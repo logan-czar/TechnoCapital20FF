@@ -302,6 +302,98 @@ describe("the desktop's bounds", () => {
     expect(win(s, "a-1").rect).toEqual({ x: 1000, y: 0, w: 1000, h: 1000 });
   });
 
+  it("re-snaps a snapped window through every size change, a tiny desktop and back included (D1050)", () => {
+    let s = run(wmInit(DESK), open("a"), open("b"), { kind: "snap", id: "a-1", side: "left" });
+    s = run(s, { kind: "snap", id: "b-2", side: "right" });
+    const sizes: Size[] = [
+      { w: 1300, h: 900 },
+      { w: 1300, h: 700 },
+      { w: 500, h: 700 },
+      { w: 2000, h: 1000 },
+      { w: 2001, h: 1000 },
+    ];
+    for (const size of sizes) {
+      s = run(s, { kind: "bounds", size });
+      expect(win(s, "a-1").rect).toEqual(snapRect("left", size));
+      expect(win(s, "b-2").rect).toEqual(snapRect("right", size));
+    }
+  });
+
+  it("stops following the desktop once the player moves or resizes a snapped window", () => {
+    let s = run(wmInit(DESK), open("a"), open("b"), { kind: "snap", id: "a-1", side: "left" });
+    s = run(s, { kind: "snap", id: "b-2", side: "left" });
+    s = run(
+      s,
+      { kind: "move", id: "a-1", x: 100, y: 0 },
+      { kind: "resize", id: "b-2", rect: { x: 0, y: 0, w: 700, h: 900 } },
+    );
+    expect(win(s, "a-1").snap).toBeNull();
+    expect(win(s, "b-2").snap).toBeNull();
+    s = run(s, { kind: "bounds", size: { w: 1400, h: 900 } });
+    expect(win(s, "a-1").rect).toEqual({ x: 100, y: 0, w: 800, h: 900 });
+    expect(win(s, "b-2").rect).toEqual({ x: 0, y: 0, w: 700, h: 900 });
+  });
+
+  it("puts a snapped window back to its old rect on restore, and ends the snap", () => {
+    let s = run(wmInit(DESK), open("a"), { kind: "snap", id: "a-1", side: "right" });
+    const before = win(s, "a-1").restore;
+    s = run(s, { kind: "restore", id: "a-1" });
+    expect(win(s, "a-1")).toMatchObject({ restore: null, snap: null, rect: before });
+  });
+
+  it("re-snaps a window saved before windows knew their snap, by the half it fills", () => {
+    const doc = {
+      seq: 3,
+      windows: [
+        {
+          id: "a-1",
+          app: "a",
+          rect: { x: 0, y: 0, w: 800, h: 900 },
+          restore: { x: 20, y: 20, w: 600, h: 400 },
+        },
+        {
+          id: "a-2",
+          app: "a",
+          rect: { x: 800, y: 0, w: 800, h: 900 },
+          restore: { x: 20, y: 20, w: 600, h: 400 },
+        },
+        { id: "a-3", app: "a", rect: { x: 0, y: 0, w: 800, h: 900 }, restore: null },
+      ],
+    };
+    let s = wmFromSaved(doc, DESK, () => true);
+    s = run(s, { kind: "bounds", size: { w: 1000, h: 600 } });
+    expect(win(s, "a-1").rect).toEqual({ x: 0, y: 0, w: 500, h: 600 });
+    expect(win(s, "a-2").rect).toEqual({ x: 500, y: 0, w: 500, h: 600 });
+    // Not snapped: only fitted.
+    expect(win(s, "a-3").rect).toEqual({ x: 0, y: 0, w: 800, h: 600 });
+  });
+
+  it("keeps whole pixels: a fractional pointer, size or desktop never gives a fractional rect (D1050)", () => {
+    let s = run(wmInit(DESK), open("a"));
+    s = run(s, { kind: "move", id: "a-1", x: 100.4, y: 50.6 });
+    expect(win(s, "a-1").rect).toEqual({ x: 100, y: 51, w: 600, h: 400 });
+    s = run(s, { kind: "resize", id: "a-1", rect: { x: 10.5, y: 20.25, w: 640.5, h: 410.49 } });
+    expect(win(s, "a-1").rect).toEqual({ x: 11, y: 20, w: 641, h: 410 });
+    expect(resizeBy({ x: 100, y: 100, w: 400, h: 300 }, "se", 10.4, 20.6, DESK)).toEqual({
+      x: 100,
+      y: 100,
+      w: 410,
+      h: 321,
+    });
+    expect(resizeBy({ x: 100, y: 100, w: 400, h: 300 }, "nw", 10.5, -20.5, DESK)).toEqual({
+      x: 111,
+      y: 80,
+      w: 389,
+      h: 320,
+    });
+    s = run(s, { kind: "bounds", size: { w: 1280.5, h: 700.4 } });
+    expect(s.bounds).toEqual({ w: 1281, h: 700 });
+    for (const w of s.windows) {
+      for (const v of [w.rect.x, w.rect.y, w.rect.w, w.rect.h]) expect(Number.isInteger(v)).toBe(true);
+    }
+    expect(snapRect("right", { w: 1281.4, h: 700.2 })).toEqual({ x: 640, y: 0, w: 641, h: 700 });
+  });
+
   it("returns the same state for the same bounds", () => {
     const s = run(wmInit(DESK), open("a"));
     expect(wmReduce(s, { kind: "bounds", size: { ...DESK } })).toBe(s);

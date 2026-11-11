@@ -1,6 +1,7 @@
-// The M1 contracts on the UI side (pivot 15; D1029): both hosts answer the pivot's new messages
-// without serving them yet, the mock boots with the pivot's views present and empty, the Step
-// control works on the mock, and the app registry and `openApp` are safe with no app and no desktop.
+// The M1 contracts on the UI side (pivot 15; D1029), as M2 left them (D1037): both hosts answer the
+// pivot's new messages, serving what M2 serves (the real host generates a history; the mock, whose
+// pivot world is now the default, takes actions); the plain mock boots with the pivot's views present
+// and empty; the Step control works on the mock; and the app registry and `openApp` are safe.
 
 import type { FromSim, PlayerAction, Reply, ToSim } from "@tc20ff/sim";
 import { unsupportedMessage, VIEW_NAMES } from "@tc20ff/sim";
@@ -45,18 +46,21 @@ const SLOT_REQUESTS: ToSim[] = [
 ];
 
 describe("the pivot's messages", () => {
-  for (const [name, make] of [
-    ["the real host", () => new RealHost(data)],
-    ["the mock host", () => new SimHost(mockWorld)],
+  for (const [name, make, real] of [
+    ["the real host", () => new RealHost(data), true],
+    ["the mock host", () => new SimHost(mockWorld), false],
   ] as const) {
     it(`${name} plays as before and refuses what it does not serve yet`, () => {
       const host = make();
-      // A start other than the world's own is not served yet, and starts no game.
+      // A baked start needs a start store, which neither has here, and starts no game.
       const baked = host.handle({ kind: "NewGame", id: 1, seed: 7, start: { kind: "baked", id: "a" } });
       expect(replyOf(baked)).toEqual({ kind: "Refused", message: unsupportedMessage("NewGame") });
       expect(host.sim).toBeNull();
       const generated = host.handle({ kind: "NewGame", id: 2, seed: 7, start: { kind: "generate" } });
+      // The real host generates a history of a historical world (D1037; sim-host generate.test.ts);
+      // this world is not one. The mock has one start.
       expect(replyOf(generated).kind).toBe("Refused");
+      if (real) expect(replyOf(generated)).toMatchObject({ message: expect.stringContaining("historical") });
       // With no `start` it is today's new game.
       const made = host.handle({ kind: "NewGame", id: 3, seed: 7 });
       expect(made.map((m) => m.kind)).toEqual(["Frame", "Reply"]);
@@ -69,13 +73,20 @@ describe("the pivot's messages", () => {
       expect(host.handle({ kind: "Cancel", id: 3 })).toEqual([]);
       const acted = host.handle({ kind: "Act", id: 20, action: ORDER });
       const refused: Reply = { kind: "ActError", error: { kind: "NotAvailable", action: "Transfer" } };
-      expect(acted).toEqual([{ kind: "Reply", id: 20, result: refused }]);
+      if (real) {
+        // The real sim takes no action until lane P (D1037).
+        expect(acted).toEqual([{ kind: "Reply", id: 20, result: refused }]);
+      } else {
+        // The mock's pivot world takes it: a Frame with the account, then Ok.
+        expect(acted.map((m) => m.kind)).toEqual(["Frame", "Reply"]);
+        expect(replyOf(acted)).toEqual({ kind: "Ok", notices: [] });
+      }
       expect(replyProblem(refused)).toBe("Transfer is not available in this build");
     });
   }
 
-  it("the mock boots and posts the pivot's views, empty", () => {
-    const host = new SimHost(mockWorld);
+  it("the plain mock boots and posts the pivot's views, empty", () => {
+    const host = new SimHost(mockWorld, { pivot: false });
     const out = host.handle({ kind: "NewGame", id: 1, seed: 7 });
     const frame = out[0];
     if (frame?.kind !== "Frame") throw new Error("no frame");
@@ -97,9 +108,10 @@ describe("the pivot's messages", () => {
     );
     const sim = host.sim;
     if (sim === null) throw new Error("no sim");
+    const t0 = sim.now;
     const notices = [];
     for (let i = 0; i < 100 && !sim.paused; i++) notices.push(...sim.advance(1000));
-    expect(sim.now).toBe(2);
+    expect(sim.now).toBe(t0 + 2);
     expect(notices.filter((n) => n.kind === "Paused")).toEqual([
       { kind: "Paused", reason: { kind: "StepDone" } },
     ]);
@@ -117,11 +129,14 @@ describe("the app registry", () => {
     ...extra,
   });
 
-  it("holds the apps that registered (the debug workspace, lane U2), and is safe to ask", () => {
-    expect(registeredApps().map((s) => s.id)).toEqual(["debug"]);
-    expect(registeredApps(true).map((s) => s.id)).toEqual(["debug"]);
+  it("holds the apps that registered (the debug workspace and the M2 apps' placeholders), and is safe to ask", () => {
+    const apps = ["browser", "debug", "news", "polls", "records", "social", "terminal", "usmap"];
+    // The debug workspace is debug-only (D1050): listed only with Omniscient.
+    expect(registeredApps().map((s) => s.id)).toEqual(apps.filter((id) => id !== "debug"));
+    expect(registeredApps(true).map((s) => s.id)).toEqual(apps);
     expect(appSpecOf("debug")?.title).toBe("Debug workspace");
-    expect(appSpecOf("news")).toBeUndefined();
+    expect(appSpecOf("news")?.PhoneView).toBeDefined();
+    expect(appSpecOf("betting")).toBeUndefined();
   });
 
   it("lists apps in id order and refuses an id twice", () => {

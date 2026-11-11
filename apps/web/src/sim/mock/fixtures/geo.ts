@@ -7,15 +7,16 @@
 // replace `genCounties` without touching the rest. The FIPS codes are well formed (state prefix,
 // odd county codes) and the names are made up.
 
-import type {
-  CountyId,
-  CountyShare,
-  DistrictsView,
-  Party,
-  PersonId,
-  SimDate,
-  UsMapLayersView,
-  UsStateId,
+import {
+  type CountyId,
+  type CountyShare,
+  type DistrictsView,
+  districtRefId,
+  type Party,
+  type PersonId,
+  type SimDate,
+  type UsMapLayersView,
+  type UsStateId,
 } from "@tc20ff/sim";
 import type { MockWorld } from "../mockWorld.ts";
 import type { MockRng } from "./rng.ts";
@@ -279,6 +280,7 @@ export function districtsView(
       strength: omniscient ? st.plan_strength : null,
     })),
     districts: geo.districts.map((d) => ({
+      id: districtRefId((geo.states[d.state] as MockState).id, d.number),
       state: (geo.states[d.state] as MockState).id,
       number: d.number,
       shares: d.shares,
@@ -294,6 +296,8 @@ export interface CountyResult {
   winner: Party;
   /** Points toward party A. */
   margin: number;
+  /** Votes cast. Whole number. */
+  votes: number;
 }
 
 /** v_usmap_layers. `last` is by county id; null before a certified presidential vote. */
@@ -310,17 +314,33 @@ export function usMapLayersView(
       name: cs.map((c) => c.name),
       population: cs.map((c) => c.population),
       district: geo.county_district,
+      turnout: cs.map((c) => c.turnout),
+      last_votes: cs.map((c) => last[c.id]?.votes ?? 0),
       last_winner: cs.map((c) => last[c.id]?.winner ?? null),
       last_margin: cs.map((c) => last[c.id]?.margin ?? null),
       lean: omniscient ? cs.map((c) => c.lean) : null,
     },
-    states: geo.states.map((st) => ({
-      id: st.id,
-      name: st.name,
-      population: st.population,
-      house_seats: st.seats,
-      electoral_votes: st.electoral_votes,
-      governor: st.governor,
-    })),
+    states: geo.states.map((st, si) => {
+      // The state's last result from its counties' (D1037): margins weighted by votes cast.
+      let votes = 0;
+      let lead = 0;
+      for (const c of cs) {
+        const r = last[c.id];
+        if (c.state !== si || r === null || r === undefined) continue;
+        votes += r.votes;
+        lead += r.margin * r.votes;
+      }
+      const margin = votes > 0 ? Math.floor((lead / votes) * 10 + 0.5) / 10 : null;
+      return {
+        id: st.id,
+        name: st.name,
+        population: st.population,
+        house_seats: st.seats,
+        electoral_votes: st.electoral_votes,
+        governor: st.governor,
+        last_winner: margin === null ? null : margin >= 0 ? "Democrats" : "Republicans",
+        last_margin: margin,
+      };
+    }),
   };
 }

@@ -21,6 +21,7 @@ import {
   simControls,
   simHydrate,
   simNew,
+  simSetDifficulty,
   simStateHash,
   simStep,
   simViews,
@@ -122,8 +123,11 @@ describe("hydration", () => {
     const queued = JSON.stringify(world.news);
     const before = simStateHash(sim);
 
+    expect(world.player).toBeNull();
     const report = simHydrate(sim);
     expect(world.fidelity).toBe("Full");
+    // The player's account opens at hydration, at Normal by default (D1052).
+    expect(world.player?.difficulty.id).toBe("Normal");
     expect(report).toMatchObject({ date: UNTIL, ended_here: true, scenario: world.era?.scenario.label });
     expect(world.era?.ended).toBe(true);
     expect(world.era?.reveal_date).toEqual(UNTIL);
@@ -151,6 +155,17 @@ describe("hydration", () => {
     simHydrate(a);
     simHydrate(b);
     expect(simStateHash(a)).toBe(simStateHash(b));
+  }, 120_000);
+
+  it("opens the account at the new game's difficulty, and a baked start's can be reopened at another", () => {
+    const a = presimTo(3, [720]);
+    simHydrate(a, "Hard");
+    expect(simWorld(a).player?.difficulty.id).toBe("Hard");
+    const b = presimTo(3, [720]);
+    simHydrate(b);
+    expect(simSetDifficulty(b, "Normal")).toBe(false);
+    expect(simSetDifficulty(b, "Hard")).toBe(true);
+    expect(simStateHash(b)).toBe(simStateHash(a));
   }, 120_000);
 
   it("leaves a run its own reveal has ended as it is", () => {
@@ -187,7 +202,7 @@ describe("hydration", () => {
 });
 
 describe("fidelity tags", () => {
-  it("the run's end is the one Coarse-only job; no job is Full-only yet", () => {
+  it("the run's end and the Coarse campaigns are the Coarse-only jobs; the player's are the Full-only ones", () => {
     const s = scheduler();
     const tagged: string[] = [];
     for (const slot of SLOT_VALUES) {
@@ -195,7 +210,13 @@ describe("fidelity tags", () => {
         if (fidelity !== null) tagged.push(`${slot} ${name} ${fidelity}`);
       }
     }
-    expect(tagged).toEqual(["YearlyArchive era.reveal Coarse"]);
+    // Lane E's weekly Coarse campaigns too (pivot 6.6; D1040).
+    expect(tagged).toEqual([
+      "HourlyPlayer player.hourly Full",
+      "DailyPlayer player.daily Full",
+      "WeeklyJobs elections.coarse_campaigns Coarse",
+      "YearlyArchive era.reveal Coarse",
+    ]);
   });
 
   /** A 1995 game one day before a reveal date of 1 January 1996, in `fidelity`. */

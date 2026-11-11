@@ -4,42 +4,74 @@
 // per platform; `pnpm e2e -- --visual --update-snapshots` writes them again after a change that is
 // meant to be seen.
 //
-// The map is a WebGL canvas whose pixels depend on the graphics driver: it is masked.
+// The first run opens the news app by itself; these shots close it first, so the baselines show the
+// shell (the wallpaper, the taskbar, the phone) and do not change when an app's own look does. What
+// the apps look like is their lanes' business, not these baselines'.
 
-import { desktop, expect, openDebug, sim, test } from "./fixtures.ts";
+import type { Page } from "@playwright/test";
+import { expect, firstRun, sim, test } from "./fixtures.ts";
 
 const visual = { tag: "@visual" };
+/** The mock's first scripted pause (a notification): 14:00 on 23 Oct 2020, in hours since 2020-01-01. */
+const FIRST_ALERT_HOUR = 7032 + 86;
+
+/** The desktop of a new mock game with the first run's window closed. */
+async function emptyDesktop(page: Page): Promise<void> {
+  await firstRun(page);
+  await page.getByTestId("win-news-1-close").click();
+  await expect(page.getByTestId("win-news-1")).toHaveCount(0);
+}
+
+/** Runs the mock to its first scripted pause, which names a notification. */
+async function toFirstPause(page: Page): Promise<void> {
+  await page.getByTestId("tb-speed-6").click();
+  await expect.poll(() => sim<number>(page, "sim.clock.now")).toBe(FIRST_ALERT_HOUR);
+  await expect(page.getByTestId("tb-pause-note")).toBeVisible();
+}
 
 test("the empty desktop", visual, async ({ game }) => {
   const page = await game.launch();
-  await desktop(page);
+  await emptyDesktop(page);
   expect(await sim<number>(page, "sim.clock.now")).toBe(7032);
   await expect(page).toHaveScreenshot("desktop.png");
 });
 
 test("the taskbar and the launcher's menu", visual, async ({ game }) => {
   const page = await game.launch();
-  await desktop(page);
+  await emptyDesktop(page);
   await expect(page.getByTestId("taskbar")).toHaveScreenshot("taskbar.png");
   await page.getByTestId("tb-launcher").click();
   await expect(page.getByRole("menu", { name: "Apps" })).toHaveScreenshot("launcher-menu.png");
 });
 
-test("the phone with nothing on it", visual, async ({ game }) => {
+test("the phone's home screen on the first day", visual, async ({ game }) => {
   const page = await game.launch();
-  await desktop(page);
+  await emptyDesktop(page);
+  // The badge counts what the mock's history left unread; the screen shows it, and reads it.
+  await expect(page.getByTestId("tb-phone")).toHaveAttribute("aria-label", /new$/);
   await page.getByTestId("tb-phone").click();
-  await expect(page.getByTestId("phone")).toContainText("Nothing yet");
-  await expect(page.getByTestId("phone")).toHaveScreenshot("phone-empty.png");
+  await expect(page.getByTestId("phone-notifications")).toBeVisible();
+  await expect(page.getByTestId("tb-phone")).toHaveAttribute("aria-label", "Phone");
+  await expect(page.getByTestId("phone")).toHaveScreenshot("phone-home.png");
 });
 
-test("the Debug workspace's window", visual, async ({ game }) => {
+test(
+  "the pause note on the taskbar, and the phone with the notification that paused the game",
+  visual,
+  async ({ game }) => {
+    const page = await game.launch();
+    await emptyDesktop(page);
+    await toFirstPause(page);
+    await expect(page.getByTestId("taskbar")).toHaveScreenshot("taskbar-paused.png");
+    await page.getByTestId("tb-pause-note").click();
+    await expect(page.getByTestId("phone")).toContainText("Paused the game");
+    await expect(page.getByTestId("phone")).toHaveScreenshot("phone-notifications.png");
+  },
+);
+
+test("the pause settings", visual, async ({ game }) => {
   const page = await game.launch();
-  await desktop(page);
-  await openDebug(page);
-  const map = page.getByTestId("win-debug").locator("canvas");
-  await expect(map.first()).toBeVisible();
-  // The whole page: the window's frame and title bar, the workspace's bars, the taskbar with the
-  // window's button. The map and the clock are covered.
-  await expect(page).toHaveScreenshot("debug-window.png", { mask: [map, page.getByTestId("tb-clock")] });
+  await emptyDesktop(page);
+  await page.getByTestId("tb-pauses").click();
+  await expect(page.getByTestId("pause-settings")).toHaveScreenshot("pause-settings.png");
 });

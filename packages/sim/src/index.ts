@@ -3,6 +3,22 @@
 // value exports are UI-safe constants and helpers (alert tables, speeds, calendar ordering, view
 // enums and names).
 
+export type { HydrateReport } from "./fidelity/hydrate.ts";
+// The pre-simulation and hydration (pivot 3.2 to 3.5; D1035): what a host drives to generate a new
+// history behind a progress screen (packages/sim-host `RealHost`, D1037).
+export {
+  PLAY_START,
+  PRESIM_CHUNK_TICKS,
+  type Presim,
+  type PresimOptions,
+  type PresimProgress,
+  type PresimStep,
+  presimAdvance,
+  presimCancel,
+  presimProgress,
+  presimSim,
+  presimStart,
+} from "./fidelity/presim.ts";
 // The Sim (lib.ts): built with `simNew`, driven through its SimApi methods. Test and soak hooks
 // (`simWorld`, `simRegisterTestJob`, `simSoakStats` ...) are in internal.ts only.
 export {
@@ -12,8 +28,11 @@ export {
   Sim,
   type SimOptions,
   simErrorMessage,
+  simHydrate,
   simNew,
   simRunUntil,
+  simSetDifficulty,
+  simSlice,
 } from "./lib.ts";
 // The save format's version (D1029): a host names it in its save listings.
 export { SAVE_VERSION } from "./save.ts";
@@ -43,7 +62,12 @@ export {
   simDateYmd,
   weekdayShortName,
 } from "./time/calendar.ts";
-export { controlsEffectiveSpeed, controlsSecondsPerTick, skipTarget } from "./time/control.ts";
+export {
+  controlsEffectiveSpeed,
+  controlsSecondsPerTick,
+  fixedPausesDefault,
+  skipTarget,
+} from "./time/control.ts";
 export {
   lockTick,
   nextPhaseStart,
@@ -65,9 +89,24 @@ export * from "./types/notice.ts";
 export { cmpStr, roundHalfAway, roundTiesEven, totalCmp } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
-export type { CountyShare } from "./types/state/geo.ts";
+export type { ChallengeStatus, CountyShare } from "./types/state/geo.ts";
 export type { Levers } from "./types/state/governing.ts";
-export type { ElectionResult, Ideology, JudgeLeaning, Party } from "./types/state/politics.ts";
+export {
+  OFFICE_KIND_VALUES,
+  type OfficeExit,
+  type OfficeHow,
+  type OfficeSeat,
+  type PersonOrigin,
+} from "./types/state/persons.ts";
+export { DIFFICULTY_VALUES, type Difficulty, type DifficultySettings } from "./types/state/player.ts";
+export {
+  type ElectionResult,
+  IDEOLOGY_VALUES,
+  type Ideology,
+  type JudgeLeaning,
+  PARTY_VALUES,
+  type Party,
+} from "./types/state/politics.ts";
 export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
 export { type PostedBars, postedBarsNone, priceBarsApply, priceBarsCompact } from "./views/bars_patch.ts";
@@ -88,6 +127,7 @@ export {
 export {
   HEAVY_VIEWS,
   lightView,
+  type PortedViews,
   type PostedViews,
   postedViewsNone,
   postedViewsResetNews,

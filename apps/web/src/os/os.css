@@ -504,6 +504,82 @@
 .os .os-tb-pause.on .os-icon {
   fill: currentColor;
 }
+/* Which notification paused the game, beside the clock; it jumps to it on the phone. */
+.os .os-taskbar .os-pause-note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 220px;
+  min-width: 0;
+  padding: 0 8px;
+  border-left: 2px solid var(--os-signal);
+  line-height: 1.15;
+  text-align: left;
+}
+.os .os-taskbar .os-pause-note:hover {
+  background: var(--os-chrome-raised);
+}
+.os .os-pause-note-label {
+  color: var(--os-signal);
+  font-stretch: 88%;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.os .os-pause-note-text {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The fixed pauses' settings (pivot 2.4): a popover above the taskbar. */
+.os .os-pauses {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.os .os-tb-pauses.on {
+  background: var(--os-chrome-raised);
+  color: var(--os-brass);
+}
+.os .os-pauses-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 7px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 300px;
+  padding: 8px;
+  background: var(--os-chrome-raised);
+  border: 1px solid var(--os-brass-dim);
+  box-shadow: 0 14px 40px rgba(3, 10, 9, 0.7);
+  z-index: 5;
+}
+.os .os-pauses-menu p {
+  margin: 0 0 4px;
+  line-height: 1.35;
+}
+.os .os-pauses-menu label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: start;
+  padding: 6px 4px;
+  line-height: 1.3;
+}
+.os .os-pauses-menu label[data-locked="true"] {
+  color: var(--os-paper-dim);
+}
+.os .os-pauses-lock {
+  grid-column: 2;
+  font-stretch: 88%;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 .os .os-speeds {
   display: flex;
   margin: 0 8px 0 4px;
@@ -697,38 +773,91 @@
   border-left: 2px solid var(--os-chrome-line);
   line-height: 1.3;
 }
-.os .os-phone-notes li[data-severity="alert"] {
+.os .os-phone-notes li[data-unread="true"] {
   border-left-color: var(--os-brass);
+}
+.os .os-phone-notes li[data-paused="true"] {
+  border-left-color: var(--os-signal);
+}
+/* The one the taskbar's pause note jumped to. */
+.os .os-phone-notes li[data-current="true"] {
+  outline: 1px solid var(--os-brass);
+}
+.os .os-phone-note-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-stretch: 88%;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.os .os-phone-note-kind {
+  color: var(--os-paper-dim);
+}
+.os .os-phone-note-pause {
+  color: var(--os-signal);
+}
+.os .os-phone-note-new {
+  color: var(--os-brass);
+}
+.os .os-phone-note-text .app-link {
+  padding: 0;
+  text-align: left;
+  font: inherit;
+}
+.os .os-phone-heading {
+  margin: 4px 12px 0;
+  color: var(--os-paper-dim);
+  font-stretch: 88%;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* The home screen's tiles: the apps that have a compact form. */
+.os .os-phone-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 10px 8px 4px;
+  list-style: none;
+}
+.os .os-phone-tiles button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 10px 4px 8px;
+  background: var(--os-ink);
+  border: 1px solid var(--os-chrome-line);
+  border-radius: 8px;
+  color: var(--os-paper);
+  font: inherit;
+  font-size: 12.5px;
+}
+.os .os-phone-tiles button:hover {
+  background: var(--os-patina);
+  color: var(--os-brass);
+}
+.os .os-phone-back {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--os-brass);
+  font: inherit;
+  cursor: pointer;
+}
+.os .os-phone-back:focus-visible {
+  outline: 2px solid var(--os-brass);
 }
 .os .os-phone-note-when {
   color: var(--os-paper-dim);
   font-variant-numeric: tabular-nums;
   font-stretch: 88%;
   font-size: 12px;
-}
-.os .os-phone-dock {
-  flex: none;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  padding: 6px;
-  background: var(--os-ink);
-}
-.os .os-phone-dock button {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 36px;
-  padding: 0;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  color: var(--os-paper-dim);
-}
-.os .os-phone-dock button:hover,
-.os .os-phone-dock button.on {
-  background: var(--os-patina);
-  color: var(--os-brass);
 }
 
 /* The toasts (shell/Toasts.tsx) sat at the page's bottom right, where the taskbar's clock and the

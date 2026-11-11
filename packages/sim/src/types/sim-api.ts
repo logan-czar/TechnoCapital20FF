@@ -25,7 +25,8 @@ import type { ActError, PlayerAction } from "./action.ts";
 import type { DateTime } from "./calendar.ts";
 import type { Control, Controls } from "./control.ts";
 import type { CompanyId } from "./ids.ts";
-import type { Notice } from "./notice.ts";
+import type { FixedPause, Notice } from "./notice.ts";
+import type { SliceData, SliceKey } from "./protocol.ts";
 import type { ClockView, SimViews } from "./views/index.ts";
 import type { LoadError, Result } from "./world.ts";
 
@@ -66,6 +67,8 @@ export type SimError =
   | { kind: "UnknownCompany"; company: CompanyId }
   /** "Omniscient is only available in debug builds". */
   | { kind: "DebugOnly" }
+  /** "the {pause} pause cannot be switched off" (pivot 2.4; D1037). */
+  | { kind: "BadFixedPause"; pause: FixedPause }
   | { kind: "Load"; error: LoadError }
   | { kind: "Save"; error: SaveError };
 
@@ -85,7 +88,7 @@ export interface SimApi {
   /**
    * Applies a player action at once, between ticks (pivot 1.2; D1027), and returns any notices it
    * causes. An action changes the world, so unlike a control it is inside the state hash and is
-   * recorded for replay (types/action.ts). Until the player and the exchange exist (M2, M5) every
+   * recorded for replay (types/action.ts). Until lane P (M2) and the exchange (M5) take one, an
    * action is refused with `NotAvailable` and changes nothing.
    */
   act(action: PlayerAction): Result<Notice[], ActError>;
@@ -102,6 +105,9 @@ export interface SimApi {
 
   /** The time of the last finished tick. */
   now(): DateTime;
+
+  /** One slice of a view from the state now (protocol.ts `SliceKey`; D1016, D1037); null for none. */
+  slice(key: SliceKey): SliceData;
 
   /** The hash of the world and RNG positions (build-plan M1.8, 4.3). */
   stateHash(): StateHash;

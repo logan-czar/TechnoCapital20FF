@@ -31,19 +31,27 @@
 // generated history (`NewGame.start`), a long request reports `Progress` and can be cancelled
 // (`Cancel`), saves live in named slots the sim's process writes (`SaveSlot`, `LoadSlot`,
 // `ListSaves`, `DeleteSave`), and the player acts through `Act`. A host that cannot serve one of
-// these yet answers it `Refused` with `unsupportedMessage`'s text; the hosts of M1 serve only
-// `Act`, which the sim itself refuses (`ActError` NotAvailable).
+// these answers it `Refused` with `unsupportedMessage`'s text: the browser's worker has no slots
+// and no starts; the Electron sim process serves them all, a generated history included (D1037).
+//
+// The pivot's views (D1037): their heavy parts are slices built from the state (`SliceKey`), and
+// their growing lists travel as appended and changed rows (`APPEND_LISTS`, `ViewsPatch.appended`).
 
 import type { ActError, PlayerAction } from "./action.ts";
 import type { DateTime, Quarter, SimDate } from "./calendar.ts";
 import type { Control } from "./control.ts";
-import type { CompanyId, ZoneId } from "./ids.ts";
+import type { CompanyId, ContractId, RaceId, ZoneId } from "./ids.ts";
 import type { Notice } from "./notice.ts";
 import type { SimError, StateHash } from "./sim-api.ts";
 import type { DailyBar, IndexHistory } from "./state/market.ts";
 import type { Headline } from "./state/news.ts";
+import type { Difficulty } from "./state/player.ts";
+import type { FrontPage } from "./views/feed.ts";
 import type { ClockView, SimViews, ViewName } from "./views/index.ts";
+import type { ContractBook, ContractHistory } from "./views/markets.ts";
 import type { RecapQuarter } from "./views/recap.ts";
+import type { RollCallVotes } from "./views/records.ts";
+import type { RaceCountyReturns } from "./views/returns.ts";
 import type { CompanyStatements } from "./views/statements.ts";
 
 /** The worker posts at most one frame this often while running (60 a second). */
@@ -85,6 +93,13 @@ export interface BakedStart {
   save_version: number;
   /** Its state hash on its first day, for the checks. */
   hash: StateHash;
+  /** Its scenario as the baker named it, or "hidden" (D1037): opaque to the game, never shown in play. */
+  scenario: string;
+  /** Its first day of play, "YYYY-MM-DD". */
+  date: string;
+  /** Its save's file name in the starts folder, and the file's size in bytes. */
+  file: string;
+  bytes: number;
 }
 
 /** What a long request is doing (pivot 3.5). */
@@ -135,6 +150,11 @@ export type ToSim =
        * pivot (the 1995 world in 1995, the 2020 world in 2020).
        */
       start?: GameStart;
+      /**
+       * The player's difficulty preset (pivot 3.6; D1052) for a start that opens an account (a
+       * generated or baked 2020 start). Absent: Normal. A world's own first day has no account.
+       */
+      difficulty?: Difficulty;
     }
   /** Load a save (D13, D953): pauses and drops any skip. */
   | { kind: "Load"; id: RequestId; bytes: Uint8Array }
@@ -167,18 +187,42 @@ export type ToSim =
 /** The requests a reply answers: every `ToSim` with an id of its own. */
 export type SimRequest = Exclude<ToSim, { kind: "FrameDone" | "Want" | "Cancel" }>;
 
-/** A slice of a heavy view (D1016). */
+/**
+ * A slice of a heavy view (D1016). The three pre-pivot ones come from their view's data; the
+ * pivot's (D1037, with a `slice` naming which part) are built from the state by the view's builder
+ * (views/index.ts `ViewBuilder.slice`) when a frame carries them:
+ * - `markets` `book`: a contract's depth (`ContractBook`);
+ * - `markets` `history`: a contract's hourly prices (`ContractHistory`);
+ * - `returns` `counties`: a race's count by county (`RaceCountyReturns`);
+ * - `records` `votes`: how each member voted in a roll call (`RollCallVotes`);
+ * - `feed` `front_pages`: every outlet's front page of one day (`FrontPage[]`).
+ */
 export type SliceKey =
   | { view: "statements"; company: CompanyId }
   | { view: "recap"; quarter: Quarter }
-  | { view: "exchanges"; zone: ZoneId };
+  | { view: "exchanges"; zone: ZoneId }
+  | { view: "markets"; slice: "book"; contract: ContractId }
+  | { view: "markets"; slice: "history"; contract: ContractId }
+  | { view: "returns"; slice: "counties"; race: RaceId }
+  | { view: "records"; slice: "votes"; roll_call: number }
+  | { view: "feed"; slice: "front_pages"; date: SimDate };
 
-/** A slice's data: the company's statements, the quarter's recap, the exchange's index history; null when the view has none. */
+/** A slice's data (see `SliceKey`); null when the view has none by that key. */
 export type SliceData<K extends SliceKey = SliceKey> = K extends { view: "statements" }
   ? CompanyStatements | null
   : K extends { view: "recap" }
     ? RecapQuarter | null
-    : IndexHistory | null;
+    : K extends { view: "exchanges" }
+      ? IndexHistory | null
+      : K extends { slice: "book" }
+        ? ContractBook | null
+        : K extends { slice: "history" }
+          ? ContractHistory | null
+          : K extends { slice: "counties" }
+            ? RaceCountyReturns | null
+            : K extends { slice: "votes" }
+              ? RollCallVotes | null
+              : FrontPage[] | null;
 
 /** One slice in a frame, at its view's version. */
 export interface SlicePatch {
@@ -187,7 +231,10 @@ export interface SlicePatch {
   data: SliceData;
 }
 
-/** A slice's identity, for maps: "statements/12", "recap/1997-Q3", "exchanges/4". */
+/**
+ * A slice's identity, for maps: "statements/12", "recap/1997-Q3", "exchanges/4", "markets/book/7",
+ * "markets/history/7", "returns/counties/3", "records/votes/12", "feed/front_pages/2020-11-04".
+ */
 export function sliceId(k: SliceKey): string {
   switch (k.view) {
     case "statements":
@@ -196,8 +243,73 @@ export function sliceId(k: SliceKey): string {
       return `recap/${k.quarter.year}-Q${k.quarter.q}`;
     case "exchanges":
       return `exchanges/${k.zone}`;
+    case "markets":
+      return `markets/${k.slice}/${k.contract}`;
+    case "returns":
+      return `returns/counties/${k.race}`;
+    case "records":
+      return `records/votes/${k.roll_call}`;
+    case "feed": {
+      const d = k.date;
+      return `feed/front_pages/${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
+    }
   }
 }
+
+// ---------------------------------------------------------------- append and changed rows (D1037)
+
+/**
+ * The lists in the pivot's views that only grow, oldest first (D1037). A frame never carries them
+ * inside their view: a posted view holds each of these as `[]`, and `ViewsPatch.appended` carries
+ * the rows added since the last frame (or the whole list, with `reset`). The UI keeps its own copy
+ * and appends, as it does v_news's feed (`news_appended`). A row already sent that changed since
+ * (an article corrected, a rumour confirmed) comes in `ViewsPatch.changed`. The sim must keep a row
+ * object it did not change from one build to the next (views/patch.ts compares rows by identity).
+ */
+export const APPEND_LISTS = {
+  feed: ["articles"],
+  social: ["posts"],
+  polls: ["polls"],
+  notifications: ["items"],
+  account: ["fills"],
+  records: ["roll_calls", "actions", "filings"],
+} as const satisfies { readonly [V in ViewName]?: readonly (keyof SimViews[V]["data"])[] };
+
+/** A view with append lists. */
+export type AppendView = keyof typeof APPEND_LISTS;
+
+/** An append list's field name in view `V`. */
+export type AppendField<V extends AppendView> = (typeof APPEND_LISTS)[V][number];
+
+/** The row type of list `F` of view `V`. */
+export type AppendRow<V extends AppendView, F extends AppendField<V>> = SimViews[V]["data"][F &
+  keyof SimViews[V]["data"]] extends readonly (infer R)[]
+  ? R
+  : never;
+
+/** The rows appended to one list since the last frame (D1037). */
+export type AppendPatch = {
+  [V in AppendView]: {
+    [F in AppendField<V>]: {
+      view: V;
+      field: F;
+      /** Replace the list held with `rows` (a new game, a load, a first post), not append to it. */
+      reset: boolean;
+      rows: AppendRow<V, F>[];
+    };
+  }[AppendField<V>];
+}[AppendView];
+
+/** Rows of one list, already sent, that changed since (D1037): `index` is the row's place in the list. */
+export type ChangedPatch = {
+  [V in AppendView]: {
+    [F in AppendField<V>]: {
+      view: V;
+      field: F;
+      rows: { index: number; row: AppendRow<V, F> }[];
+    };
+  }[AppendField<V>];
+}[AppendView];
 
 /** Worker → UI. */
 export type FromSim =
@@ -291,4 +403,12 @@ export type ViewsPatch = Partial<Omit<SimViews, "news">> & {
   news_version?: number;
   /** The wanted slices whose view moved since they were last posted, or newly wanted (D1016). */
   slices?: SlicePatch[];
+  /**
+   * Rows added to the pivot views' append lists since the last frame (`APPEND_LISTS`; D1037), for
+   * the views in this patch. A view in the patch holds those lists empty: keep the old rows and
+   * append these (or replace them, on `reset`).
+   */
+  appended?: AppendPatch[];
+  /** Rows already sent that changed since (D1037): replace the row at each `index`. */
+  changed?: ChangedPatch[];
 };

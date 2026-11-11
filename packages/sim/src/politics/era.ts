@@ -21,8 +21,27 @@ export const REGION_DRIFT_SD_PTS = 1.5;
 export const STATE_DRIFT_SD_PTS = 1.0;
 /** The sd of a state's yearly population growth around its own rate (1995-rework 7.4, T). */
 export const POP_SHOCK_SD = 0.002;
-/** The years a census's new seats are worked out, on 1 January (1995-rework 7.4). */
-export const CENSUS_YEARS: readonly number[] = [2001, 2011];
+/** The first census of play (pivot 5.3): 2000, then every `CENSUS_EVERY_YEARS`. */
+export const CENSUS_FIRST_YEAR = 2000;
+/** Years between censuses (pivot 5.3). */
+export const CENSUS_EVERY_YEARS = 10;
+/** The last year the politics job's census list runs to: far past any game (pivot 5.3, D1039). */
+export const CENSUS_HORIZON_YEAR = 2500;
+
+/** Whether `year` is a census year (pivot 5.3): 2000, 2010, 2020 and every ten years after. */
+export function isCensusYear(year: number): boolean {
+  return year >= CENSUS_FIRST_YEAR && (year - CENSUS_FIRST_YEAR) % CENSUS_EVERY_YEARS === 0;
+}
+
+/**
+ * The years a census's new seats are worked out for the politics job, on 1 January (1995-rework
+ * 7.4): the year after each census of pivot 5.3 (2001, 2011, 2021 and on to the horizon; D1039).
+ * The years up to 2020 are the ones the 1995 world always had.
+ */
+export const CENSUS_YEARS: readonly number[] = Array.from(
+  { length: (CENSUS_HORIZON_YEAR - CENSUS_FIRST_YEAR) / CENSUS_EVERY_YEARS + 1 },
+  (_, i) => CENSUS_FIRST_YEAR + i * CENSUS_EVERY_YEARS + 1,
+);
 /** The House's size (1995-rework 7.4). */
 export const HOUSE_SEATS = 435;
 /** A people count per million of `pop_1990_m`. */
@@ -148,13 +167,26 @@ export function equalProportions(people: readonly number[], total: number): numb
  */
 export function driftYear(p: PoliticsState, era: EraPolitics, g: DrawSource): void {
   const swing = CENSUS_REGIONS.map(() => g.normal("Politics") * REGION_DRIFT_SD_PTS);
-  const by = p.states.map((s, i) => {
+  const by = p.states.map((_, i) => {
     const row = era.states[i] as EraUsState;
     const d = (swing[row.region] as number) + g.normal("Politics") * STATE_DRIFT_SD_PTS;
-    s.lean_pts += d;
     row.population *= expF(row.growth + g.normal("Politics") * POP_SHOCK_SD);
-    s.weight = row.population;
     return d;
+  });
+  // The nation's people-weighted lean holds (D1052): the drift moves regions and states against
+  // each other, and party competition keeps the whole near where it was; the national mood of a
+  // November is the elections' swing and tides (pivot 6.7).
+  let total = 0;
+  let mean = 0;
+  p.states.forEach((s, i) => {
+    total += s.weight;
+    mean += s.weight * (by[i] as number);
+  });
+  const shift = total > 0 ? mean / total : 0;
+  p.states.forEach((s, i) => {
+    by[i] = (by[i] as number) - shift;
+    s.lean_pts += by[i] as number;
+    s.weight = (era.states[i] as EraUsState).population;
   });
   const move = (districts: District[]): void => {
     for (const d of districts) d.lean_pts += by[d.state] as number;

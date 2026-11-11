@@ -1,0 +1,707 @@
+/* Ledger of Record: the republic's official public records (pivot 8.6). A dry, ledger-like site:
+   slate ground, parchment ink, a brass rule. Everything is scoped under .rec-root; the party colours
+   come from apps/_shared (--party-a, --party-b, --party-none). */
+
+.rec-root {
+  --rec-bg: #0d1318;
+  --rec-panel: #141c24;
+  --rec-panel-2: #1a2430;
+  --rec-line: #2a3744;
+  --rec-ink: #e8e4d6;
+  --rec-dim: #a0abb4;
+  --rec-brass: #cfa94e;
+  --rec-link: #8fc6ea;
+  --rec-ok: #86cfa0;
+  --rec-bad: #e8917f;
+  --rec-warn: #e3c373;
+
+  container-type: inline-size;
+  container-name: rec;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--rec-bg);
+  color: var(--rec-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  line-height: 1.45;
+  font-variant-numeric: lining-nums;
+}
+
+.rec-root *,
+.rec-root *::before,
+.rec-root *::after {
+  box-sizing: border-box;
+}
+
+/* masthead and section bar */
+
+.rec-masthead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--rec-panel);
+  border-bottom: 2px solid var(--rec-brass);
+}
+
+.rec-seal {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--rec-brass);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--rec-brass);
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 13px;
+}
+
+.rec-brand {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-name {
+  margin: 0;
+  font-size: 1.35em;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  color: var(--rec-ink);
+}
+
+.rec-tag {
+  margin: 0;
+  color: var(--rec-dim);
+  font-size: 0.85em;
+}
+
+.rec-history {
+  display: flex;
+  gap: 4px;
+}
+
+.rec-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 0 12px;
+  background: var(--rec-panel-2);
+  border-bottom: 1px solid var(--rec-line);
+}
+
+.rec-tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--rec-dim);
+  font: inherit;
+  padding: 7px 10px 5px;
+  cursor: pointer;
+}
+
+.rec-tab:hover {
+  color: var(--rec-ink);
+}
+
+.rec-tab.active {
+  color: var(--rec-ink);
+  border-bottom-color: var(--rec-brass);
+}
+
+.rec-tab:focus-visible,
+.rec-button:focus-visible,
+.rec-link:focus-visible,
+.rec-th:focus-visible,
+.rec-root input:focus-visible,
+.rec-root select:focus-visible,
+.rec-root summary:focus-visible {
+  outline: 2px solid var(--rec-brass);
+  outline-offset: 1px;
+}
+
+.rec-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 16px 24px;
+}
+
+/* controls */
+
+.rec-button {
+  font: inherit;
+  color: var(--rec-ink);
+  background: var(--rec-panel-2);
+  border: 1px solid var(--rec-line);
+  border-radius: 3px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.rec-button:hover:not(:disabled) {
+  border-color: var(--rec-brass);
+}
+
+.rec-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.rec-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--rec-link);
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  cursor: pointer;
+}
+
+.rec-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* The shared EntityLink is a button too: keep its dotted look but read well on this ground. */
+.rec-root .app-link {
+  color: inherit;
+  text-decoration-color: var(--rec-dim);
+}
+
+.rec-root .app-person .app-link {
+  color: var(--party, var(--rec-ink));
+}
+
+.rec-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: end;
+  margin: 0 0 10px;
+}
+
+.rec-filters input[type="search"] {
+  min-width: 15em;
+}
+
+.rec-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85em;
+  color: var(--rec-dim);
+}
+
+.rec-root input,
+.rec-root select {
+  font: inherit;
+  color: var(--rec-ink);
+  background: var(--rec-bg);
+  border: 1px solid var(--rec-line);
+  border-radius: 3px;
+  padding: 3px 6px;
+  min-width: 0;
+}
+
+.rec-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rec-search label {
+  flex: 1;
+}
+
+.rec-search input {
+  width: 100%;
+  padding: 6px 8px;
+}
+
+.rec-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* page frame */
+
+.rec-page-head {
+  border-bottom: 1px solid var(--rec-line);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+
+.rec-kicker {
+  margin: 0;
+  color: var(--rec-brass);
+  font-size: 0.8em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rec-title {
+  margin: 2px 0 4px;
+  font-size: 1.55em;
+  font-weight: normal;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.rec-lede {
+  color: var(--rec-dim);
+}
+
+.rec-lede p {
+  margin: 0;
+}
+
+.rec-section {
+  margin: 0 0 18px;
+  min-width: 0;
+}
+
+.rec-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--rec-line);
+  margin-bottom: 8px;
+}
+
+.rec-section h2 {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  color: var(--rec-brass);
+}
+
+.rec-aside {
+  font-size: 0.85em;
+  color: var(--rec-dim);
+}
+
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+
+.rec-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px 16px;
+  margin: 0 0 14px;
+}
+
+.rec-fact dt {
+  color: var(--rec-dim);
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rec-fact dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.rec-muted {
+  color: var(--rec-dim);
+}
+
+.rec-note {
+  margin: 6px 0 14px;
+  color: var(--rec-dim);
+  font-style: italic;
+}
+
+.rec-count {
+  margin: 0 0 4px;
+  color: var(--rec-dim);
+  font-size: 0.85em;
+}
+
+/* states */
+
+.rec-state {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px dashed var(--rec-line);
+  color: var(--rec-dim);
+  text-align: center;
+}
+
+.rec-missing-title {
+  margin: 0 0 4px;
+  font-size: 1.2em;
+  color: var(--rec-ink);
+}
+
+.rec-banner {
+  margin: 0 0 12px;
+  padding: 6px 10px;
+  border-left: 4px solid;
+  background: var(--rec-panel);
+}
+
+.rec-banner-official {
+  border-color: var(--rec-ok);
+}
+
+.rec-banner-unofficial {
+  border-color: var(--rec-warn);
+}
+
+/* tables */
+
+.rec-tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--rec-line);
+}
+
+.rec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.93em;
+}
+
+.rec-table caption {
+  text-align: left;
+}
+
+.rec-table th,
+.rec-table td {
+  padding: 4px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rec-line);
+}
+
+.rec-table thead th {
+  background: var(--rec-panel-2);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.rec-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.rec-table tbody tr:hover {
+  background: rgba(207, 169, 78, 0.08);
+}
+
+.rec-table .num {
+  text-align: right;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.rec-th {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.rec-th:hover {
+  color: var(--rec-brass);
+}
+
+.rec-mini {
+  width: auto;
+  min-width: 320px;
+}
+
+.rec-countybox {
+  height: 340px;
+  border: 1px solid var(--rec-line);
+}
+
+.rec-counties summary {
+  cursor: pointer;
+  color: var(--rec-link);
+}
+
+.rec-counties ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+/* badges */
+
+.rec-badge {
+  display: inline-block;
+  padding: 0 7px;
+  border: 1px solid var(--rec-line);
+  border-radius: 9px;
+  font-size: 0.82em;
+  white-space: nowrap;
+}
+
+.rec-pass,
+.rec-official,
+.rec-stage-law {
+  color: var(--rec-ok);
+  border-color: var(--rec-ok);
+}
+
+.rec-fail,
+.rec-stage-dead,
+.rec-exec-veto {
+  color: var(--rec-bad);
+  border-color: var(--rec-bad);
+}
+
+.rec-unofficial {
+  color: var(--rec-warn);
+  border-color: var(--rec-warn);
+}
+
+.rec-stage-president,
+.rec-stage-conference {
+  color: var(--rec-brass);
+  border-color: var(--rec-brass);
+}
+
+.rec-vote-yea {
+  color: var(--rec-ok);
+}
+
+.rec-vote-nay {
+  color: var(--rec-bad);
+}
+
+.rec-vote-notvoting {
+  color: var(--rec-dim);
+}
+
+/* a bill's progress and history */
+
+.rec-path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rec-step {
+  padding: 3px 10px;
+  border: 1px solid var(--rec-line);
+  color: var(--rec-dim);
+}
+
+.rec-step.done {
+  border-color: var(--rec-brass);
+  color: var(--rec-ink);
+}
+
+.rec-step.now {
+  background: var(--rec-brass);
+  border-color: var(--rec-brass);
+  color: #15110a;
+  font-weight: bold;
+}
+
+.rec-changes {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rec-changes.rec-inline {
+  margin-top: 2px;
+  color: var(--rec-dim);
+  font-size: 0.92em;
+}
+
+.rec-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid var(--rec-line);
+}
+
+.rec-timeline li {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  padding: 3px 0 3px 14px;
+}
+
+.rec-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 0.8em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rec-brass);
+}
+
+.rec-timeline time,
+.rec-feed time {
+  color: var(--rec-dim);
+  font-variant-numeric: lining-nums tabular-nums;
+  min-width: 6.5em;
+}
+
+.rec-where {
+  color: var(--rec-dim);
+  min-width: 4.5em;
+}
+
+.rec-cards {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.rec-card {
+  padding: 8px 12px;
+  border: 1px solid var(--rec-line);
+  background: var(--rec-panel);
+}
+
+.rec-card p {
+  margin: 4px 0 6px;
+}
+
+.rec-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.rec-feed,
+.rec-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rec-feed li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--rec-line);
+}
+
+.rec-links li {
+  padding: 2px 0;
+}
+
+/* chamber make-up */
+
+.rec-makeup {
+  margin-bottom: 10px;
+}
+
+.rec-makeup-name {
+  margin: 0 0 3px;
+  font-weight: bold;
+}
+
+.rec-splitbar {
+  display: flex;
+  height: 14px;
+  border: 1px solid var(--rec-line);
+  overflow: hidden;
+}
+
+.rec-split {
+  flex-basis: 0;
+  background: var(--party, var(--rec-dim));
+}
+
+.rec-split.rec-vacant {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--rec-line),
+    var(--rec-line) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+.rec-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9em;
+}
+
+.rec-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: var(--party, var(--rec-dim));
+}
+
+/* narrow windows (480 wide and up are supported) */
+
+@container rec (max-width: 700px) {
+  .rec-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rec-main {
+    padding: 10px 10px 20px;
+  }
+  .rec-masthead {
+    padding: 8px 10px;
+  }
+  .rec-tag {
+    display: none;
+  }
+  .rec-title {
+    font-size: 1.3em;
+  }
+  .rec-nav {
+    padding: 0 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .rec-tab {
+    white-space: nowrap;
+  }
+  .rec-seal {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+  .rec-name {
+    font-size: 1.15em;
+  }
+  .rec-tab {
+    padding: 6px 7px 4px;
+    font-size: 0.92em;
+  }
+  .rec-timeline time,
+  .rec-feed time {
+    min-width: 0;
+  }
+}

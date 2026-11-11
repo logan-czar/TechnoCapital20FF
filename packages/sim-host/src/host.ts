@@ -7,10 +7,14 @@
 //
 // Slot saves, autosaves and baked starts (pivot 15.4, 3.5) work when the host is handed their
 // stores (saves.ts); without them it answers those requests as unsupported, as the browser does.
+// A generated history (pivot 3.2 to 3.5; D1037) runs here too, a chunk of ticks per `tick` call so
+// the host's loop yields between chunks: `Progress` after each chunk, `Cancel` stops it, and the
+// game it makes is hydrated and installed, with its Frame and then the request's Reply.
 
 import {
   type BakedStart,
   controlsSecondsPerTick,
+  type Difficulty,
   dateTimeDate,
   dateTimeHour,
   type FromSim,
@@ -19,9 +23,19 @@ import {
   newGameChoices,
   type PostedBars,
   type PostedViews,
+  PRESIM_CHUNK_TICKS,
+  type Presim,
+  type PresimOptions,
+  type PresimProgress,
+  type PresimStep,
   postedBarsNone,
   postedViewsNone,
   postedViewsResetNews,
+  presimAdvance,
+  presimCancel,
+  presimProgress,
+  presimSim,
+  presimStart,
   priceBarsCompact,
   type Reply,
   type RequestId,
@@ -29,7 +43,9 @@ import {
   type Sim,
   type SimError,
   simErrorMessage,
+  simHydrate,
   simNew,
+  simSetDifficulty,
   type ToSim,
   unsupportedMessage,
   type ViewsPatch,
@@ -52,20 +68,66 @@ export interface GenerateRequest {
   id: RequestId;
   seed: number;
   scenario?: string;
+  /** The player's preset at hydration (pivot 3.6); Normal when absent. */
+  difficulty?: Difficulty;
+}
+
+/** A generated history being run (pivot 3.2 to 3.5; D1037): the host drives it a chunk at a time. */
+export interface GenerateJob {
+  /** Where it stands before the first chunk. */
+  progress(): PresimProgress;
+  /** Runs up to `ticks` more ticks (a whole number, at least 1). */
+  advance(ticks: number): PresimStep;
+  /** Stops it between chunks. */
+  cancel(): void;
+  /** The hydrated game once `advance` has said `Done`; null before, or once cancelled. */
+  game(): Sim | null;
 }
 
 /**
- * SEAM for lane S4's pre-simulation (packages/sim/src/fidelity/; pivot 3.2 to 3.5): what answers a
- * `NewGame` with `start: { kind: "generate" }`. It returns the messages to post. Today nothing
- * is injected and `generateUnsupported` answers; the real one will also need to install its sim
- * and to post `Progress` and honour `Cancel` while it runs, so expect this signature to widen.
+ * What answers a `NewGame` with `start: { kind: "generate" }` (D1037): a job the host runs, or the
+ * reason it cannot start (sent as `Refused`). The default is `presimGenerate` on the host's data;
+ * tests inject a short one.
  */
-export type GenerateStart = (req: GenerateRequest) => FromSim[];
+export type GenerateStart = (req: GenerateRequest) => Result<GenerateJob, string>;
 
 /** The `GenerateStart` of a build with no pre-simulation: Refused, as unsupported. */
-export const generateUnsupported: GenerateStart = (req) => [
-  { kind: "Reply", id: req.id, result: { kind: "Refused", message: unsupportedMessage("NewGame") } },
-];
+export const generateUnsupported: GenerateStart = () => ({ ok: false, error: unsupportedMessage("NewGame") });
+
+/**
+ * The pre-simulation of `data` (packages/sim fidelity/presim.ts; pivot 3.2, 3.4): a new game of the
+ * historical world under the hidden random scenario (or the request's), run at Coarse fidelity to
+ * the first day of play, then hydrated (`simHydrate`, which opens the player's account at the
+ * request's difficulty). A world that is not historical is refused. `opts.until` ends it earlier
+ * (tests).
+ */
+export function presimGenerate(data: WorldData, opts: PresimOptions = {}): GenerateStart {
+  return (req) => {
+    const made = presimStart(data, req.seed, {
+      ...opts,
+      ...(req.scenario === undefined ? {} : { scenario: req.scenario }),
+    });
+    if (!made.ok) return { ok: false, error: simErrorMessage({ kind: "Load", error: made.error }) };
+    const p: Presim = made.value;
+    let hydrated: Sim | null = null;
+    return {
+      ok: true,
+      value: {
+        progress: () => presimProgress(p),
+        advance: (ticks) => presimAdvance(p, ticks),
+        cancel: () => presimCancel(p),
+        game: () => {
+          if (hydrated !== null) return hydrated;
+          const sim = presimSim(p);
+          if (sim === null) return null;
+          simHydrate(sim, req.difficulty);
+          hydrated = sim;
+          return sim;
+        },
+      },
+    };
+  };
+}
 
 /** A game the host starts by itself, before `Ready` (the desktop's `--save`). */
 export type Boot = { kind: "new"; seed: number; scenario?: string } | { kind: "load"; bytes: Uint8Array };
@@ -104,8 +166,10 @@ export interface RealHostOptions {
   onAutosaveError?: (message: string) => void;
   /** The baked starts (pivot 3.5). Absent: `Ready` lists none and a baked NewGame is unsupported. */
   starts?: StartStore;
-  /** The pre-simulation seam (see `GenerateStart`). */
+  /** What runs a generated history (see `GenerateStart`); `presimGenerate` on the host's data when absent. */
   generate?: GenerateStart;
+  /** Ticks a generated history runs per `tick` call, between yields; `PRESIM_CHUNK_TICKS` when absent. */
+  generateChunkTicks?: number;
 }
 
 export class RealHost {
@@ -130,6 +194,9 @@ export class RealHost {
   private readonly onAutosaveError: (message: string) => void;
   private readonly startStore: StartStore | null;
   private readonly generate: GenerateStart;
+  private readonly generateChunkTicks: number;
+  /** The generated history being run, and the request it answers; null when none is. */
+  private generating: { id: RequestId; job: GenerateJob } | null = null;
   /** When the last autosave was written, on `now`'s clock; null before the first. */
   private lastAutosaveMs: number | null = null;
   /** `boot` started a game and no Frame has gone out since. */
@@ -148,7 +215,44 @@ export class RealHost {
     this.autosaveMinMs = opts.autosaveMinMs ?? AUTOSAVE_MIN_REAL_MS;
     this.onAutosaveError = opts.onAutosaveError ?? (() => {});
     this.startStore = opts.starts ?? null;
-    this.generate = opts.generate ?? generateUnsupported;
+    this.generate = opts.generate ?? presimGenerate(data, { debug: this.debug });
+    this.generateChunkTicks = opts.generateChunkTicks ?? PRESIM_CHUNK_TICKS;
+  }
+
+  /** A generated history is being run (pivot 3.5). */
+  isGenerating(): boolean {
+    return this.generating !== null;
+  }
+
+  /** Stops the generation, answering its request `Cancelled`; nothing when none runs. */
+  private stopGenerating(): FromSim[] {
+    const g = this.generating;
+    if (g === null) return [];
+    g.job.cancel();
+    this.generating = null;
+    return [this.reply(g.id, { kind: "Cancelled" })];
+  }
+
+  private progressOf(id: RequestId, p: PresimProgress): FromSim {
+    return { kind: "Progress", id, phase: "Presim", done: p.done, total: p.total, date: p.date };
+  }
+
+  /** One chunk of the generated history (pivot 3.5): its progress, or at the end the new game's Frame and Reply. */
+  private generateChunk(): FromSim[] {
+    const g = this.generating as { id: RequestId; job: GenerateJob };
+    const step = g.job.advance(this.generateChunkTicks);
+    if (step.kind === "Progress") return [this.progressOf(g.id, step)];
+    this.generating = null;
+    if (step.kind === "Cancelled") return [this.reply(g.id, { kind: "Cancelled" })];
+    const out: FromSim[] = [
+      this.progressOf(g.id, step),
+      { kind: "Progress", id: g.id, phase: "Hydrate", done: 0, total: 1, date: step.date },
+    ];
+    const sim = g.job.game();
+    if (sim === null)
+      return [...out, this.reply(g.id, { kind: "Refused", message: "the history ended without a game" })];
+    this.install(sim);
+    return [...out, this.frame([]), this.reply(g.id, { kind: "Ok", notices: [] })];
   }
 
   /**
@@ -214,9 +318,9 @@ export class RealHost {
         const views = this.patch();
         return Object.keys(views).length > 0 ? [this.frameOf(views, [])] : [];
       }
-      // No request here runs long enough to cancel (pivot 3.5 arrives with lane S4's pre-simulation).
+      // Only a generated history runs long enough to cancel (pivot 3.5).
       case "Cancel":
-        return [];
+        return this.generating?.id === msg.id ? this.stopGenerating() : [];
       // Slot saves are written by the sim's own process (pivot 15.4): a host with no store (the
       // browser worker) does not serve them.
       case "SaveSlot":
@@ -234,15 +338,23 @@ export class RealHost {
         return [this.frame(result.value), this.reply(msg.id, { kind: "Ok", notices: result.value })];
       }
       case "NewGame": {
-        // Absent is the world's own start. A generated one goes to the seam (lane S4).
+        // A new game replaces a history still being generated.
+        const stopped = this.stopGenerating();
+        // Absent is the world's own start. A generated one runs a chunk per `tick` (pivot 3.5).
         if (msg.start?.kind === "generate") {
-          return this.generate({
+          const job = this.generate({
             id: msg.id,
             seed: msg.seed,
             ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
+            ...(msg.difficulty === undefined ? {} : { difficulty: msg.difficulty }),
           });
+          if (!job.ok) return [...stopped, this.reply(msg.id, { kind: "Refused", message: job.error })];
+          this.generating = { id: msg.id, job: job.value };
+          return [...stopped, this.progressOf(msg.id, job.value.progress())];
         }
-        if (msg.start?.kind === "baked") return this.newGameBaked(msg.id, msg.start.id);
+        if (msg.start?.kind === "baked") {
+          return [...stopped, ...this.newGameBaked(msg.id, msg.start.id, msg.difficulty)];
+        }
         const made = simNew(this.data, msg.seed, {
           debug: this.debug,
           ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
@@ -251,10 +363,10 @@ export class RealHost {
           return [this.reply(msg.id, { kind: "SimError", error: { kind: "Load", error: made.error } })];
         }
         this.install(made.value);
-        return [this.frame([]), this.reply(msg.id, { kind: "Ok", notices: [] })];
+        return [...stopped, this.frame([]), this.reply(msg.id, { kind: "Ok", notices: [] })];
       }
       case "Load": {
-        return this.load(msg.id, msg.bytes);
+        return [...this.stopGenerating(), ...this.load(msg.id, msg.bytes)];
       }
       case "Save": {
         if (this.sim === null) return [this.refuse(msg.id)];
@@ -299,15 +411,22 @@ export class RealHost {
     return [this.frame(loaded.value), this.reply(id, { kind: "Ok", notices: loaded.value })];
   }
 
-  /** A new game from a baked start (pivot 3.5): its save, loaded. The request's seed is not used. */
-  private newGameBaked(id: RequestId, start: string): FromSim[] {
+  /**
+   * A new game from a baked start (pivot 3.5): its save, loaded, with the player's account reopened
+   * at `difficulty` when the start was baked at another (`simSetDifficulty`; a start is baked at
+   * Normal). The request's seed is not used.
+   */
+  private newGameBaked(id: RequestId, start: string, difficulty?: Difficulty): FromSim[] {
     const starts = this.starts();
     if (starts === null || this.startStore === null) {
       return [this.reply(id, { kind: "Refused", message: unsupportedMessage("NewGame") })];
     }
     const bytes = starts.some((s) => s.id === start) ? this.startStore.read(start) : null;
     if (bytes === null) return [this.reply(id, { kind: "Refused", message: `no baked start "${start}"` })];
-    return this.load(id, bytes);
+    const loaded = this.loadInto(bytes);
+    if (!loaded.ok) return [this.reply(id, { kind: "SimError", error: loaded.error })];
+    if (difficulty !== undefined && this.sim !== null) simSetDifficulty(this.sim, difficulty);
+    return [this.frame(loaded.value), this.reply(id, { kind: "Ok", notices: loaded.value })];
   }
 
   /** The four slot requests (pivot 15.4). A store that throws is answered, not Fatal: the game is whole. */
@@ -400,6 +519,8 @@ export class RealHost {
    * ticks as fit in the frame budget.
    */
   tick(dtMs: number): FromSim[] {
+    // While a history is generated, the timer runs its chunks and the old game (if any) waits.
+    if (this.generating !== null) return this.generateChunk();
     const sim = this.sim;
     if (sim === null) return [];
     const notices: Notice[] = [];
@@ -458,7 +579,8 @@ export class RealHost {
 
   /** The views to post: those that moved since the last frame, as the UI wants them (D1016). */
   private patch(): ViewsPatch {
-    const views = viewsPatchSince((this.sim as Sim).views(), this.posted, undefined, this.want);
+    const sim = this.sim as Sim;
+    const views = viewsPatchSince(sim.views(), this.posted, undefined, this.want, (key) => sim.slice(key));
     priceBarsCompact(views, this.postedBars);
     return views;
   }

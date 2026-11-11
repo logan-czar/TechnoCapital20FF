@@ -57,9 +57,12 @@ describe("a baked start", () => {
     expect(simViews(sim).history.data.scenario).toBe(world.era?.scenario.label);
     expect(simViews(sim).history.data.years.at(-1)).toBe(2019);
     expect(sim.controls().paused).toBe(true);
-    // Only the last years of daily bars are left.
+    // Only the last years of daily bars are left. A historical world's stocks keep as many as the
+    // hydration does (market/jobs.ts `ERA_STOCK_BAR_YEARS_KEPT`, D1038), so its 1 January archive
+    // has already dropped the rest and the hydration drops none.
     const firstKept = simDateYmd(2020 - HYDRATE_BAR_YEARS, 1, 1);
-    expect(report.bars_dropped).toBeGreaterThan(report.bars_kept);
+    expect(report.bars_dropped).toBe(0);
+    expect(report.bars_kept).toBeGreaterThan(0);
     for (const s of world.market.stocks) {
       const first = barHistoryIter(s.bars).next().value;
       if (first !== undefined) expect(cmpDate(first.date, firstKept)).toBeGreaterThanOrEqual(0);

@@ -12,15 +12,18 @@
 
 import { companyIsFrozen } from "../economy/index.ts";
 import { profileOf } from "../economy/profiles.ts";
+import { electionsStateEmpty } from "../elections/index.ts";
 import { eraHistoryNew } from "../era/jobs.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
+import { geoStateEmpty } from "../geo/load.ts";
 import { corpTaxRate } from "../governing/levers.ts";
 import { scheduler } from "../jobs.ts";
 import { headlineConfidence } from "../news.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import { confidenceFactor } from "../people/management.ts";
+import { personsStateEmpty } from "../politics/people.ts";
 import { NoNoise } from "../rng.ts";
 import {
   dateTimeDate,
@@ -106,6 +109,19 @@ import { barHistoryDropBefore, barHistoryPush, stockCap } from "./state.ts";
 export const EFV_ERROR_WIDTH = 0.15;
 /** Spec 4.5 step 2: 10 years of daily bars are kept (T). */
 export const BAR_YEARS_KEPT = 10;
+/**
+ * A historical world's stocks keep 3 years of daily bars (T, D1038): the 3 a hydrated world starts
+ * play with (fidelity/hydrate.ts `HYDRATE_BAR_YEARS`, D1035), so a played game's save stays the size
+ * of its first day's instead of growing back to 10 years. No formula reads the bars: only the price
+ * chart's reach back changes. The index closes keep their 10 (`BAR_YEARS_KEPT`); the 2020 world
+ * keeps 10 of both.
+ */
+export const ERA_STOCK_BAR_YEARS_KEPT = 3;
+
+/** Years of daily bars each stock keeps: 10, or `ERA_STOCK_BAR_YEARS_KEPT` in a historical world. */
+export function stockBarYearsKept(world: World): number {
+  return world.era === undefined ? BAR_YEARS_KEPT : ERA_STOCK_BAR_YEARS_KEPT;
+}
 
 // ---------------------------------------------------------------------------------------------
 // Reading the World.
@@ -587,6 +603,12 @@ function projectionClone(world: World): World {
     recaps: [],
     // Politics jobs are not projection slots: leave the people and the results out of the copy.
     politics: { ...world.politics, politicians: [], districts: [], pending: null, elections: [] },
+    // Nor are the pivot's geo, careers, elections and player jobs (D1052): the month closes read none
+    // of their tables, which are most of a pre-simulated world's size.
+    geo: geoStateEmpty(),
+    persons: personsStateEmpty(),
+    elections: electionsStateEmpty(),
+    player: null,
     // Nor are the run's yearly jobs: it keeps what the month closes read (1995-rework 3.3).
     ...(world.era === undefined
       ? {}
@@ -677,13 +699,14 @@ export function consensusJob(world: World, ctx: JobCtx): void {
 }
 
 /**
- * 4.5 step 2 (spec 3.10, 4.5): each company keeps 10 years of daily bars, and each exchange as
- * many index closes (D540).
+ * 4.5 step 2 (spec 3.10, 4.5): each company keeps 10 years of daily bars (3 in a historical world,
+ * D1038), and each exchange 10 years of index closes (D540).
  */
 export function archiveBarsJob(world: World, ctx: JobCtx): void {
   const d = ctx.facts.date;
   const firstKept = simDateYmd(d.year - BAR_YEARS_KEPT, d.month, d.day);
-  for (const s of world.market.stocks) barHistoryDropBefore(s.bars, firstKept);
+  const firstBar = simDateYmd(d.year - stockBarYearsKept(world), d.month, d.day);
+  for (const s of world.market.stocks) barHistoryDropBefore(s.bars, firstBar);
   for (const h of world.market.index_history) indexHistoryDropBefore(h, firstKept);
 }
 

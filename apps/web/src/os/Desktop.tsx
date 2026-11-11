@@ -56,11 +56,16 @@ export interface DesktopProps {
   storage?: SettingsStorage | null | undefined;
   /** The apps to list, debug-only ones included when asked: the registry, unless a test names its own. */
   apps?: (debug: boolean) => AppSpec[];
+  /**
+   * The app to open when the desktop starts with no window (the first run, D1050); null for none.
+   * The app root names the news app; a test's desktop opens nothing by itself.
+   */
+  firstApp?: string | null | undefined;
   /** Drawn over the windows (the toasts). */
   children?: ReactNode;
 }
 
-export function Desktop({ storage, apps = registeredApps, children }: DesktopProps) {
+export function Desktop({ storage, apps = registeredApps, firstApp = null, children }: DesktopProps) {
   const omniscient = useOmniscient();
   const store = useMemo(() => (storage === undefined ? safeLocalStorage() : storage), [storage]);
   const all = useMemo(() => apps(true), [apps]);
@@ -71,7 +76,8 @@ export function Desktop({ storage, apps = registeredApps, children }: DesktopPro
   const [saved] = useState(() => loadDesktop(store, guessBounds(), (id) => all.some((s) => s.id === id)));
   const [wm, dispatch] = useReducer(wmReduce, saved.wm);
   const [phoneOpen, setPhoneOpen] = useState(saved.phoneOpen);
-  const [seen, setSeen] = useState(0);
+  // The notification the taskbar's pause note jumped to (v_notifications row id).
+  const [jumpTo, setJumpTo] = useState<number | null>(null);
 
   // The desktop's size follows the page (and so the outer window).
   const desk = useRef<HTMLDivElement>(null);
@@ -133,8 +139,24 @@ export function Desktop({ storage, apps = registeredApps, children }: DesktopPro
     return () => setAppOpener(null);
   }, [open]);
 
-  const togglePhone = useCallback(() => setPhoneOpen((o) => !o), []);
-  const onSeen = useCallback((seq: number) => setSeen((s) => (seq > s ? seq : s)), []);
+  // A game that starts on an empty desktop opens `firstApp`, so the player has something to read
+  // (D1050). Once: windows the player closes afterwards stay closed.
+  const opened = useRef(false);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once, with the desktop as first read
+  useEffect(() => {
+    if (opened.current) return;
+    opened.current = true;
+    if (firstApp !== null && !wm.windows.some((w) => specOf(w.app) !== undefined)) open(firstApp);
+  }, []);
+
+  const togglePhone = useCallback(() => {
+    setJumpTo(null);
+    setPhoneOpen((o) => !o);
+  }, []);
+  const showNotification = useCallback((id: number) => {
+    setJumpTo(id);
+    setPhoneOpen(true);
+  }, []);
 
   // A window of an app that is not listed now (a debug app with Omniscient off) waits unseen.
   const windows = useMemo(() => wm.windows.filter((w) => specOf(w.app) !== undefined), [wm.windows, specOf]);
@@ -180,7 +202,7 @@ export function Desktop({ storage, apps = registeredApps, children }: DesktopPro
             );
           })}
         </div>
-        <Phone open={phoneOpen} onToggle={togglePhone} apps={listed} onSeen={onSeen} />
+        <Phone open={phoneOpen} onToggle={togglePhone} apps={listed} jumpTo={jumpTo} />
         {children}
       </div>
       <Taskbar
@@ -191,8 +213,8 @@ export function Desktop({ storage, apps = registeredApps, children }: DesktopPro
         dispatch={dispatch}
         onOpenApp={open}
         phoneOpen={phoneOpen}
-        seen={seen}
         onTogglePhone={togglePhone}
+        onShowNotification={showNotification}
       />
     </div>
   );

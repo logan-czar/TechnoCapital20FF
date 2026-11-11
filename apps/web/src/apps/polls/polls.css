@@ -1,0 +1,613 @@
+/* Plumbline, the polls and forecast site (apps/polls). A graph-paper ground, a lime plumb-bob
+   accent and the shared party colours. Every rule sits under .polls-app; the container queries
+   keep it legible in a window as small as 480 by 360. */
+
+.polls-app {
+  --polls-bg: #0d1417;
+  --polls-panel: #141e22;
+  --polls-panel-2: #1a2629;
+  --polls-line: #2a3a40;
+  --polls-text: #d9e3dd;
+  --polls-dim: #8fa49d;
+  --polls-accent: #b6e35b;
+  --polls-accent-ink: #11190a;
+  --polls-focus: #ffd166;
+  --polls-ser-0: #e8b04a;
+  --polls-ser-1: #5fd0a5;
+  --polls-ser-2: #c58cff;
+  --polls-ser-3: #ff8a5c;
+  --polls-ser-4: #4fc3e8;
+  --polls-ser-5: #d8d85a;
+  --polls-ser-6: #ff7fb0;
+  --polls-ser-7: #9aa5ff;
+
+  container-type: inline-size;
+  container-name: polls;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--polls-bg);
+  background-image:
+    linear-gradient(var(--polls-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--polls-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+  color: var(--polls-text);
+  font:
+    13px / 1.45 system-ui,
+    "Segoe UI",
+    sans-serif;
+}
+
+.polls-app *,
+.polls-app *::before,
+.polls-app *::after {
+  box-sizing: border-box;
+}
+
+.polls-app button,
+.polls-app select,
+.polls-app input {
+  font: inherit;
+  color: inherit;
+}
+
+.polls-app button:focus-visible,
+.polls-app select:focus-visible,
+.polls-app input:focus-visible {
+  outline: 2px solid var(--polls-focus);
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------ masthead */
+.polls-mast {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--polls-bg) 92%, black);
+  border-bottom: 2px solid var(--polls-accent);
+  flex-wrap: wrap;
+}
+
+.polls-navbtns {
+  display: flex;
+  gap: 4px;
+}
+
+.polls-navbtns button {
+  width: 26px;
+  height: 24px;
+  background: var(--polls-panel);
+  border: 1px solid var(--polls-line);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.polls-navbtns button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.polls-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.polls-brand-mark {
+  width: 10px;
+  height: 16px;
+  align-self: center;
+  background: var(--polls-accent);
+  clip-path: polygon(50% 0, 100% 0, 100% 35%, 50% 100%, 0 35%, 0 0);
+}
+
+.polls-brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--polls-accent);
+}
+
+.polls-brand-sub {
+  color: var(--polls-dim);
+  font-size: 12px;
+}
+
+.polls-nav {
+  display: flex;
+  gap: 2px;
+  margin-left: 8px;
+}
+
+.polls-nav button {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 3px 8px;
+  cursor: pointer;
+  color: var(--polls-dim);
+}
+
+.polls-nav button.on,
+.polls-nav button:hover {
+  color: var(--polls-text);
+  border-bottom-color: var(--polls-accent);
+}
+
+.polls-updated {
+  margin-left: auto;
+  color: var(--polls-dim);
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------ the page */
+.polls-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 14px 8px;
+}
+
+.polls-foot {
+  margin: 18px 0 4px;
+  color: var(--polls-dim);
+  font-size: 11px;
+  text-align: center;
+}
+
+.polls-section {
+  margin: 0 0 18px;
+}
+
+.polls-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--polls-line);
+}
+
+.polls-section-head h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--polls-accent);
+}
+
+.polls-note {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  color: var(--polls-dim);
+}
+
+.polls-section-head .polls-note {
+  margin: 0;
+}
+
+.polls-dim {
+  color: var(--polls-dim);
+}
+
+.polls-card {
+  background: var(--polls-panel);
+  border: 1px solid var(--polls-line);
+  border-radius: 4px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.polls-card h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.polls-grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.polls-empty {
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px dashed var(--polls-line);
+  border-radius: 4px;
+  color: var(--polls-dim);
+  background: var(--polls-panel);
+}
+
+.polls-app .app-link {
+  color: inherit;
+}
+
+.polls-pagelink {
+  text-underline-offset: 2px;
+  text-align: left;
+}
+
+.polls-app .polls-brand:hover .polls-brand-name {
+  text-decoration: underline;
+}
+
+.polls-btn {
+  margin-top: 8px;
+  background: var(--polls-panel-2);
+  border: 1px solid var(--polls-line);
+  border-radius: 3px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.polls-btn:hover {
+  border-color: var(--polls-accent);
+}
+
+/* ------------------------------------------------------------ headers of a page */
+.polls-racehead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.polls-racehead h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.polls-racehead p {
+  margin: 2px 0 0;
+}
+
+.polls-racehead-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.polls-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--polls-line);
+}
+
+.polls-tab {
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: none;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: var(--polls-dim);
+  border-radius: 3px 3px 0 0;
+}
+
+.polls-tab.on {
+  background: var(--polls-panel);
+  border-color: var(--polls-line);
+  color: var(--polls-text);
+  box-shadow: inset 0 2px 0 var(--polls-accent);
+}
+
+.polls-tag {
+  margin-left: 6px;
+  padding: 0 5px;
+  font-size: 10.5px;
+  border: 1px solid var(--polls-line);
+  border-radius: 8px;
+  color: var(--polls-dim);
+}
+
+.polls-rating {
+  display: inline-block;
+  padding: 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 9px;
+  border: 1px solid var(--party, var(--polls-dim));
+  color: var(--party, var(--polls-text));
+  white-space: nowrap;
+}
+
+.polls-rating.rating-even {
+  --party: var(--polls-accent);
+}
+
+/* ------------------------------------------------------------ lists and bars */
+.polls-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.polls-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--polls-line) 60%, transparent);
+  flex-wrap: wrap;
+}
+
+.polls-list li > :first-child {
+  min-width: 9em;
+}
+
+.polls-odds {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.polls-odds-row {
+  display: grid;
+  grid-template-columns: minmax(7em, 14em) minmax(0, 1fr) 3.4em;
+  align-items: center;
+  gap: 8px;
+}
+
+.polls-odds-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.polls-odds-track {
+  display: block;
+  height: 10px;
+  background: var(--polls-panel-2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.polls-odds-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.polls-odds-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.polls-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.polls-facts div {
+  background: var(--polls-panel);
+  border: 1px solid var(--polls-line);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.polls-facts dt {
+  font-size: 11px;
+  color: var(--polls-dim);
+}
+
+.polls-facts dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ tables */
+.polls-tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--polls-line);
+  border-radius: 4px;
+  background: var(--polls-panel);
+}
+
+.polls-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.polls-table th,
+.polls-table td {
+  padding: 3px 8px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid color-mix(in srgb, var(--polls-line) 55%, transparent);
+}
+
+.polls-table th {
+  position: sticky;
+  top: 0;
+  background: var(--polls-panel-2);
+  color: var(--polls-dim);
+  font-weight: 600;
+  font-size: 11.5px;
+}
+
+.polls-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.polls-table td.polls-lead {
+  font-weight: 800;
+  color: var(--polls-accent);
+}
+
+.polls-sort {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.polls-sort:hover {
+  color: var(--polls-text);
+}
+
+.polls-lazyrow {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 26px;
+}
+
+.polls-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 14px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: var(--polls-panel);
+  border: 1px solid var(--polls-line);
+  border-radius: 4px;
+}
+
+.polls-filters label {
+  display: grid;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--polls-dim);
+}
+
+.polls-filters select,
+.polls-filters input {
+  min-width: 8em;
+  padding: 2px 6px;
+  background: var(--polls-bg);
+  border: 1px solid var(--polls-line);
+  border-radius: 3px;
+  color: var(--polls-text);
+}
+
+.polls-count {
+  margin-left: auto;
+  color: var(--polls-dim);
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------ charts */
+.polls-chartblock {
+  margin-bottom: 10px;
+}
+
+.polls-chartbox {
+  width: 100%;
+  min-width: 0;
+}
+
+.polls-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.polls-grid {
+  stroke: var(--polls-line);
+  stroke-width: 1;
+}
+
+.polls-rule {
+  stroke: var(--polls-dim);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.polls-axis {
+  fill: var(--polls-dim);
+  font-size: 10.5px;
+}
+
+.polls-endlabel {
+  fill: var(--polls-text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.polls-track {
+  fill: var(--polls-panel-2);
+}
+
+.polls-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.polls-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.polls-swatch {
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.polls-legend-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ narrow windows */
+@container polls (max-width: 640px) {
+  .polls-grid2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .polls-main {
+    padding: 8px;
+  }
+  .polls-brand-sub {
+    display: none;
+  }
+  .polls-racehead h1 {
+    font-size: 18px;
+  }
+  .polls-odds-row {
+    grid-template-columns: minmax(6em, 10em) minmax(0, 1fr) 3em;
+  }
+}
+
+@container polls (max-width: 520px) {
+  .polls-mast {
+    gap: 6px;
+    padding: 4px 8px;
+  }
+  .polls-updated {
+    display: none;
+  }
+  .polls-count {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

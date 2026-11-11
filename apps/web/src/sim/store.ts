@@ -10,6 +10,8 @@
 // keeps its last copy here until someone does.
 
 import {
+  APPEND_LISTS,
+  type BakedStart,
   type ClockView,
   type FromSim,
   type NewGameChoices,
@@ -25,6 +27,9 @@ import {
 } from "@tc20ff/sim";
 
 export type StoreKey = ViewName | "notices" | "messages" | "status";
+
+/** A long request's progress (protocol.ts `Progress`; pivot 3.5): a generated history's ticks. */
+export type ProgressInfo = Omit<Extract<FromSim, { kind: "Progress" }>, "kind">;
 export type Frame = Extract<FromSim, { kind: "Frame" }>;
 
 /** A notice worth showing the player: tick, day and month markers are bookkeeping only. */
@@ -56,6 +61,10 @@ export interface Status {
   choices: NewGameChoices | null;
   /** The worker's Fatal message, or a worker error. */
   fatal: string | null;
+  /** The running request's progress (a generated history); null when nothing long is running. */
+  progress: ProgressInfo | null;
+  /** The baked starts the host offers (`Ready.starts`, pivot 3.5); empty when it has none. */
+  starts: readonly BakedStart[];
 }
 
 /** Notices kept in the log; older ones drop off. */
@@ -87,7 +96,14 @@ export class SimStore {
   private messageId = 0;
   notices: readonly NoticeEntry[] = [];
   messages: readonly Message[] = [];
-  status: Status = { ready: false, started: false, choices: null, fatal: null };
+  status: Status = {
+    ready: false,
+    started: false,
+    choices: null,
+    fatal: null,
+    progress: null,
+    starts: [],
+  };
 
   getView<K extends ViewName>(name: K): SimViews[K] | undefined {
     return this.views[name];
@@ -185,8 +201,40 @@ export class SimStore {
   private take<K extends Exclude<ViewName, "news">>(patch: ViewsPatch, name: K, moved: StoreKey[]): void {
     const next = patch[name];
     if (next === undefined) return;
-    this.views[name] = next;
+    // A view with append lists comes with them empty (protocol.ts `APPEND_LISTS`; D1037): it keeps
+    // the rows held, which `appended` and `changed` then bring up to date.
+    const fields = (APPEND_LISTS as Partial<Record<ViewName, readonly string[]>>)[name];
+    if (fields !== undefined) {
+      const old = this.views[name]?.data as unknown as Record<string, unknown> | undefined;
+      const data = { ...(next.data as unknown as Record<string, unknown>) };
+      for (const f of fields) data[f] = old?.[f] ?? [];
+      this.views[name] = { ...next, data } as unknown as SimViews[K];
+    } else {
+      this.views[name] = next;
+    }
     moved.push(name);
+  }
+
+  /** Applies a frame's changed rows, then its appended ones, to the append lists held (D1037). */
+  private applyLists(patch: ViewsPatch, moved: StoreKey[]): void {
+    const edit = (view: ViewName, field: string, fn: (rows: readonly unknown[]) => unknown[]): void => {
+      const v = this.views[view];
+      if (v === undefined) return;
+      const data = v.data as unknown as Record<string, unknown>;
+      const rows = fn((data[field] ?? []) as readonly unknown[]);
+      (this.views as Record<string, unknown>)[view] = { ...v, data: { ...data, [field]: rows } };
+      if (!moved.includes(view)) moved.push(view);
+    };
+    for (const c of patch.changed ?? []) {
+      edit(c.view, c.field, (rows) => {
+        const out = rows.slice();
+        for (const r of c.rows as { index: number; row: unknown }[]) out[r.index] = r.row;
+        return out;
+      });
+    }
+    for (const a of patch.appended ?? []) {
+      edit(a.view, a.field, (rows) => (a.reset ? (a.rows as unknown[]).slice() : [...rows, ...a.rows]));
+    }
   }
 
   /**
@@ -198,6 +246,7 @@ export class SimStore {
     const patch = frame.views;
     const moved: StoreKey[] = [];
     for (const name of VIEW_NAMES) if (name !== "news") this.take(patch, name, moved);
+    this.applyLists(patch, moved);
     if (patch.price_bars_delta !== undefined) {
       this.views.price_bars = priceBarsApply(this.views.price_bars, patch.price_bars_delta);
       moved.push("price_bars");

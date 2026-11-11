@@ -39,7 +39,7 @@ import { monthFactor } from "../src/economy/demand.ts";
 import { start as economyStart } from "../src/economy/index.ts";
 import { start as financeStart } from "../src/finance/index.ts";
 import { scheduler } from "../src/jobs.ts";
-import { simNew, simWorld, startWorld } from "../src/lib.ts";
+import { START_DEPS, simNew, simWorld, startWorld } from "../src/lib.ts";
 import { start as marketStart } from "../src/market/index.ts";
 import { start as seatingStart } from "../src/people/seating.ts";
 import { politicsStart } from "../src/politics/jobs.ts";
@@ -99,6 +99,11 @@ function startWorldWith(d: WorldData, draws: DrawSource, beforeDraws: (w: World)
   financeStart(world);
   marketStart(world, draws);
   politicsStart(world, draws);
+  // The M2 lanes' starts (lib.ts `START_DEPS`, D1037), in the real start's order.
+  START_DEPS.geoStart(world, draws);
+  START_DEPS.personsStart(world, draws);
+  START_DEPS.electionsStart(world, draws);
+  START_DEPS.playerStart(world);
   world.news.labels = world.industries.map((i) => i.phase_label);
   return world;
 }

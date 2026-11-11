@@ -8,6 +8,8 @@ import {
   actErrorMessage,
   type ClockView,
   type FromSim,
+  type GameStart,
+  type PlayerAction,
   type Reply,
   type RequestId,
   type SaveInfo,
@@ -58,8 +60,10 @@ export class SimClient {
   ticks = 0;
   /** The clock of the last Frame; null before the first. */
   clock: ClockView | null = null;
-  /** A long request's progress (pivot 3.5), for whoever shows it; nothing sends one before lane S4. */
+  /** A long request's progress (pivot 3.5), also kept in `store.status.progress` (D1037). */
   onProgress: (p: Extract<FromSim, { kind: "Progress" }>) => void = () => {};
+  /** The NewGame request still running, so `cancel` can stop it (a generated history, pivot 3.5). */
+  private running: RequestId | null = null;
 
   constructor(private readonly transport: SimTransport) {
     this.ready = new Promise((res) => {
@@ -75,7 +79,7 @@ export class SimClient {
   private receive(m: FromSim): void {
     switch (m.kind) {
       case "Ready":
-        this.store.setStatus({ ready: true, choices: m.choices ?? null });
+        this.store.setStatus({ ready: true, choices: m.choices ?? null, starts: m.starts ?? [] });
         this.resolveReady();
         break;
       case "Frame":
@@ -92,6 +96,10 @@ export class SimClient {
       case "Reply": {
         const p = this.pending.get(m.id);
         this.pending.delete(m.id);
+        if (m.id === this.running) {
+          this.running = null;
+          if (this.store.status.progress !== null) this.store.setStatus({ progress: null });
+        }
         if (!p) break;
         if (m.result.kind === "Ok") this.store.mergeReplyNotices(m.result.notices, p.mark);
         const problem = replyProblem(m.result);
@@ -100,6 +108,9 @@ export class SimClient {
         break;
       }
       case "Progress":
+        this.store.setStatus({
+          progress: { id: m.id, phase: m.phase, done: m.done, total: m.total, date: m.date },
+        });
         this.onProgress(m);
         break;
       case "Fatal":
@@ -129,12 +140,36 @@ export class SimClient {
     });
   }
 
-  async newGame(seed: number, scenario?: string): Promise<Reply> {
-    const r = await this.request((id) =>
-      scenario === undefined ? { kind: "NewGame", id, seed } : { kind: "NewGame", id, seed, scenario },
-    );
+  /**
+   * A new game (pivot 3.5): the world's own first day, or `start`, a baked start or a generated
+   * history. A generated one reports its progress in `store.status.progress` and can be stopped
+   * with `cancel` (the reply is then `Cancelled`).
+   */
+  async newGame(seed: number, scenario?: string, start?: GameStart): Promise<Reply> {
+    const r = await this.request((id) => {
+      this.running = id;
+      return {
+        kind: "NewGame",
+        id,
+        seed,
+        ...(scenario === undefined ? {} : { scenario }),
+        ...(start === undefined ? {} : { start }),
+      };
+    });
     if (r.kind === "Ok") this.store.setStatus({ started: true });
     return r;
+  }
+
+  /** Stops the running NewGame (a generated history); false when none is running. */
+  cancel(): boolean {
+    if (this.running === null) return false;
+    this.transport.send({ kind: "Cancel", id: this.running });
+    return true;
+  }
+
+  /** A player action (pivot 1.2; D1027): the reply is `Ok`, or `ActError` saying why it was refused. */
+  act(action: PlayerAction): Promise<Reply> {
+    return this.request((id) => ({ kind: "Act", id, action }));
   }
 
   async load(bytes: Uint8Array): Promise<Reply> {

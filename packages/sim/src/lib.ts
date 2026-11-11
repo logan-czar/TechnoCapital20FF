@@ -28,14 +28,18 @@ import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
 import { RANDOM_SCENARIO_ID, RANDOM_SCENARIO_LABEL, SCENARIOS, scenarioKnown } from "./economy/scenarios.ts";
 import { start as economyStart } from "./economy/start.ts";
+import { electionsStart } from "./elections/index.ts";
 import { eraStart } from "./era/jobs.ts";
 import { type HydrateReport, hydrateFull } from "./fidelity/hydrate.ts";
 import { start as financeStart } from "./finance/index.ts";
+import { geoStart } from "./geo/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
 import { mapDataBuild, mapDataDefault } from "./map.ts";
 import { start as marketStart } from "./market/jobs.ts";
 import { start as seatingStart } from "./people/seating.ts";
+import { playerAct, playerStart } from "./player/index.ts";
+import { personsStart } from "./politics/careers.ts";
 import { politicsStart } from "./politics/jobs.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
 import { decode, encode, saveErrorMessage } from "./save.ts";
@@ -54,9 +58,10 @@ import type { ActError, PlayerAction } from "./types/action.ts";
 import type { DateTime, SimDate } from "./types/calendar.ts";
 import { type Control, type Controls, MAX_SPEED, MAX_STEP_HOURS } from "./types/control.ts";
 import type { DrawSource } from "./types/draws.ts";
-import type { Notice, PauseReason } from "./types/notice.ts";
-import type { NewGameChoices } from "./types/protocol.ts";
+import { FIXED_PAUSE_SWITCHABLE, type Notice, type PauseReason } from "./types/notice.ts";
+import type { NewGameChoices, SliceData, SliceKey } from "./types/protocol.ts";
 import type { SaveError, SimApi, SimError, StateHash } from "./types/sim-api.ts";
+import type { Difficulty } from "./types/state/player.ts";
 import type { ClockView, SimViews } from "./types/views/index.ts";
 import type { EconomyProfile, LoadError, Result, World } from "./types/world.ts";
 import {
@@ -64,8 +69,10 @@ import {
   simViewsBuild,
   simViewsClock,
   simViewsRebuild,
+  simViewsRefreshAfterAct,
   simViewsRefreshAfterControl,
   simViewsRefreshAfterTick,
+  simViewsSlice,
   VIEW_BUILDERS,
   type ViewBuilders,
   type ViewInput,
@@ -100,6 +107,16 @@ export interface StartDeps {
   marketStart(world: World, draws: DrawSource): void;
   /** politics/jobs.ts `politicsStart(world, draws)`: the US office holders (Politics stream, D987). */
   politicsStart(world: World, draws: DrawSource): void;
+  // The M2 lanes' starts (D1037), in this order, after everything above: each draws only from its
+  // own stream, so none moves the economy's draws. Empty until the lane fills it.
+  /** geo/index.ts `geoStart`: the seats and the first district plans (lane G; Governing stream). */
+  geoStart(world: World, draws: DrawSource): void;
+  /** politics/careers.ts `personsStart`: the persons, offices and benches (lane C; Politics stream). */
+  personsStart(world: World, draws: DrawSource): void;
+  /** elections/index.ts `electionsStart`: the calendar and the open cycle (lane E; Count, Campaign). */
+  electionsStart(world: World, draws: DrawSource): void;
+  /** player/index.ts `playerStart`: the player's account in a Full world (lane P; draws nothing). */
+  playerStart(world: World): void;
 }
 
 /** The default `StartDeps`: every member is the ported Rust function. */
@@ -113,6 +130,10 @@ export const START_DEPS: StartDeps = {
   financeStart, // finance/index.ts
   marketStart, // market/jobs.ts start
   politicsStart, // politics/jobs.ts
+  geoStart, // geo/index.ts
+  personsStart, // politics/careers.ts
+  electionsStart, // elections/index.ts
+  playerStart, // player/index.ts
 };
 
 /** Everything `Sim` calls outside lib.ts that Step 2 or 3 ports. */
@@ -174,6 +195,10 @@ export function startWorld(
   deps.financeStart(world);
   deps.marketStart(world, draws);
   deps.politicsStart(world, draws);
+  deps.geoStart(world, draws);
+  deps.personsStart(world, draws);
+  deps.electionsStart(world, draws);
+  deps.playerStart(world);
   world.news.labels = world.industries.map((i) => i.phase_label);
   return { ok: true, value: world };
 }
@@ -194,6 +219,8 @@ export function simErrorMessage(e: SimError): string {
       return `no company ${e.company}`;
     case "DebugOnly":
       return "Omniscient is only available in debug builds";
+    case "BadFixedPause":
+      return `the ${e.pause} pause cannot be switched off`;
     case "Load":
       return loadErrorToString(e.error);
     case "Save":
@@ -321,6 +348,10 @@ export class Sim implements SimApi {
 
   views(): SimViews {
     return simViews(this);
+  }
+
+  slice(key: SliceKey): SliceData {
+    return simSlice(this, key);
   }
 
   clock(): ClockView {
@@ -628,14 +659,33 @@ export function simRebuildViews(sim: Sim): void {
 
 /**
  * Switches this game's world to Full fidelity where it stands (pivot 3.4; fidelity/hydrate.ts
- * `hydrateFull`) and rebuilds every view. The controls are not touched: a game that has only been
- * pre-simulated is still paused, as a new game is. Throws on a world that cannot be hydrated.
+ * `hydrateFull`), opens the player's account at `difficulty` (pivot 3.6; player/index.ts
+ * `playerStart`, Normal when absent; D1052) and rebuilds every view. The controls are not touched: a
+ * game that has only been pre-simulated is still paused, as a new game is. Throws on a world that
+ * cannot be hydrated.
  */
-export function simHydrate(sim: Sim): HydrateReport {
+export function simHydrate(sim: Sim, difficulty?: Difficulty): HydrateReport {
   const i = inner(sim);
   const report = hydrateFull(i.s.world);
+  playerStart(i.s.world, difficulty);
   simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
   return report;
+}
+
+/**
+ * A new game's difficulty on a hydrated start that was saved with another (pivot 3.5, 3.6; D1052): a
+ * baked start is hydrated at Normal, so a game of it at another difficulty opens a fresh account at
+ * that preset. Does nothing when the account already plays `difficulty`, when the player has acted,
+ * or in a world with no account (one never hydrated). Returns whether the account was reopened.
+ */
+export function simSetDifficulty(sim: Sim, difficulty: Difficulty): boolean {
+  const i = inner(sim);
+  const p = i.s.world.player;
+  if (p === null || p.difficulty.id === difficulty || p.actions.length > 0) return false;
+  i.s.world.player = null;
+  playerStart(i.s.world, difficulty);
+  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+  return true;
 }
 
 /** Pauses (once: a second pause posts nothing). */
@@ -717,6 +767,13 @@ export function simApply(sim: Sim, control: Control): Result<Notice[], SimError>
       if (!i.cfg.debug) return fail({ kind: "DebugOnly" });
       c.omniscient = control.on;
       break;
+    case "SetFixedPause":
+      // pivot 2.4: items 1 and 2 cannot be switched off.
+      if (!control.on && !FIXED_PAUSE_SWITCHABLE.includes(control.pause)) {
+        return fail({ kind: "BadFixedPause", pause: control.pause });
+      }
+      c.fixed_pauses[control.pause] = control.on;
+      break;
     case "WatchlistAdd":
       if (i.s.world.companies[control.company] === undefined) {
         return fail({ kind: "UnknownCompany", company: control.company });
@@ -732,14 +789,16 @@ export function simApply(sim: Sim, control: Control): Result<Notice[], SimError>
 }
 
 /**
- * Applies a player action (types/action.ts; D1027). M1 has no player and no exchange, so every
- * action is refused with `NotAvailable` and the world is not touched. The lanes that add the
- * player (M2) and the exchange (M5) apply the action to the world here, inside the state hash,
- * and refresh the views that follow it.
+ * Applies a player action (types/action.ts; D1027) at once, between ticks: player/index.ts
+ * `playerAct` changes the world (inside the state hash) and records it for replay, or refuses it
+ * and changes nothing. An applied action rebuilds the views marked `on_act` (D1037). Until lane P
+ * every action is refused with `NotAvailable`.
  */
 export function simAct(sim: Sim, action: PlayerAction): Result<Notice[], ActError> {
-  inner(sim);
-  return { ok: false, error: { kind: "NotAvailable", action: action.kind } };
+  const i = inner(sim);
+  const r = playerAct(i.s.world, action);
+  if (r.ok) simViewsRefreshAfterAct(i.s.views, viewInput(i.s), i.cfg.views);
+  return r;
 }
 
 /** The state as save bytes (spec 9.1 `Save`; build-plan M1.7). */
@@ -822,6 +881,15 @@ export function simStateHash(sim: Sim): StateHash {
 /** The game seed. */
 export function simSeed(sim: Sim): number {
   return rngStreamsSeed(inner(sim).s.rng);
+}
+
+/**
+ * One slice of a view (protocol.ts `SliceKey`; D1016, D1037) from the state now: what a host's
+ * frame carries for a wanted slice (`viewsPatchSince`'s `sliceOf`).
+ */
+export function simSlice(sim: Sim, key: SliceKey): SliceData {
+  const i = inner(sim);
+  return simViewsSlice(i.s.views, viewInput(i.s), key, i.cfg.views);
 }
 
 /** The read-only views the UI reads (spec 9.2, 9.4). Read them; never change them. */

@@ -38,6 +38,11 @@ export interface Contender {
   persuasion: number;
   /** The incumbency term this side gets: INCUMBENCY, PRESIDENT_INCUMBENCY or 0. */
   incumbency: number;
+  /**
+   * The Coarse campaign's strength (pivot 6.6; elections/), added as it is. Absent in the POC's
+   * races, which read `persuasion` instead.
+   */
+  strength?: number;
 }
 
 /** What every race of one November shares. */
@@ -62,7 +67,8 @@ export function utility(leanPts: number, c: Contender, climate: VoteClimate): nu
     c.party === climate.incumbent_party ? ECONOMY_PER_POINT * climate.growth * PERCENT_PER_UNIT : 0;
   const candidate = CANDIDATE_PER_PERSUASION * (c.persuasion - CANDIDATE_PERSUASION_BASE);
   const swing = c.party === PARTY_VALUES[0] ? climate.swing : -climate.swing;
-  return LEAN_WEIGHT * partyLean(leanPts, c.party) + c.incumbency + economy + candidate + swing;
+  const u = LEAN_WEIGHT * partyLean(leanPts, c.party) + c.incumbency + economy + candidate + swing;
+  return c.strength === undefined ? u : u + c.strength;
 }
 
 /** Percentage points per unit of a rate. */

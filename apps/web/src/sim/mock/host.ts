@@ -3,54 +3,35 @@
 // protocol's rules (types/protocol.ts): after each request a Frame with the views it changed
 // FIRST, then the Reply; while running, at most one Frame per FRAME_MS.
 //
-// `MockOptions` (mockSim.ts) says which mock it hosts: with `pivot` the pivot world runs and `Act`
-// is served; without it the host is the pre-pivot one. With the pivot world, once the UI sends a
-// `Want` (D1016) the mock posts only the views it names, as the real host does. The slices the pivot views describe (a
-// contract's book and history, a race's county returns, a roll call's votes) are `slice`: the
-// protocol's `SliceKey` cannot name them yet (README, contract requests).
+// `MockOptions` (mockSim.ts) says which mock it hosts: the pivot world by default (D1037), where
+// `Act` is served; with `pivot: false` the pre-pivot one. With the pivot world, once the UI sends a
+// `Want` (D1016) the mock posts only the views and slices it names, as the real host does: a
+// contract's book and history, a race's county returns, a roll call's votes and a day's front
+// pages (protocol.ts `SliceKey`). `slice` reads one in process, for tests.
 
 import {
   ALERT_LEVEL_VALUES,
-  type ContractBook,
-  type ContractId,
   type FromSim,
   type Notice,
-  type RaceCountyReturns,
-  type RaceId,
   type Reply,
-  type RollCallVotes,
+  type SliceData,
+  type SliceKey,
   type ToSim,
   unsupportedMessage,
-  type ViewName,
   type ViewsPatch,
+  type ViewWant,
 } from "@tc20ff/sim";
-import type { MockContractHistory } from "./fixtures/markets.ts";
 import { type MockOptions, type MockSave, MockSim } from "./mockSim.ts";
 import type { MockWorld } from "./mockWorld.ts";
 import type { RecordedAction } from "./pivot.ts";
-
-/** A slice of a pivot view the mock can serve (the view types' `ContractBook`, `RaceCountyReturns`, `RollCallVotes`). */
-export type MockSliceKey =
-  | { view: "markets"; contract: ContractId }
-  | { view: "markets_history"; contract: ContractId }
-  | { view: "returns"; race: RaceId }
-  | { view: "records"; roll_call: number };
-
-export type MockSliceData<K extends MockSliceKey = MockSliceKey> = K extends { view: "markets" }
-  ? ContractBook | null
-  : K extends { view: "markets_history" }
-    ? MockContractHistory | null
-    : K extends { view: "returns" }
-      ? RaceCountyReturns | null
-      : RollCallVotes | null;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 export class SimHost {
   sim: MockSim | null = null;
-  /** The views the UI reads (D1016); null until its first `Want`: every view then. */
-  private want: ReadonlySet<ViewName> | null = null;
+  /** The views and slices the UI reads (D1016); null until its first `Want`: every view then. */
+  private want: ViewWant | null = null;
 
   constructor(
     private readonly world: MockWorld,
@@ -66,20 +47,9 @@ export class SimHost {
   }
 
   /** A slice of a pivot view, at the current tick; null with no game, no pivot world or nothing by that key. */
-  slice<K extends MockSliceKey>(key: K): MockSliceData<K>;
-  slice(key: MockSliceKey): MockSliceData {
-    const pivot = this.sim?.pivot ?? null;
-    if (pivot === null) return null;
-    switch (key.view) {
-      case "markets":
-        return pivot.book(key.contract);
-      case "markets_history":
-        return pivot.history(key.contract);
-      case "returns":
-        return pivot.countyReturns(key.race);
-      case "records":
-        return pivot.rollCall(key.roll_call);
-    }
+  slice<K extends SliceKey>(key: K): SliceData<K>;
+  slice(key: SliceKey): SliceData {
+    return this.sim?.slice(key) ?? null;
   }
 
   /** Handles one request: [Frame, Reply], or just a Reply when nothing changed. */
@@ -87,9 +57,8 @@ export class SimHost {
     switch (msg.kind) {
       case "Want": {
         // The pre-pivot mock posts every view whole, whatever is wanted, as its tests pin.
-        if (!this.opts.pivot) return [];
-        // The views only: the mock's heavy pre-pivot views are empty, so it posts no slices (D1016).
-        this.want = new Set(msg.views);
+        if (this.opts.pivot === false) return [];
+        this.want = { views: new Set(msg.views), slices: msg.slices };
         if (this.sim === null) return [];
         // Whatever is newly wanted goes out now, even while paused (no frame would carry it).
         const views = this.patch(this.sim);

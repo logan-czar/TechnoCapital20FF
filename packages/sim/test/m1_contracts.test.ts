@@ -6,7 +6,7 @@
 
 import type { CountyAdjacencyRow, CountyRow, WorldData } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
-import { geoStateFromData } from "../src/geo/load.ts";
+import { geoStateEmpty, geoStateFromData } from "../src/geo/load.ts";
 import { leversNeutral } from "../src/governing/levers.ts";
 import { simApply, simNew, simRunUntil, simStateHash, simStep, simViews, simWorld } from "../src/lib.ts";
 import { rngStreamsNew, rngStreamsNextU32 } from "../src/rng.ts";
@@ -73,8 +73,8 @@ describe("M1 contracts: RNG streams and saves", () => {
     expect(r.state.length).toBe(13);
   });
 
-  it("the save version is the M1 one", () => {
-    expect(SAVE_VERSION).toBe(6);
+  it("the save version moved past the M1 one (7 is M2's, D1037)", () => {
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(6);
   });
 });
 
@@ -89,7 +89,7 @@ describe("M1 contracts: World fields", () => {
       expect(w.levers[k]).toEqual(w.industries.map(() => 0));
     }
     expect(w.levers.state_growth.length).toBe(w.politics.states.length);
-    expect(w.geo).toEqual({ counties: [], plans: [] });
+    expect(w.geo).toEqual(geoStateEmpty());
     expect(w.industries.every((i) => i.row_assets === 0)).toBe(true);
   });
 
@@ -269,6 +269,7 @@ describe("M1 contracts: running the sim", () => {
       { kind: "Unfollow", target: ref },
       { kind: "AlertRuleAdd", rule: { target: ref, when: { kind: "Any" }, pause: true } },
       { kind: "AlertRuleRemove", rule: 0 },
+      { kind: "NotificationsRead", through: 0 },
     ];
     expect(actions.map((a) => a.kind)).toEqual([...PLAYER_ACTION_KINDS]);
     for (const action of actions) {
@@ -285,13 +286,32 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
-    for (const n of PIVOT_VIEWS) {
-      expect(viewIsPorted(n), n).toBe(false);
+    // The M2 lanes port theirs: v_people is lane C's (D1041), the two geo views lane G's (D1039),
+    // the account and notifications lane P's (D1042): with no player those two hold their empty
+    // values; v_races and v_returns lane E's (D1040): in this world without counties they stay empty,
+    // though rebuilt (so posted) on their cadence.
+    const ported: readonly string[] = [
+      "people",
+      "districts",
+      "usmap_layers",
+      "account",
+      "notifications",
+      "races",
+      "returns",
+    ];
+    const unported = PIVOT_VIEWS.filter((n) => !ported.includes(n));
+    expect(viewIsPorted("people")).toBe(true);
+    for (const n of ["account", "notifications", "races", "returns"] as const) {
+      expect(viewIsPorted(n), n).toBe(true);
       expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
+    }
+    for (const n of unported) {
+      expect(viewIsPorted(n), n).toBe(false);
       expect(views[n].version, n).toBe(1);
     }
     const patch = viewsPatchSince(views, postedViewsNone());
-    for (const n of PIVOT_VIEWS) expect(n in patch, n).toBe(false);
+    for (const n of unported) expect(n in patch, n).toBe(false);
+    for (const n of ["races", "returns"] as const) expect(n in patch, n).toBe(true);
     expect(data().counties.rows).toEqual([]);
   });
 });

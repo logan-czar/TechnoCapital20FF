@@ -119,6 +119,106 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "politics.elections[].senate_class",
     ],
   },
+  // Public records with no company or industry subject (pivot 5.7, D1041); the hidden stats are
+  // null without Omniscient (pivot 5.11), so they hold no number to classify.
+  people: {
+    ids: [
+      "people.people[].id",
+      "people.people[].age",
+      "people.people[].home_state",
+      "people.chambers[].parties[].seats",
+      "people.chambers[].independents",
+      "people.chambers[].vacant",
+    ],
+  },
+  // No company or industry subject (pivot 5.4, 15.3; D1039); the hidden lean and strength are null
+  // unless Omniscient.
+  districts: {
+    ids: [
+      "districts.plans[].state",
+      "districts.plans[].census_year",
+      "districts.districts[].id",
+      "districts.districts[].state",
+      "districts.districts[].number",
+      "districts.districts[].member",
+      "districts.districts[].shares[].county",
+    ],
+  },
+  usmap_layers: {
+    ids: [
+      "usmap_layers.counties.state[]",
+      "usmap_layers.counties.district[]",
+      "usmap_layers.states[].id",
+      "usmap_layers.states[].house_seats",
+      "usmap_layers.states[].electoral_votes",
+    ],
+  },
+  // Public records with no company or industry subject (pivot 6.2, 9.4; D1040, D1052): the races
+  // and their returns; a candidate's money and strength are null at Coarse, the votes are counts.
+  races: {
+    ids: [
+      "races.cycle",
+      "races.races[].id",
+      "races.races[].state",
+      "races.races[].district",
+      "races.races[].senate_class",
+      "races.races[].electoral_votes",
+      "races.races[].candidates[].person",
+      "races.races[].primaries[].ballot[]",
+      "races.races[].primaries[].winner",
+      "races.races[].ballot[]",
+      "races.races[].winner",
+    ],
+  },
+  returns: {
+    ids: [
+      "returns.races[].race",
+      "returns.races[].reporting",
+      "returns.races[].votes[].person",
+      "returns.races[].votes[].votes",
+      "returns.races[].electoral_votes[].person",
+      "returns.races[].electoral_votes[].votes",
+      "returns.races[].states[].state",
+      "returns.races[].states[].reporting",
+      "returns.races[].states[].votes[].person",
+      "returns.races[].states[].votes[].votes",
+      "returns.races[].states[].electoral_votes",
+      "returns.races[].states[].called",
+      "returns.races[].calls[].outlet",
+      "returns.races[].calls[].person",
+    ],
+  },
+  // The player's own account and notices (pivot 14; D1042, D1052): their figures are the player's
+  // (what they paid, hold and owe) and the market's public prices, about no banded subject, so no
+  // subtree is a company's here.
+  account: {
+    ids: [
+      "account.positions[].instrument",
+      "account.positions[].what.id",
+      "account.positions[].qty",
+      "account.orders[].id",
+      "account.orders[].instrument",
+      "account.orders[].what.id",
+      "account.orders[].qty",
+      "account.orders[].filled",
+      "account.fills[].order",
+      "account.fills[].instrument",
+      "account.fills[].what.id",
+      "account.fills[].qty",
+      "account.settlements[].contract",
+      "account.settlements[].qty",
+      "account.follows[].id",
+      "account.alert_rules[].id",
+    ],
+  },
+  notifications: {
+    ids: [
+      "notifications.items[].id",
+      "notifications.items[].refs[].id",
+      "notifications.items[].rule",
+      "notifications.read_through",
+    ],
+  },
   // All public, with no company or industry subject: GDP reads only demand, exact in every class
   // (1995-rework 6.1, D432).
   history: {

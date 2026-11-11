@@ -42,12 +42,23 @@ function specOrder(t: DateTime): Slot[] {
       "PriceMoveResultHeadlines",
     );
   }
-  v.push("Alerts");
+  // The player's hour (lane P, D1037), before the alerts.
+  v.push("HourlyPlayer", "Alerts");
   if (h !== 0) return v;
   // 4.2 daily; reaction week on the 3rd to the 8th of a release month.
   v.push("DailyPriceBars", "DailyFairValue");
   if (quarterMonth && d.day >= 3 && d.day <= 8) v.push("DailyReactionWeek");
-  v.push("DailyProjections", "DailyPolitics", "DailyNews", "DailyZoneConfidence");
+  // The M2 lanes' days (D1037): geo, careers and elections after the politics POC, the player after the news.
+  v.push(
+    "DailyProjections",
+    "DailyPolitics",
+    "DailyGeo",
+    "DailyCareers",
+    "DailyElections",
+    "DailyNews",
+    "DailyPlayer",
+    "DailyZoneConfidence",
+  );
   // Weekly on Mondays (pivot 2.3; D1029). 2020-01-01 is a Wednesday and day 0, so Mondays are the
   // days 5, 12, 19...
   if (Math.floor(t / 24) % 7 === 5) v.push("WeeklyJobs");
