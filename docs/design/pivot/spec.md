@@ -102,7 +102,7 @@ Levers move only when a law or executive action says so (7.7). The quarterly par
 ## 5. People and places
 
 ### 5.1 Counties
-The voter unit is the real county, about 3,100 of them, on one frozen vintage. Each has `population`, `lean` (points toward party A), `elasticity` and `turnout`. Populations and starting leans come from public data; all people are invented.
+The voter unit is the real county, 3,142 of them, on one frozen vintage (the 2010 county set with Bedford city, Virginia, merged into Bedford County). Each has `population`, `lean` (points toward party A), `spread` (5.4), `elasticity` and `turnout`. Populations and starting leans come from public data; all people are invented.
 
 ### 5.2 Drift
 Each year county population moves with its state's growth and a county term, and lean drifts with a state trend plus noise (extending `driftYear`). Elasticity and turnout drift slowly **(T)**.
@@ -111,7 +111,9 @@ Each year county population moves with its state's growth and a county term, and
 Censuses fall in 2000, 2010, 2020 and every ten years after. Seats are reapportioned by equal proportions.
 
 ### 5.4 Districts
-A House district is a list of whole counties plus weighted shares of counties too large for one district. Districts in a state are contiguous and equal in population within `DISTRICT_POP_TOLERANCE` **(T)**. A share of a county carries that county's lean, elasticity and turnout.
+A House district is a list of whole counties plus weighted shares of counties too large for one district. Districts in a state are contiguous and equal in population within `DISTRICT_POP_TOLERANCE` **(T)**. A share of a county carries that county's elasticity and turnout.
+
+A county is not politically uniform. Its people are ordered from most party-A to most party-B, and their lean runs in a straight line from `lean + spread` to `lean − spread` across that order. A district's share of a county is an interval `[from, to]` of that order, and carries the mean lean of its interval; the shares of one county do not overlap and together cover it. A county held whole by one district has the interval `[0, 1]` and so the county's own lean. `spread` is set at load from population and density **(T)**: near zero for small rural counties, large for big urban ones.
 
 ### 5.5 Redistricting
 After each census every state with more than one seat is redrawn by the governor's party with strength `s` from 0 (neutral, compact) to 1 (maximum pack and crack). `s` rises with the governor's intrigue and falls with integrity traits **(T)**.
