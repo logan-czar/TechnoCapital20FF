@@ -83,6 +83,8 @@ function Screen({ apps, onSeen }: { apps: readonly AppSpec[]; onSeen: (seq: numb
             <View
               route={routes[app.id] ?? null}
               onRoute={(r) => setRoutes((old) => ({ ...old, [app.id]: r }))}
+              close={() => setAppId(null)}
+              setTitle={() => {}}
             />
           </Suspense>
         ) : (

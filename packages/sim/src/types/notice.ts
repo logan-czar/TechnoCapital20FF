@@ -178,4 +178,27 @@ export type PauseReason =
   /** A save was loaded (D13). */
   | { kind: "Loaded" }
   /** A historical world's run reached its end, which no setting skips (1995-rework 8.3). */
-  | { kind: "RunEnded" };
+  | { kind: "RunEnded" }
+  /**
+   * A notification to the player asked to pause (pivot 2.4, 12; D1037): one of the fixed pauses
+   * still switched on, or an alert rule set to pause. `id` is its row in v_notifications.
+   */
+  | { kind: "Notification"; id: number };
+
+/**
+ * The fixed auto-pauses of pivot 2.4 (D1037), apart from the player's own alert rules:
+ * - OwnFill: a fill or resolution of the player's own order or contract (item 1).
+ * - MarginCall: a margin call on the player (item 2).
+ * - ElectionDay: 00:00 on a federal general election day (item 3).
+ * - Holding: a scandal, roll call or resolution naming something the player holds a position on (item 4).
+ */
+export type FixedPause = "OwnFill" | "MarginCall" | "ElectionDay" | "Holding";
+
+/** FixedPause in declaration order (pivot 2.4's numbering). */
+export const FIXED_PAUSE_VALUES = ["OwnFill", "MarginCall", "ElectionDay", "Holding"] as const;
+
+/** The fixed pauses settings can switch off (pivot 2.4: every one except items 1 and 2). */
+export const FIXED_PAUSE_SWITCHABLE: readonly FixedPause[] = ["ElectionDay", "Holding"];
+
+/** Which fixed pauses are on (`Controls.fixed_pauses`, v_clock): all of them in a new game. */
+export type FixedPauses = Record<FixedPause, boolean>;

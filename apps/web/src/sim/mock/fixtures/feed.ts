@@ -5,6 +5,8 @@
 
 import {
   type Article,
+  type ArticleKind,
+  type ArticleSource,
   type DateTime,
   dateTimeDate,
   type EntityRef,
@@ -13,6 +15,7 @@ import {
   type OutletId,
   type OutletKind,
   type Party,
+  type SimDate,
 } from "@tc20ff/sim";
 import type { MockGeo } from "./geo.ts";
 import type { MockRng } from "./rng.ts";
@@ -56,6 +59,8 @@ export interface FeedState {
   articles: Article[];
   /** By outlet id; null until the outlet has published. */
   front_pages: (FrontPage | null)[];
+  /** Every front page so far, oldest first: the `front_pages` slice by date (D1037). */
+  archive: FrontPage[];
 }
 
 /** What an article says, before an outlet prints it. */
@@ -63,6 +68,10 @@ export interface Story {
   headline: string;
   body: string;
   refs: EntityRef[];
+  /** What kind of article it makes (D1037); a report when absent. */
+  kind?: ArticleKind;
+  /** The article or post it follows. */
+  source?: ArticleSource;
 }
 
 export function genFeed(geo: MockGeo, rng: MockRng): FeedState {
@@ -84,7 +93,7 @@ export function genFeed(geo: MockGeo, rng: MockRng): FeedState {
       reliability: rng.range(0.7, 0.9),
     });
   }
-  return { outlets, articles: [], front_pages: outlets.map(() => null) };
+  return { outlets, articles: [], front_pages: outlets.map(() => null), archive: [] };
 }
 
 /** The regional paper of a state. */
@@ -109,6 +118,8 @@ export function publish(
     id: fs.articles.length,
     time: t,
     outlet,
+    kind: s.kind ?? "Report",
+    source: s.source ?? null,
     headline: s.headline,
     body: s.body,
     refs: s.refs,
@@ -140,12 +151,21 @@ export function rankFrontPages(fs: FeedState, t: DateTime): void {
     ids.sort(
       (x, y) => (fs.articles[y] as Article).body.length - (fs.articles[x] as Article).body.length || x - y,
     );
-    fs.front_pages[o.id] = {
+    const page: FrontPage = {
       outlet: o.id,
       date: dateTimeDate(t),
       articles: ids.slice(0, FRONT_PAGE_STORIES),
     };
+    fs.front_pages[o.id] = page;
+    fs.archive.push(page);
   });
+}
+
+/** Every outlet's front page of `date`, in outlet id order: the `front_pages` slice (D1037). */
+export function frontPagesOf(fs: FeedState, date: SimDate): FrontPage[] {
+  return fs.archive.filter(
+    (p) => p.date.year === date.year && p.date.month === date.month && p.date.day === date.day,
+  );
 }
 
 /** v_feed: slant and reliability only for Omniscient (pivot 8.1). */
@@ -207,6 +227,7 @@ export const STORY = {
   },
   forecast(leaderParty: Party, chance: number, refs: EntityRef[]): Story {
     return {
+      kind: "Analysis",
       headline: `Forecast gives ${leaderParty} a ${pct(chance)} chance at the presidency`,
       body: `The public forecast model, which blends published polls with each state's past vote, now rates the ${leaderParty === "Democrats" ? "Democratic" : "Republican"} ticket a ${pct(chance)} favourite. Its authors caution that a normal polling miss would still change the outcome in the closest states.`,
       refs,
@@ -332,6 +353,7 @@ export const STORY = {
     refs: EntityRef[],
   ): Story {
     return {
+      kind: "Call",
       headline: tone > 0 ? `${winner} wins ${race}` : `${outlet} projects ${winner} to win ${race}`,
       body: `With ${pct(reporting)} of the expected vote counted, ${outlet} projects that ${winner} will win ${race}.`,
       refs,
@@ -339,6 +361,7 @@ export const STORY = {
   },
   retraction(outlet: string, race: string, refs: EntityRef[]): Story {
     return {
+      kind: "Correction",
       headline: `${outlet} withdraws its call in ${race}`,
       body: `${outlet} has withdrawn its earlier projection in ${race} after late-counted ballots erased the lead it was based on. The race is too close to call.`,
       refs,

@@ -5,7 +5,7 @@
 // are TS additions (D975): player controls, not private truth.
 
 import { dateTimeDate, dateTimeHour, dateTimeWeekday } from "../time/calendar.ts";
-import { controlsEffectiveSpeed } from "../time/control.ts";
+import { controlsEffectiveSpeed, fixedPausesDefault } from "../time/control.ts";
 import { nextPhaseStart, phaseAt, phaseInfoDaysToNextPhase } from "../time/quarter.ts";
 import { sortedKeys } from "../types/collections.ts";
 import type { ClockView } from "../types/views/clock.ts";
@@ -32,6 +32,7 @@ export function buildClock(input: ViewInput): ClockView {
     next_release: nextPhaseStart(now, "Release"),
     watchlist: sortedKeys(controls.watchlist),
     omniscient: controls.omniscient,
+    fixed_pauses: { ...controls.fixed_pauses },
   };
 }
 
@@ -56,5 +57,6 @@ export function emptyClock(): ClockView {
     next_release: 24,
     watchlist: [],
     omniscient: false,
+    fixed_pauses: fixedPausesDefault(),
   };
 }

@@ -1,6 +1,6 @@
-// Counties and House districts (pivot 5.1 to 5.6; D1027, D1028): `World.geo`. Types only. M1 loads
-// the counties when the world has a counties file (geo/load.ts) and leaves the plans empty; drift,
-// the census, districting and court challenges are M2's (`geo/`).
+// Counties and House districts (pivot 5.1 to 5.6; D1027, D1028, D1037): `World.geo`. Types only. M1
+// loads the counties when the world has a counties file (geo/load.ts) and leaves the plans empty;
+// drift, the census, districting and court challenges are lane G's in M2 (`geo/`).
 //
 // `District` here is the pivot's (whole counties and shares of counties). The politics POC's
 // `District` (./politics.ts, D982: a state, a number and a home province) stays until M2's
@@ -83,14 +83,45 @@ export interface DistrictPlan {
   districts: District[];
 }
 
+/** One census (pivot 5.3): the people counted and the seats they apportion, by equal proportions. */
+export interface Census {
+  /** 2000, 2010, 2020 and every ten years after. Whole number. */
+  year: number;
+  /** People by `UsStateId`. Whole numbers. */
+  population: number[];
+  /** House seats by `UsStateId` from the next Congress on. Whole numbers summing to 435. */
+  seats: number[];
+}
+
+/** Where a court challenge to a map stands (pivot 5.6). */
+export type ChallengeStatus = "Filed" | "Upheld" | "Struck";
+
+/** A court challenge to a state's plan (pivot 5.6): an event, and a contract in M5 (pivot 10.2). */
+export interface Challenge {
+  state: UsStateId;
+  /** The census of the plan challenged. Whole number. */
+  census_year: number;
+  filed: SimDate;
+  /** When the court rules; set at filing (lane G's T). */
+  ruling: SimDate;
+  status: ChallengeStatus;
+}
+
 /**
- * The places politics runs on (`World.geo`). Both tables are empty in a world with no counties
- * file (every world before lane S1's data lands), and elections then run on the politics POC's
- * tables as today.
+ * The places politics runs on (`World.geo`; D1037). Every table is empty in a world with no
+ * counties file, and elections then run on the politics POC's tables as today.
  */
 export interface GeoState {
   /** In FIPS order (pivot 5.1). */
   counties: County[];
-  /** The plan in force for each state with a seat, in state order; empty until M2 draws the first. */
+  /** The plan in force for each state with a seat, in state order; empty until lane G draws the first. */
   plans: DistrictPlan[];
+  /** Plans no longer in force, oldest first (the records site's maps, pivot 8.6). */
+  history: DistrictPlan[];
+  /** Every census taken in play, oldest first (pivot 5.3). */
+  censuses: Census[];
+  /** House seats by `UsStateId` now (pivot 5.3); empty until lane G sets them (at load or a census). */
+  seats: number[];
+  /** Every challenge filed, oldest first (pivot 5.6). */
+  challenges: Challenge[];
 }
