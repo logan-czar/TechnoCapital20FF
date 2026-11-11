@@ -236,6 +236,7 @@
 
 .polls-pagelink {
   text-underline-offset: 2px;
+  text-align: left;
 }
 
 .polls-app .polls-brand:hover .polls-brand-name {
@@ -515,11 +516,15 @@
   margin-bottom: 10px;
 }
 
+.polls-chartbox {
+  width: 100%;
+  min-width: 0;
+}
+
 .polls-chart {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 260px;
 }
 
 .polls-grid {

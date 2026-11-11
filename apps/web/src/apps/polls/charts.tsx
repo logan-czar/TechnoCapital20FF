@@ -6,6 +6,7 @@
 
 import type { Party } from "@tc20ff/sim";
 import { simDateFromDaysSinceEpoch } from "@tc20ff/sim";
+import { useLayoutEffect, useRef, useState } from "react";
 import { MONTH_NAMES_SHORT } from "../_shared/index.ts";
 
 /** The colour a party's line is drawn in (the shared party colours). */
@@ -54,9 +55,30 @@ export interface LineChartProps {
   testId?: string;
 }
 
-const W = 640;
-const H = 220;
+/** A chart's width before it is measured (and in a DOM with no layout). */
+const DEFAULT_W = 480;
+const MIN_W = 260;
+const H = 200;
 const PAD = { l: 38, r: 44, t: 10, b: 24 };
+
+/** The width of the box a chart sits in, so its text is drawn at its true size. */
+function useChartWidth(): [React.RefObject<HTMLDivElement | null>, number] {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(DEFAULT_W);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (el === null) return;
+    const read = () => {
+      if (el.clientWidth > 0) setW(Math.max(MIN_W, Math.floor(el.clientWidth)));
+    };
+    read();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, w];
+}
 
 function niceTicks(lo: number, hi: number, n: number): number[] {
   const step = Math.max(1, Math.ceil((hi - lo) / n));
@@ -68,6 +90,7 @@ function niceTicks(lo: number, hi: number, n: number): number[] {
 
 /** Lines and dots over days: x is a day number, y is whatever `yFormat` prints. */
 export function LineChart(p: LineChartProps) {
+  const [box, W] = useChartWidth();
   const xs = [
     ...p.lines.flatMap((l) => l.points.map((q) => q.x)),
     ...(p.dots ?? []).flatMap((d) => d.points.map((q) => q.x)),
@@ -87,74 +110,76 @@ export function LineChart(p: LineChartProps) {
   for (let v = p.yMin; v <= p.yMax + 1e-9; v += p.yStep) yTicks.push(v);
   const xTicks = niceTicks(Math.ceil(x0), Math.floor(x1), 4);
   return (
-    <svg
-      className="polls-chart"
-      viewBox={`0 0 ${W} ${H}`}
-      role="img"
-      aria-label={p.summary}
-      data-testid={p.testId}
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <title>{p.summary}</title>
-      {yTicks.map((v) => (
-        <g key={v}>
-          <line className="polls-grid" x1={PAD.l} x2={W - PAD.r} y1={sy(v)} y2={sy(v)} />
-          <text className="polls-axis" x={PAD.l - 6} y={sy(v)} textAnchor="end" dominantBaseline="middle">
-            {p.yFormat(v)}
-          </text>
-        </g>
-      ))}
-      {xTicks.map((v) => (
-        <text key={v} className="polls-axis" x={sx(v)} y={H - 6} textAnchor="middle">
-          {dayLabel(v)}
-        </text>
-      ))}
-      {(p.rules ?? []).map((r) => (
-        <g key={r.label}>
-          <line className="polls-rule" x1={sx(r.x)} x2={sx(r.x)} y1={PAD.t} y2={H - PAD.b} />
-          <text className="polls-axis" x={sx(r.x)} y={PAD.t + 8} textAnchor="end" dx={-3}>
-            {r.label}
-          </text>
-        </g>
-      ))}
-      {(p.dots ?? []).map((d, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: dot sets are in series order
-        <g key={i} fill={d.color} fillOpacity={0.4}>
-          {d.points.map((q) => (
-            <circle key={`${q.x}/${q.y}`} cx={sx(q.x)} cy={sy(q.y)} r={2.8} />
-          ))}
-        </g>
-      ))}
-      {p.lines.map((l) => {
-        const last = l.points[l.points.length - 1];
-        return (
-          <g key={l.key} stroke={l.color} fill={l.color}>
-            {l.points.length > 1 ? (
-              <polyline
-                fill="none"
-                strokeWidth={2}
-                strokeLinejoin="round"
-                points={l.points.map((q) => `${sx(q.x)},${sy(q.y)}`).join(" ")}
-              />
-            ) : null}
-            {last === undefined ? null : (
-              <>
-                <circle cx={sx(last.x)} cy={sy(last.y)} r={3.4} stroke="none" />
-                <text
-                  className="polls-endlabel"
-                  x={sx(last.x) + 7}
-                  y={sy(last.y)}
-                  dominantBaseline="middle"
-                  stroke="none"
-                >
-                  {p.yFormat(last.y)}
-                </text>
-              </>
-            )}
+    <div ref={box} className="polls-chartbox">
+      <svg
+        className="polls-chart"
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label={p.summary}
+        data-testid={p.testId}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <title>{p.summary}</title>
+        {yTicks.map((v) => (
+          <g key={v}>
+            <line className="polls-grid" x1={PAD.l} x2={W - PAD.r} y1={sy(v)} y2={sy(v)} />
+            <text className="polls-axis" x={PAD.l - 6} y={sy(v)} textAnchor="end" dominantBaseline="middle">
+              {p.yFormat(v)}
+            </text>
           </g>
-        );
-      })}
-    </svg>
+        ))}
+        {xTicks.map((v) => (
+          <text key={v} className="polls-axis" x={sx(v)} y={H - 6} textAnchor="middle">
+            {dayLabel(v)}
+          </text>
+        ))}
+        {(p.rules ?? []).map((r) => (
+          <g key={r.label}>
+            <line className="polls-rule" x1={sx(r.x)} x2={sx(r.x)} y1={PAD.t} y2={H - PAD.b} />
+            <text className="polls-axis" x={sx(r.x)} y={PAD.t + 8} textAnchor="end" dx={-3}>
+              {r.label}
+            </text>
+          </g>
+        ))}
+        {(p.dots ?? []).map((d, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: dot sets are in series order
+          <g key={i} fill={d.color} fillOpacity={0.4}>
+            {d.points.map((q) => (
+              <circle key={`${q.x}/${q.y}`} cx={sx(q.x)} cy={sy(q.y)} r={2.8} />
+            ))}
+          </g>
+        ))}
+        {p.lines.map((l) => {
+          const last = l.points[l.points.length - 1];
+          return (
+            <g key={l.key} stroke={l.color} fill={l.color}>
+              {l.points.length > 1 ? (
+                <polyline
+                  fill="none"
+                  strokeWidth={2}
+                  strokeLinejoin="round"
+                  points={l.points.map((q) => `${sx(q.x)},${sy(q.y)}`).join(" ")}
+                />
+              ) : null}
+              {last === undefined ? null : (
+                <>
+                  <circle cx={sx(last.x)} cy={sy(last.y)} r={3.4} stroke="none" />
+                  <text
+                    className="polls-endlabel"
+                    x={sx(last.x) + 7}
+                    y={sy(last.y)}
+                    dominantBaseline="middle"
+                    stroke="none"
+                  >
+                    {p.yFormat(last.y)}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -178,72 +203,75 @@ export function RangeBar(p: {
   summary: string;
   testId?: string;
 }) {
-  const rowH = 30;
+  const [box, W] = useChartWidth();
+  const rowH = 40;
   const h = PAD.t + 14 + p.rows.length * rowH + 22;
   const sx = (v: number) => 14 + (v / p.total) * (W - 28);
   const ticks = niceTicks(0, p.total, 5);
   return (
-    <svg
-      className="polls-chart polls-range"
-      viewBox={`0 0 ${W} ${h}`}
-      role="img"
-      aria-label={p.summary}
-      data-testid={p.testId}
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <title>{p.summary}</title>
-      {p.rows.map((r, i) => {
-        const y = PAD.t + 14 + i * rowH;
-        return (
-          <g key={r.key}>
-            <rect
-              className="polls-track"
-              x={sx(0)}
-              y={y + 6}
-              width={sx(p.total) - sx(0)}
-              height={14}
-              rx={2}
-            />
-            <rect
-              x={sx(r.range[0])}
-              y={y + 6}
-              width={Math.max(2, sx(r.range[2]) - sx(r.range[0]))}
-              height={14}
-              rx={2}
-              fill={r.color}
-              fillOpacity={0.4}
-              stroke={r.color}
-            />
-            <line
-              x1={sx(r.range[1])}
-              x2={sx(r.range[1])}
-              y1={y + 2}
-              y2={y + 24}
-              stroke={r.color}
-              strokeWidth={3}
-            />
-            <text
-              className="polls-endlabel"
-              x={sx(r.range[1])}
-              y={y - 1}
-              textAnchor={
-                r.range[1] < p.total * 0.2 ? "start" : r.range[1] > p.total * 0.8 ? "end" : "middle"
-              }
-            >
-              {r.label} {r.range[1]} ({r.range[0]} to {r.range[2]})
-            </text>
-          </g>
-        );
-      })}
-      <line className="polls-rule" x1={sx(p.majority)} x2={sx(p.majority)} y1={PAD.t + 6} y2={h - 20} />
-      <text className="polls-axis" x={sx(p.majority)} y={PAD.t + 2} textAnchor="middle">
-        {p.majorityLabel}
-      </text>
-      {ticks.map((v) => (
-        <text key={v} className="polls-axis" x={sx(v)} y={h - 6} textAnchor="middle">
-          {v}
+    <div ref={box} className="polls-chartbox">
+      <svg
+        className="polls-chart polls-range"
+        viewBox={`0 0 ${W} ${h}`}
+        role="img"
+        aria-label={p.summary}
+        data-testid={p.testId}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <title>{p.summary}</title>
+        {p.rows.map((r, i) => {
+          const y = PAD.t + 14 + i * rowH;
+          return (
+            <g key={r.key}>
+              <rect
+                className="polls-track"
+                x={sx(0)}
+                y={y + 16}
+                width={sx(p.total) - sx(0)}
+                height={14}
+                rx={2}
+              />
+              <rect
+                x={sx(r.range[0])}
+                y={y + 16}
+                width={Math.max(2, sx(r.range[2]) - sx(r.range[0]))}
+                height={14}
+                rx={2}
+                fill={r.color}
+                fillOpacity={0.4}
+                stroke={r.color}
+              />
+              <line
+                x1={sx(r.range[1])}
+                x2={sx(r.range[1])}
+                y1={y + 12}
+                y2={y + 34}
+                stroke={r.color}
+                strokeWidth={3}
+              />
+              <text
+                className="polls-endlabel"
+                x={sx(r.range[1])}
+                y={y + 8}
+                textAnchor={
+                  r.range[1] < p.total * 0.2 ? "start" : r.range[1] > p.total * 0.8 ? "end" : "middle"
+                }
+              >
+                {r.label} {r.range[1]} ({r.range[0]} to {r.range[2]})
+              </text>
+            </g>
+          );
+        })}
+        <line className="polls-rule" x1={sx(p.majority)} x2={sx(p.majority)} y1={PAD.t + 6} y2={h - 20} />
+        <text className="polls-axis" x={sx(p.majority)} y={PAD.t + 2} textAnchor="middle">
+          {p.majorityLabel}
         </text>
-      ))}
-    </svg>
+        {ticks.map((v) => (
+          <text key={v} className="polls-axis" x={sx(v)} y={h - 6} textAnchor="middle">
+            {v}
+          </text>
+        ))}
+      </svg>
+    </div>
   );
 }

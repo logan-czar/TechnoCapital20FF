@@ -6,7 +6,7 @@
 // The route (route.ts) is the app's whole navigation state; the window keeps it, and this component
 // keeps a back/forward history of the routes it has shown.
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AppProps } from "../../os/apps.ts";
 import { useViewData } from "../../sim/hooks.ts";
 import { formatDay } from "../_shared/index.ts";
@@ -175,6 +175,12 @@ export default function PollsApp({ route, onRoute, setTitle }: AppProps) {
   }, [route]);
 
   const shown = currentRoute(hist);
+  // A new page opens at its top, whatever the last one was scrolled to.
+  const main = useRef<HTMLElement>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `shown` is the trigger
+  useEffect(() => {
+    main.current?.scrollTo?.(0, 0);
+  }, [shown]);
   const parsed = useMemo(() => parseRoute(shown), [shown]);
 
   const go = useCallback(
@@ -250,7 +256,7 @@ export default function PollsApp({ route, onRoute, setTitle }: AppProps) {
             {forecast?.updated == null ? "Model not run yet" : `Model run ${formatDay(forecast.updated)}`}
           </span>
         </header>
-        <main className="polls-main">
+        <main className="polls-main" ref={main}>
           <Page route={parsed} setTitle={setTitle} go={go} />
           <p className="polls-foot">
             Plumbline's odds are estimates from published polls and fundamentals. The model can be wrong.
