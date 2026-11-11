@@ -2,7 +2,7 @@
 // something another view holds, lists are in id order, prices and votes are in range, a group's
 // prices sum to about 100, and hidden fields are null unless Omniscient (pivot 5.11).
 
-import type { EntityRef, SimViews } from "@tc20ff/sim";
+import { districtRefId, type EntityRef, instrumentTarget, type SimViews } from "@tc20ff/sim";
 import { expect } from "vitest";
 
 /** A group's quoted prices may miss 100 by half a cent of rounding a contract, and a little slack. */
@@ -52,7 +52,8 @@ export function checkPivotViews(v: SimViews, omniscient: boolean): void {
     Industry: (id) => id < v.industry_rows.data.rows.length,
     State: (id) => states.has(id),
     County: (id) => id < counties,
-    District: (id) => id < districts.districts.length,
+    // A district's ref id is its state and number (D1037).
+    District: (id) => districts.districts.some((d) => d.id === id),
     Outlet: (id) => id < feed.outlets.length,
     Pollster: (id) => id < polls.pollsters.length,
     Handle: (id) => id < social.handles.length,
@@ -333,5 +334,67 @@ export function checkPivotViews(v: SimViews, omniscient: boolean): void {
       person(c.person, "call");
     }
     expect(r.electoral_votes !== null).toBe(races.races[r.race]?.office === "President");
+    // The presidency's count by state (D1037).
+    expect(r.states !== null).toBe(races.races[r.race]?.office === "President");
+    for (const st of r.states ?? []) {
+      ref({ kind: "State", id: st.state }, "state returns");
+      share(st.reporting, "state reporting");
+      expect(st.votes.map((x) => x.person)).toEqual(r.votes.map((x) => x.person));
+      if (st.called !== null) person(st.called, "state call");
+    }
   }
+
+  // The fields D1037 added.
+  // A race's candidate order is its ballot: polls, forecasts and returns list exactly it.
+  for (const r of races.races) {
+    const filed = new Set(r.candidates.map((c) => c.person as number));
+    for (const p of r.ballot) expect(filed.has(p), `ballot of ${r.title}`).toBe(true);
+    for (const pr of r.primaries) for (const p of pr.ballot) expect(filed.has(p)).toBe(true);
+    expect(r.polls_close).toBeGreaterThan(0);
+    expect(r.electoral_votes !== null).toBe(r.office === "President");
+  }
+  for (const p of polls.polls) {
+    if (p.state !== null) ref({ kind: "State", id: p.state }, "state poll");
+    const r = races.races[p.race];
+    if (r !== undefined && p.stage === "General") {
+      expect(
+        p.shares.map((x) => x.person),
+        `poll ${p.id}`,
+      ).toEqual(r.ballot);
+    }
+  }
+  for (const f of forecast.races) {
+    expect(f.odds.map((x) => x.person)).toEqual(races.races[f.race]?.ballot);
+  }
+  for (const st of forecast.states) ref({ kind: "State", id: st.state }, "state forecast");
+  for (const r of returns.races) {
+    expect(r.votes.map((x) => x.person)).toEqual(races.races[r.race]?.ballot);
+  }
+  for (const a of feed.articles) {
+    if (a.source?.kind === "Article") expect(a.source.id).toBeLessThan(a.id);
+    if (a.source?.kind === "Post") expect(a.source.id).toBeLessThan(social.posts.length);
+  }
+  for (const d of districts.districts) expect(d.id).toBe(districtRefId(d.state, d.number));
+  for (const c of v.people.data.chambers) {
+    const seats = c.parties.reduce((a, x) => a + x.seats, 0) + c.independents + c.vacant;
+    expect(seats).toBeGreaterThan(0);
+  }
+  for (const c of markets) {
+    if (c.person !== null) person(c.person, "contract");
+    expect(c.closes.length).toBeLessThanOrEqual(30);
+    if (c.bracket !== null) expect(c.kind).toBe("Bracket");
+  }
+  for (const p of account.positions) {
+    expect(p.qty).toBeGreaterThan(0);
+    expect(p.side === "Long").toBe(p.venue === "Brokerage");
+    expect(p.what).toEqual(instrumentTarget(p.instrument));
+  }
+  for (const f of account.fills) expect(f.what).toEqual(instrumentTarget(f.instrument));
+  for (const o of account.orders) expect(o.closed === null).toBe(o.status === "Open");
+  for (const c of account.cash) expect(c.reserved).toBeLessThanOrEqual(c.cash + 1e-9);
+  expect(v.notifications.data.read_through).toBeLessThan(notes.length);
+  for (const n of notes) expect(n.fixed === null).toBe(n.kind === "Alert");
+  const columns = map.counties;
+  expect(columns.turnout.length).toBe(counties);
+  expect(columns.last_votes.length).toBe(counties);
 }

@@ -71,11 +71,16 @@ const AppBody = memo(function AppBody({
     (r: string | null) => dispatch({ kind: "route", id, route: r }),
     [dispatch, id],
   );
+  const close = useCallback(() => dispatch({ kind: "close", id }), [dispatch, id]);
+  const setTitle = useCallback(
+    (title: string | null) => dispatch({ kind: "title", id, title }),
+    [dispatch, id],
+  );
   const Body = spec.Component;
   return (
     <AppBoundary title={spec.title}>
       <Suspense fallback={<p className="os-window-loading">Opening {spec.title}...</p>}>
-        <Body route={route} onRoute={onRoute} />
+        <Body route={route} onRoute={onRoute} close={close} setTitle={setTitle} />
       </Suspense>
     </AppBoundary>
   );
@@ -236,7 +241,7 @@ function WindowInner({ win, spec, focused, bounds, dispatch }: WindowProps) {
         onKeyDown={onTitleKey}
       >
         <Icon name={spec.icon} size={16} />
-        <span className="os-title">{spec.title}</span>
+        <span className="os-title">{win.title ?? spec.title}</span>
         <span className="os-address" data-testid={`win-${id}-address`}>
           {address}
         </span>

@@ -55,8 +55,8 @@ def main():
     if manifest['id'] != '1995' or manifest['start_date'] != '1995-01-01':
         errors.append('manifest: not the 1995 world')
     if manifest['features'] != {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False,
-                                'counties': True}:
-        errors.append('manifest: expected an era world with counties and no scripted parts, '
+                                'counties': True, 'usa_only': True}:
+        errors.append('manifest: expected an era world cut to the USA with counties and no scripted parts, '
                       f'got {manifest["features"]}')
     errors += county_errors()
 

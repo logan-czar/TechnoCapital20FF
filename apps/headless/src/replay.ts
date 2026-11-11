@@ -321,6 +321,8 @@ export function simErrorToString(e: SimError): string {
       return `no company ${e.company}`;
     case "DebugOnly":
       return "Omniscient is only available in debug builds";
+    case "BadFixedPause":
+      return `the ${e.pause} pause cannot be switched off`;
     case "Load":
       return `load error: ${JSON.stringify(e.error)}`;
     case "Save":

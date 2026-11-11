@@ -16,6 +16,7 @@ import type {
   RaceId,
   ReturnsView,
   SimDate,
+  StateReturns,
 } from "@tc20ff/sim";
 import { normalCdf, type Outlook } from "./forecast.ts";
 import type { MockCounty, MockGeo, MockState } from "./geo.ts";
@@ -334,11 +335,48 @@ export function returnsView(cs: CountState, pol: MockPolitics, geo: MockGeo, t: 
               { person: ballotCandidate(r, r.rep).person, votes: ev[1] },
             ]
           : null,
+      states: r.office === "President" ? stateReturns(cs, pol, geo, r, t) : null,
       calls: (cs.calls[r.id] as RaceCall[]).slice(),
       recount: cs.recount[r.id] === true,
       certified: cs.certified[r.id] ?? null,
     })),
   };
+}
+
+/** The presidency state by state (D1037): its counties' reported votes summed, and the wire's call. */
+function stateReturns(
+  cs: CountState,
+  pol: MockPolitics,
+  geo: MockGeo,
+  r: MockRace,
+  t: DateTime,
+): StateReturns[] {
+  const counted = countyReturns(cs, pol, geo, r.id, t);
+  return geo.states.map((st, s) => {
+    const votes = r.ballot.map(() => 0);
+    let expected = 0;
+    let reported = 0;
+    r.units.forEach((u, k) => {
+      if (u.state !== s) return;
+      const all = u.votes.reduce((a, b) => a + b, 0);
+      expected += all;
+      reported += all * (counted?.reporting[k] ?? 0);
+      (counted?.votes[k] ?? []).forEach((v, i) => {
+        votes[i] = (votes[i] as number) + v;
+      });
+    });
+    const closed = SCRIPT.election_day + st.close_hour;
+    const party = cs.state_called[s] ?? null;
+    return {
+      state: st.id,
+      polls_closed: t >= closed ? closed : null,
+      reporting: expected > 0 ? reported / expected : 0,
+      votes: votes.map((v, i) => ({ person: ballotCandidate(r, i).person, votes: v })),
+      electoral_votes: st.electoral_votes,
+      called: party === null ? null : ballotCandidate(r, party === "Democrats" ? r.dem : r.rep).person,
+      certified: cs.certified[r.id] ?? null,
+    };
+  });
 }
 
 /** One race's count by county: the slice of v_returns (`RaceCountyReturns`). */
@@ -366,7 +404,7 @@ export function countyReturns(
 export function countyResults(
   pol: MockPolitics,
   counties: MockCounty[],
-): { winner: Party; margin: number }[] {
+): { winner: Party; margin: number; votes: number }[] {
   const pres = pol.races[0] as MockRace;
   return counties.map((c) => {
     const u = pres.units[c.id] as RaceUnit;
@@ -379,6 +417,10 @@ export function countyResults(
           u.votes.reduce((a, b) => a + b, 0),
         )) *
       100;
-    return { winner: margin >= 0 ? "Democrats" : "Republicans", margin: Math.floor(margin * 10 + 0.5) / 10 };
+    return {
+      winner: margin >= 0 ? "Democrats" : "Republicans",
+      margin: Math.floor(margin * 10 + 0.5) / 10,
+      votes: u.votes.reduce((a, b) => a + b, 0),
+    };
   });
 }

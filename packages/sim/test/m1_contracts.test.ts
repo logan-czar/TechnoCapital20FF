@@ -6,7 +6,7 @@
 
 import type { CountyAdjacencyRow, CountyRow, WorldData } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
-import { geoStateFromData } from "../src/geo/load.ts";
+import { geoStateEmpty, geoStateFromData } from "../src/geo/load.ts";
 import { leversNeutral } from "../src/governing/levers.ts";
 import { simApply, simNew, simRunUntil, simStateHash, simStep, simViews, simWorld } from "../src/lib.ts";
 import { rngStreamsNew, rngStreamsNextU32 } from "../src/rng.ts";
@@ -73,8 +73,8 @@ describe("M1 contracts: RNG streams and saves", () => {
     expect(r.state.length).toBe(13);
   });
 
-  it("the save version is the M1 one", () => {
-    expect(SAVE_VERSION).toBe(6);
+  it("the save version moved past the M1 one (7 is M2's, D1037)", () => {
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(6);
   });
 });
 
@@ -89,7 +89,7 @@ describe("M1 contracts: World fields", () => {
       expect(w.levers[k]).toEqual(w.industries.map(() => 0));
     }
     expect(w.levers.state_growth.length).toBe(w.politics.states.length);
-    expect(w.geo).toEqual({ counties: [], plans: [] });
+    expect(w.geo).toEqual(geoStateEmpty());
     expect(w.industries.every((i) => i.row_assets === 0)).toBe(true);
   });
 
@@ -269,6 +269,7 @@ describe("M1 contracts: running the sim", () => {
       { kind: "Unfollow", target: ref },
       { kind: "AlertRuleAdd", rule: { target: ref, when: { kind: "Any" }, pause: true } },
       { kind: "AlertRuleRemove", rule: 0 },
+      { kind: "NotificationsRead", through: 0 },
     ];
     expect(actions.map((a) => a.kind)).toEqual([...PLAYER_ACTION_KINDS]);
     for (const action of actions) {
