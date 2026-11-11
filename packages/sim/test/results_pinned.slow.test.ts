@@ -32,6 +32,7 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded once for D1052 (the integration of the four sim lanes), on the merged tree: the lanes each recorded alone, so the constants were stale. The state hash moved because lane C's governors' term ends now follow lane E's calendar (3 January, not 15), and with them v_people; v_usmap_layers's states now carry the governors' parties from lane C's persons (lane G recorded before careers merged). The monthly and patch digests moved with those two views; every other view digest (the economy, v_politics, v_races, v_returns, v_account, v_notifications, v_districts) is unchanged: this world has no counties, so the elections, the mirror and the player never act in it.
 // Re-recorded for D1041 (lane C, careers): the world's persons table is filled at load and run by the careers job every day, so the state hash moved; their draws come after the politics POC's on the Politics stream, so the POC's later elections and appointments moved, and with them v_politics and its headlines in v_news; v_people is now built (version 8785). The monthly and patch digests moved with those three views; every other view digest (the whole economy) is unchanged.
 // Re-recorded for D1039 (lane G): v_districts and v_usmap_layers are built now, monthly, so their versions, the usmap_layers digest (its states' rows from the politics table; this world has no counties) and the monthly and patch digests moved; the state hash and every other view are unchanged (a world with no counties draws and changes nothing in geo).
 // Re-recorded for D1042 (lane P, the player): v_account and v_notifications have builders now, rebuilt every tick, so their versions (1 to 8785), the monthly digest and the patch digest moved; their data (empty: this world never hydrates, so it has no player), the state hash and every other view are unchanged.
@@ -49,9 +50,9 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "4a2b98bb64a7c722b3f20fcd881f3ab2";
-const GOLDEN_MONTHLY = "153c65407bae50675480b4fc";
-const GOLDEN_PATCHES = "6a7b9d690930eba8d156666b";
+const GOLDEN_STATE = "0570df621d13e7eee505464f03dac97e";
+const GOLDEN_MONTHLY = "aa1a8f8e7b87d626d080dd4e";
+const GOLDEN_PATCHES = "c3624abc35ffa941c537f179";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["f7cc508c07c87cda3927d6d8", 8785],
@@ -89,13 +90,13 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   polls: ["66f490e3432976fdbfc95485", 1],
   forecast: ["e3ae3632c2838aeb6d729301", 1],
   races: ["59923a8a46fcb9581c1acb8a", 8785],
-  people: ["7cd800faf4054b407f4c7108", 8785],
+  people: ["61e9523c877c8bab9917e866", 8785],
   records: ["6df68f989ab8c28290a21f7d", 1],
   markets: ["3312b062bb7ccfa55b0b7d0a", 1],
   account: ["39647396081a417498294a57", 8785],
   notifications: ["924140588434f28477897e50", 8785],
   districts: ["d2162f6f6799d28562484c4a", 8785],
-  usmap_layers: ["f8d2720c54256356ab2fe980", 8785],
+  usmap_layers: ["53a1e4cd5095d3ed55866d6d", 8785],
   returns: ["2492e5a3c809942bb06a61ed", 8785],
 };
 
@@ -134,13 +135,15 @@ describe("results pinned to main", () => {
         await macrotask();
       }
     }
-    expect(simStateHash(sim)).toBe(GOLDEN_STATE);
     const v = views();
     const got: Record<string, [string, number]> = {};
     for (const n of VIEW_NAMES) got[n] = [sha(canonicalString(v[n]!.data)), v[n]!.version];
+    const gotMonthly = monthly.digest("hex").slice(0, 24);
+    const gotPatches = patches.digest("hex").slice(0, 24);
+    expect(simStateHash(sim)).toBe(GOLDEN_STATE);
     expect(got).toEqual(GOLDEN_VIEWS);
-    expect(monthly.digest("hex").slice(0, 24)).toBe(GOLDEN_MONTHLY);
-    expect(patches.digest("hex").slice(0, 24)).toBe(GOLDEN_PATCHES);
+    expect(gotMonthly).toBe(GOLDEN_MONTHLY);
+    expect(gotPatches).toBe(GOLDEN_PATCHES);
 
     // The encoder against the reference, on the whole world and every view.
     const world = simWorld(sim);
