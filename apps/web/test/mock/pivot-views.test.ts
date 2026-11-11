@@ -86,7 +86,7 @@ describe("the mock's pivot world at a new game", () => {
     expect(a.cash.every((c) => c.cash > 1000)).toBe(true);
     expect(new Set(a.positions.map((p) => p.venue))).toEqual(new Set(["Brokerage", "Exchange"]));
     expect(
-      a.positions.some((p) => p.qty < 0),
+      a.positions.some((p) => p.side === "No" && p.qty > 0),
       "a No side",
     ).toBe(true);
     expect(new Set(a.orders.map((o) => o.status))).toEqual(
@@ -176,8 +176,8 @@ describe("the mock's pivot world at a new game", () => {
     checkPivotViews(v, false);
     // The player has opened an account and done nothing with it yet.
     expect(v.account.data.cash).toEqual([
-      { venue: "Brokerage", cash: 50_000 },
-      { venue: "Exchange", cash: 0 },
+      { venue: "Brokerage", cash: 50_000, reserved: 0 },
+      { venue: "Exchange", cash: 0, reserved: 0 },
     ]);
     expect(v.account.data.positions).toEqual([]);
     expect(v.feed.data.articles).toEqual([]);
@@ -187,12 +187,12 @@ describe("the mock's pivot world at a new game", () => {
   });
 
   it("without the pivot option is the pre-pivot mock: empty views, no actions", () => {
-    const host = new SimHost(mockWorld());
+    const host = new SimHost(mockWorld(), { pivot: false });
     host.handle({ kind: "NewGame", id: 1, seed: 7 });
     expect(host.sim?.now).toBe(0);
     expect(host.sim?.pivot).toBeNull();
     expect(host.sim?.views.markets.data.contracts).toEqual([]);
-    expect(host.slice({ view: "markets", contract: 0 as never })).toBeNull();
+    expect(host.slice({ view: "markets", slice: "book", contract: 0 as never })).toBeNull();
   });
 });
 
@@ -238,7 +238,9 @@ describe("the mock's frame sizes", () => {
       w.sim.step();
       const f = w.host.tick(0)[0];
       if (f?.kind !== "Frame") throw new Error("no frame");
-      expect(Object.keys(f.views).every((k) => ["refresh", "clock", "markets"].includes(k))).toBe(true);
+      // The news feed's appends go out whether wanted or not, as from the real host (views/patch.ts).
+      const allowed = ["refresh", "clock", "markets", "news_appended", "news_version"];
+      expect(Object.keys(f.views).filter((k) => !allowed.includes(k))).toEqual([]);
       wanted.push(bytes(f));
     }
     const wantedMedian = [...wanted].sort((a, b) => a - b)[12] as number;
@@ -258,6 +260,15 @@ describe("the mock's frame sizes", () => {
       slices: [],
     })[0];
     expect(late?.kind === "Frame" && late.views.feed !== undefined).toBe(true);
+    // Its articles are an append list (D1037): the view comes with them empty, and only the rows
+    // since the first frame (which carried the whole list) follow, as an append.
+    if (late?.kind !== "Frame") throw new Error("no frame");
+    expect(late.views.feed?.data.articles).toEqual([]);
+    const first0 = (g.log[0] as { views: { appended?: { view: string; rows: unknown[] }[] } }).views.appended;
+    const firstRows = first0?.find((a) => a.view === "feed")?.rows.length ?? 0;
+    const articles = late.views.appended?.find((a) => a.view === "feed" && a.field === "articles");
+    expect(articles?.reset ?? false).toBe(false);
+    expect(firstRows + (articles?.rows.length ?? 0)).toBe(w.sim.views.feed.data.articles.length);
     expect(VIEW_NAMES).toContain("feed");
   });
 });

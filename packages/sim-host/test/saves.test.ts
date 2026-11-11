@@ -224,6 +224,10 @@ describe("baked starts and the generate seam", () => {
     seed: 3,
     save_version,
     hash: "0".repeat(32),
+    scenario: "hidden",
+    date: "2020-01-01",
+    file: `${id}.tcsave`,
+    bytes: 0,
   });
 
   it("lists this build's starts in Ready, and none when the folder has none", async () => {
@@ -271,19 +275,20 @@ describe("baked starts and the generate seam", () => {
     }
   });
 
-  it("answers a generated start through the seam: unsupported until lane S4 injects one", () => {
-    const host = new RealHost(data);
+  it("passes a generated start's request to the seam, and answers what it refuses Refused", () => {
+    // The default seam pre-simulates the host's own world (D1037; generate.test.ts runs one).
     const msg: ToSim = { kind: "NewGame", id: 1, seed: 1, start: { kind: "generate" } };
-    expect(replyOf(host.handle(msg))).toEqual({ kind: "Refused", message: unsupportedMessage("NewGame") });
-    expect(host.sim).toBeNull();
     const seen: unknown[] = [];
     const injected = new RealHost(data, {
       generate: (req) => {
         seen.push(req);
-        return [{ kind: "Reply", id: req.id, result: { kind: "Cancelled" } }];
+        return { ok: false, error: unsupportedMessage("NewGame") };
       },
     });
-    expect(replyOf(injected.handle({ ...msg, scenario: "stable" }))).toEqual({ kind: "Cancelled" });
+    expect(replyOf(injected.handle({ ...msg, scenario: "stable" }))).toEqual({
+      kind: "Refused",
+      message: unsupportedMessage("NewGame"),
+    });
     expect(seen).toEqual([{ id: 1, seed: 1, scenario: "stable" }]);
   });
 });
@@ -408,7 +413,8 @@ describe("the stores on disk", () => {
     );
     writeFileSync(join(dir, `a${SAVE_EXT}`), new Uint8Array([7, 8, 9]));
     expect(store.list().map((s) => s.id)).toEqual(["a", "c"]);
-    expect(store.list()[0]).toEqual(row);
+    // A row from before D1037 gets its file's default name and blank details.
+    expect(store.list()[0]).toEqual({ ...row, scenario: "hidden", date: "", file: `a${SAVE_EXT}`, bytes: 0 });
     expect([...(store.read("a") ?? [])]).toEqual([7, 8, 9]);
     // A file name that leaves the folder is not read.
     expect(store.read("c")).toBeNull();
