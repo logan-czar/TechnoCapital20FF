@@ -154,8 +154,10 @@ describe("election night", () => {
     g.sim.paused = false;
     const notices = g.sim.step();
     expect(g.sim.paused).toBe(true);
-    expect(notices).toContainEqual({ kind: "Paused", reason: { kind: "Alert", alert_kind: "Election" } });
-    expect(g.views().notifications.data.items.at(-1)).toMatchObject({ kind: "ElectionDay", paused: true });
+    // Election day is a fixed pause (pivot 2.4 item 3), paused as its notification (D1037).
+    const day = g.views().notifications.data.items.at(-1);
+    expect(day).toMatchObject({ kind: "ElectionDay", paused: true, fixed: "ElectionDay" });
+    expect(notices).toContainEqual({ kind: "Paused", reason: { kind: "Notification", id: day?.id } });
     // A Step that would run past it stops there too.
     const s = newGame(7);
     s.runTo(SCRIPT.election_day - 10);

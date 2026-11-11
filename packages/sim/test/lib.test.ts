@@ -54,6 +54,10 @@ function recordingDeps(calls: string[], fail: { on: boolean }): StartDeps {
     birthsDrawFirstVotes: rec("birthsDrawFirstVotes"),
     financeStart: rec("financeStart"),
     marketStart: rec("marketStart"),
+    geoStart: rec("geoStart"),
+    personsStart: rec("personsStart"),
+    electionsStart: rec("electionsStart"),
+    playerStart: rec("playerStart"),
   };
 }
 
@@ -73,6 +77,10 @@ describe("startWorld", () => {
       "financeStart",
       "marketStart",
       "politicsStart",
+      "geoStart",
+      "personsStart",
+      "electionsStart",
+      "playerStart",
     ]);
     expect(r.ok && r.value.news.labels).toEqual(["Normal", "Normal", "Normal", "Normal", "Normal"]);
   });
@@ -204,10 +212,12 @@ describe("Sim", () => {
       "-view clock",
       "-Views",
     ]);
-    expect(parts.slice(0, 6)).toEqual([
-      // 1 January: no share prices (spec 4.1 step 2, 3.1.0).
+    expect(parts.slice(0, 8)).toEqual([
+      // 1 January: no share prices (spec 4.1 step 2, 3.1.0). The player's slot is visited, empty (D1037).
       "+AdvanceClock",
       "-AdvanceClock",
+      "+HourlyPlayer",
+      "-HourlyPlayer",
       "+Alerts",
       "+Alerts/time.calendar_alerts",
       "-Alerts/time.calendar_alerts",

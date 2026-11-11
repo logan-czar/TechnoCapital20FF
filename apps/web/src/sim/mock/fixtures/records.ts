@@ -338,10 +338,42 @@ export function genRecords(base: MockWorld, pol: MockPolitics, geo: MockGeo, rng
   return rs;
 }
 
-/** v_records. */
+/** Where a bill's stage puts it, for its history line (D1037). */
+const STAGE_TEXT: Readonly<Record<BillStage, string>> = {
+  Drafted: "Drafted",
+  Committee: "Referred to committee",
+  HouseFloor: "Reported to the House floor",
+  SenateFloor: "Reported to the Senate floor",
+  Conference: "Sent to conference",
+  President: "Presented to the President",
+  Law: "Became law",
+  Dead: "Died",
+};
+
+/**
+ * v_records. Every mock bill starts in the House (D1037); its history is its introduction, each roll
+ * call on it, and its stage now.
+ */
 export function recordsView(rs: RecordsState): RecordsView {
   return {
-    bills: rs.bills.map((b) => ({ ...b })),
+    bills: rs.bills.map((b) => ({
+      ...b,
+      chamber_of_origin: "House",
+      actions: [
+        { date: b.introduced, chamber: "House", text: "Introduced", roll_call: null },
+        ...rs.roll_calls
+          .filter((r) => r.bill === b.id)
+          .map((r) => ({
+            date: r.date,
+            chamber: r.chamber,
+            text: `${r.question}: ${r.passed ? "agreed to" : "failed"} ${r.yeas} to ${r.nays}`,
+            roll_call: r.id,
+          })),
+        ...(b.stage === "Drafted" || b.stage === "Committee"
+          ? []
+          : [{ date: b.last_action, chamber: null, text: STAGE_TEXT[b.stage], roll_call: null }]),
+      ],
+    })),
     roll_calls: rs.roll_calls.slice(),
     actions: rs.actions.slice(),
     filings: rs.filings.slice(),

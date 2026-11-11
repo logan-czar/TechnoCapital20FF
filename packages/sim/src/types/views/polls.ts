@@ -2,7 +2,7 @@
 // the builder arrives with the information layer (M4). The polls only grow, oldest first.
 
 import type { SimDate } from "../calendar.ts";
-import type { PersonId, PollsterId, RaceId } from "../ids.ts";
+import type { PersonId, PollsterId, RaceId, UsStateId } from "../ids.ts";
 import type { Party } from "../state/politics.ts";
 
 export interface PollsterRow {
@@ -23,13 +23,18 @@ export interface Poll {
   stage: RaceStage;
   /** A primary poll's party. */
   party: Party | null;
+  /** A presidential poll of one state (pivot 8.4; D1037); null for a national poll or another race. */
+  state: UsStateId | null;
   /** The days in the field. */
   from: SimDate;
   to: SimDate;
   published: SimDate;
   /** People asked. Whole number. */
   sample: number;
-  /** Each candidate's share, 0 to 1, in the race's candidate order. */
+  /**
+   * Each candidate's share, 0 to 1, in the race's candidate order: the general's `RaceRow.ballot`,
+   * or the primary's `ballot` (D1037). Only candidates on that ballot.
+   */
   shares: { person: PersonId; share: number }[];
   undecided: number;
   /** The published margin of error, in points. */
@@ -39,6 +44,6 @@ export interface Poll {
 export interface PollsView {
   /** In pollster id order. */
   pollsters: PollsterRow[];
-  /** Every poll, oldest first. */
+  /** Every poll, oldest first. An append list (protocol.ts `APPEND_LISTS`). */
   polls: Poll[];
 }
