@@ -87,9 +87,30 @@ export async function desktop(page: Page): Promise<void> {
   await expect(page.getByTestId("taskbar")).toBeVisible();
 }
 
-/** Opens the Debug workspace from its desktop icon and waits for its content. */
-export async function openDebug(page: Page): Promise<void> {
-  await page.getByTestId("app-debug").dblclick();
-  await expect(page.getByTestId("win-debug")).toBeVisible();
-  await expect(page.getByTestId("debug-workspace")).toBeVisible();
+/**
+ * The window the first run opens by itself (apps/web/src/App.tsx FIRST_APP, the news app; the
+ * window manager numbers windows from 1 and a non-singleton app's is `<app>-<number>`).
+ */
+export const FIRST_WINDOW = "win-news-1";
+
+/** Waits for the desktop of a started game and for the first run's news window to be drawn. */
+export async function firstRun(page: Page): Promise<void> {
+  await desktop(page);
+  await expect(page.getByTestId(FIRST_WINDOW)).toBeVisible();
+}
+
+/**
+ * Opens an app from the taskbar's launcher and waits for its window `id` to be drawn. The first
+ * run's window covers the desktop's icons, so a test with it open goes this way.
+ */
+export async function openFromLauncher(page: Page, app: string, id: string): Promise<void> {
+  await page.getByTestId("tb-launcher").click();
+  await page.getByTestId(`launch-${app}`).click();
+  await expect(page.getByTestId(`win-${id}`)).toBeVisible();
+}
+
+/** Opens an app from its desktop icon (a double click) and waits for its window `id` to be drawn. */
+export async function openFromIcon(page: Page, app: string, id: string): Promise<void> {
+  await page.getByTestId(`app-${app}`).dblclick();
+  await expect(page.getByTestId(`win-${id}`)).toBeVisible();
 }
