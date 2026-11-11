@@ -508,6 +508,28 @@ function stepInner(i: SimInner, observer: TickObserver | null): Notice[] {
   return notices;
 }
 
+// ---------------------------------------------------------------- SPIKE (tools/spikes/coarse)
+// Throwaway prototype of a view-free "Coarse" run path, for measurement only: nothing in the
+// game or the headless runner calls these. See tools/spikes/coarse/README.md.
+
+/**
+ * SPIKE: one tick of jobs with no view refresh and no pause handling. The notices are built by
+ * the scheduler into `scratch` and dropped. The world and the draws are the same as `simStep`'s;
+ * the views are stale until `simSpikeRebuildViews`. Returns true when the run has ended.
+ */
+export function simSpikeStepNoViews(sim: Sim, scratch: Notice[]): boolean {
+  const s = inner(sim).s;
+  scratch.length = 0;
+  const p = schedulerRunTickObserved(s.scheduler, s.world, s.draws, scratch, s.controls, null, null);
+  return p?.kind === "RunEnded";
+}
+
+/** SPIKE: rebuilds every view once, after a run of `simSpikeStepNoViews`. */
+export function simSpikeRebuildViews(sim: Sim): void {
+  const i = inner(sim);
+  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+}
+
 /** Pauses (once: a second pause posts nothing). */
 function pause(s: SimState, notices: Notice[], reason: PauseReason): void {
   if (!s.controls.paused) {
