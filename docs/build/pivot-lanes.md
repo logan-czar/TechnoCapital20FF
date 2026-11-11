@@ -64,12 +64,22 @@ contracts change plays exactly as before.
 | `PoliticsState.districts` and its `District` (D982) | `GeoState.plans` (lane G) | Lane E (who reads it) |
 | `politics/state.ts`, `politics/calendar.ts`, `politics/vote.ts` (keeping `shares` and `utility`), `views/politics.ts` (v_politics) | Elections, v_races, v_people | Lane E |
 | Appointments, judges' retirement, aging (`fillExecutive`, `fillCourtVacancies`, `newYear`) | Lane C's careers | Lane E deletes them from `politics/jobs.ts`; lane C writes the new ones in its own files and never edits `politics/jobs.ts` |
-| The start seats (`politicsStart`) | `personsStart` (lane C) | Lane E empties the POC's start when lane C's start exists; the call in `START_DEPS` stays |
-| `driftYear`, `drawCensus`, `applyDistricts` (`politics/era.ts`) | Lane G's drift and census | Lane G owns `politics/era.ts` and may add to it, but keeps the signatures `politics/jobs.ts` calls; lane E deletes the calls |
+| The start seats (`politicsStart`) | `personsStart` (lane C) | Kept (D1052): `personsStart` makes the POC's start holders persons, its House members re-seated in lane G's districts; the call in `START_DEPS` stays |
+| `drawCensus`, `applyDistricts` (`politics/era.ts`) | Lane G's census and plans | Lane E deleted the calls |
+| `driftYear` (`politics/era.ts`) | Still the era's state lean drift, centred on the nation's mean (D1052); lane G's county drift re-centres on it | Kept, in a county world on 1 January |
 | `PoliticsState.politicians`, `pending`, `president_terms`, `elections` | `World.persons`, `World.elections` | The M3 contracts change deletes the fields |
 
 The merge order is G, C, then E (E rebases on both and switches the POC off with their starts in
 place); P and the UI lanes merge in any order.
+
+**After the integration (D1052).** In a world with counties the offices table (`World.persons`) is
+the one record of who holds office: lane C seats everyone at the start, decides who runs
+(`declareCycle`), fills every vacancy but a House seat's and names the administration; lane E files
+those fields, counts, seats winners and schedules specials; lane G's plans are the districts (there is
+no fallback districting). The POC's table is a mirror of the offices table (elections/mirror.ts) for
+era/policy.ts, the tides and v_politics; the POC's own vote, appointments, ageing and census run only in
+a world without counties (the frozen fixture). The player's account opens at hydration (`simHydrate`,
+at `NewGame.difficulty`).
 
 ## RNG streams
 
@@ -117,7 +127,7 @@ which `EntityRef`s of kind District name. v_usmap_layers' county columns gained 
 
 **E Elections.** `ElectionsState` is empty; a `Race` keeps its candidacies, primaries, ballot (the
 **candidate order** every poll, forecast and count lists) and result. County results are columns of
-whole votes for the latest general only. `registerElectionJobs` registers into `DailyElections` and
+whole votes for the latest general and the latest presidential race (D1040). `registerElectionJobs` registers into `DailyElections` and
 first into `WeeklyJobs`; Coarse campaign jobs are tagged `{ fidelity: "Coarse" }`. When a race lacks a
 candidate, call `challengerFor` (lane C's). A seat changes hands through `officeLeave` and
 `officeTake`. Vacancies whose `fill` is `Special` are yours to schedule. v_returns has `states` for
@@ -129,7 +139,7 @@ filled by `vacancyFillOf`. `challengerFor` draws a person with `drawPerson`. v_p
 `chambers` and the career lines `how` and `exit`; hidden stats are null unless Omniscient.
 
 **P Player.** `World.player` is null; `playerStart` runs last at load and should open the account in a
-Full world (hydration calls it in M3). `simAct` calls `playerAct` and then rebuilds the `on_act` views
+Full world (hydration calls it: `simHydrate`, since the integration, D1052). `simAct` calls `playerAct` and then rebuilds the `on_act` views
 (account, notifications, markets). Record each applied action in `PlayerState.actions`. A notification
 that asks to pause calls `jobCtxNotify(ctx, id, fixed)`: the runner pauses with
 `{ kind: "Notification", id }` unless that fixed pause is switched off (a setting, outside the world);
