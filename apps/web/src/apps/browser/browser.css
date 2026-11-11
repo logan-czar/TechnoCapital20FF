@@ -1,0 +1,323 @@
+/* The browser (pivot 15.3; D1047): its home site is the Almanac, an encyclopedia of public facts.
+   Restrained identity: a sage accent, a serif face for articles, a small ruled masthead mark.
+   Every rule is under .br-root. The pages/ framework's pages inside it keep the apps' own palette
+   (styles.css). Container queries, not media queries: the window is what is narrow. */
+
+.br-root {
+  --br-accent: #8fd1ae;
+  --br-accent-dim: #4f7d68;
+  --br-paper: #12171a;
+  --br-line: #2a3a36;
+  --br-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  container-type: inline-size;
+  container-name: br;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--br-paper);
+  color: var(--text, #e6e8ee);
+}
+
+/* ------------------------------------------------------------ the bar */
+.br-root .br-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--panel, #161a22);
+  border-bottom: 1px solid var(--br-line);
+}
+.br-root .br-mark {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-family: var(--br-serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--br-accent);
+  border: 1px double var(--br-accent-dim);
+  border-radius: 2px;
+}
+.br-root .br-nav {
+  flex: none;
+  display: flex;
+  gap: 4px;
+}
+.br-root .br-nav button {
+  min-width: 28px;
+  padding: 3px 8px;
+}
+.br-root .br-nav button:disabled {
+  opacity: 0.4;
+}
+.br-root .br-address {
+  flex: 1 1 220px;
+  min-width: 0;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+  color: var(--br-accent);
+  background: #0d1214;
+  border: 1px solid var(--br-line);
+  border-radius: 3px;
+  padding: 4px 8px;
+}
+.br-root .br-address:focus {
+  outline: 1px solid var(--br-accent);
+}
+.br-root .br-search {
+  position: relative;
+  flex: 0 1 240px;
+  min-width: 120px;
+}
+.br-root .br-search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  background: #0d1214;
+  color: inherit;
+  border: 1px solid var(--br-line);
+  border-radius: 3px;
+}
+.br-root .br-suggest {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 2px);
+  right: 0;
+  left: 0;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  background: var(--panel-raised, #1e2430);
+  border: 1px solid var(--br-line);
+  border-radius: 3px;
+  min-width: 240px;
+}
+.br-root .br-suggest button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  color: inherit;
+}
+.br-root .br-suggest button:hover,
+.br-root .br-suggest button.on {
+  background: var(--hover, #2a3240);
+}
+.br-root .br-suggest-kind {
+  color: var(--muted, #8d98ae);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.br-root .br-suggest-none {
+  padding: 4px 6px;
+  color: var(--muted, #8d98ae);
+}
+
+/* Narrow: the address gets a row of its own. */
+@container br (max-width: 640px) {
+  .br-root .br-bar {
+    flex-wrap: wrap;
+  }
+  .br-root .br-mark {
+    display: none;
+  }
+  .br-root .br-address {
+    order: 3;
+    flex: 1 0 100%;
+  }
+  .br-root .br-search {
+    flex: 1 1 140px;
+  }
+}
+
+/* ------------------------------------------------------------ the page */
+.br-root .br-page {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 18px 24px;
+}
+.br-root .br-framework {
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------ an article */
+.br-root .br-article {
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: var(--br-serif);
+}
+.br-root .br-article-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding-bottom: 6px;
+  border-bottom: 3px double var(--br-accent-dim);
+}
+.br-root .br-title {
+  margin: 0;
+  font-size: 1.9em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.br-root .br-kind {
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--br-accent);
+}
+.br-root .br-body {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 10px;
+}
+.br-root .br-main {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.br-root .br-lead {
+  font-size: 1.1em;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+.br-root .br-infobox {
+  flex: 0 0 260px;
+  padding: 8px 12px;
+  background: var(--panel, #161a22);
+  border: 1px solid var(--br-line);
+  border-top: 2px solid var(--br-accent);
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 0.9em;
+}
+.br-root .br-infobox dl {
+  margin: 0;
+}
+.br-root .br-fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--br-line);
+}
+.br-root .br-fact:last-child {
+  border-bottom: none;
+}
+.br-root .br-fact dt {
+  color: var(--muted, #8d98ae);
+}
+.br-root .br-fact dd {
+  margin: 0;
+  text-align: right;
+}
+.br-root .br-section h2 {
+  margin: 18px 0 6px;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--br-accent);
+  border-bottom: 1px solid var(--br-line);
+}
+.br-root .br-section p {
+  margin: 6px 0;
+  line-height: 1.45;
+}
+.br-root .br-muted {
+  color: var(--muted, #8d98ae);
+}
+.br-root .br-list {
+  margin: 6px 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+.br-root .br-elsewhere {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid var(--br-line);
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 0.85em;
+  color: var(--muted, #8d98ae);
+}
+
+/* Links: buttons that look like links; a link to another app is dotted. */
+.br-root .br-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--link, #8ec5ff);
+  cursor: pointer;
+  text-align: inherit;
+}
+.br-root .br-link.br-party {
+  color: var(--party, var(--link, #8ec5ff));
+}
+.br-root .br-link.br-out {
+  text-decoration: underline dotted;
+}
+.br-root .br-link:hover,
+.br-root .br-link:focus-visible {
+  text-decoration: underline;
+}
+
+/* Tables */
+.br-root .br-table-wrap {
+  overflow-x: auto;
+  margin: 6px 0;
+}
+.br-root .br-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 0.88em;
+}
+.br-root .br-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--muted, #8d98ae);
+  padding: 4px 10px 4px 6px;
+  border-bottom: 1px solid var(--br-line);
+  white-space: nowrap;
+}
+.br-root .br-table td {
+  padding: 3px 10px 3px 6px;
+  border-bottom: 1px solid rgb(42 58 54 / 45%);
+  vertical-align: top;
+}
+.br-root .br-table tbody tr:hover {
+  background: rgb(143 209 174 / 6%);
+}
+.br-root .br-more {
+  margin-top: 6px;
+}
+
+.br-root .br-error {
+  color: var(--amber, #ffb000);
+  padding: 12px;
+}
+
+/* Narrow: the infobox goes above the text and a table's cells stack their labels. */
+@container br (max-width: 760px) {
+  .br-root .br-body {
+    flex-direction: column;
+  }
+  .br-root .br-infobox {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .br-root .br-page {
+    padding: 10px 10px 20px;
+  }
+}
