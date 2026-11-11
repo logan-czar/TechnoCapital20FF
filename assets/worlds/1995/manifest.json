@@ -15,7 +15,9 @@
     "company-start": 300,
     "startup-events": 0,
     "politics-usa": 51,
-    "politics-usa-offices": 30
+    "politics-usa-offices": 30,
+    "counties": 3142,
+    "county-adjacency": 18582
   },
   "base_rate": 0.05,
   "neutral_rate": 0.05,
@@ -25,6 +27,7 @@
     "era": true,
     "ai_boom": false,
     "fixed_events": false,
-    "arrowhead": false
+    "arrowhead": false,
+    "counties": true
   }
 }

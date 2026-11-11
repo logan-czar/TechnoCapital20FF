@@ -83,12 +83,13 @@ describe("county files", () => {
 
   it("manifest.json may set features.counties; absent is false", () => {
     const text = readFileSync(join(worldDataDir("1995"), "manifest.json"), "utf8");
-    const plain = parseManifest(text);
-    expect(plain.ok && plain.value.features.counties).toBe(false);
-    const json = JSON.parse(text) as { features: Record<string, unknown> };
-    json.features.counties = true;
-    const on = parseManifest(JSON.stringify(json));
+    // The 1995 world has had its counties since lane S1 (tools/world-1995/counties).
+    const on = parseManifest(text);
     expect(on.ok && on.value.features.counties).toBe(true);
+    const json = JSON.parse(text) as { features: Record<string, unknown> };
+    delete json.features.counties;
+    const plain = parseManifest(JSON.stringify(json));
+    expect(plain.ok && plain.value.features.counties).toBe(false);
     json.features.counties = "yes";
     expect(parseManifest(JSON.stringify(json))).toMatchObject({
       ok: false,
