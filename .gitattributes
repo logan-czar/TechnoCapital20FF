@@ -20,3 +20,4 @@ test/fixtures/** text eol=lf
 # The generated 1995 world; tools/world-1995/gen.py writes LF, so a rerun shows no change.
 assets/worlds/**/*.csv text eol=lf
 assets/worlds/**/*.json text eol=lf
+docs/build/decisions.md merge=union
