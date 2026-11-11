@@ -6,7 +6,7 @@
 # whose data or generator changed.
 #
 #   scripts/check-fast.ps1                     detect from git
-#   scripts/check-fast.ps1 sim web             these Vitest projects (sim-data sim headless web mapgen)
+#   scripts/check-fast.ps1 sim web             these Vitest projects (sim-data sim sim-host headless web desktop mapgen)
 #   scripts/check-fast.ps1 packages/sim/test/rng.test.ts    these test files (slow ones included)
 #   scripts/check-fast.ps1 all                 every project
 #   scripts/check-fast.ps1 none                no tests
@@ -22,7 +22,7 @@ function Step($name, [scriptblock]$body) {
 }
 function Skip($name, $why) { Write-Host "`n== $name (skipped: $why)" }
 
-$AllProjects = @('sim-data', 'sim', 'headless', 'web', 'mapgen')
+$AllProjects = @('sim-data', 'sim', 'sim-host', 'headless', 'web', 'desktop', 'mapgen')
 $MaxBiomeFiles = 200 # past this the command line gets long; check the whole tree instead
 
 # git writes "not a valid object name" to stderr when main is missing; that is not an error here.
@@ -41,14 +41,16 @@ if ($base) {
 function Has($pattern) { return [bool]($changed | Where-Object { $_ -match $pattern }) }
 
 # Which Vitest projects a path can reach: a package and everything that depends on it
-# (sim-data <- sim <- headless, web; mapgen stands alone). World data, map data and the soak
+# (sim-data <- sim <- sim-host <- web, desktop; sim <- headless; mapgen stands alone). World data, map data and the soak
 # fixtures are read by tests in every project; the root configs steer them all.
 $projects = New-Object System.Collections.Generic.List[string]
 function Add($names) { foreach ($p in $names) { if (-not $projects.Contains($p)) { $projects.Add($p) } } }
-if (Has '^packages/sim-data/') { Add @('sim-data', 'sim', 'headless', 'web') }
-if (Has '^packages/sim/') { Add @('sim', 'headless', 'web') }
+if (Has '^packages/sim-data/') { Add @('sim-data', 'sim', 'sim-host', 'headless', 'web', 'desktop') }
+if (Has '^packages/sim/') { Add @('sim', 'sim-host', 'headless', 'web') }
+if (Has '^packages/sim-host/') { Add @('sim-host', 'web', 'desktop') }
 if (Has '^apps/headless/') { Add @('headless') }
 if (Has '^apps/web/') { Add @('web') }
+if (Has '^apps/desktop/') { Add @('desktop') }
 if (Has '^apps/mapgen/') { Add @('mapgen') }
 if (Has '^(assets/|docs/design/data/|test/fixtures/)') { Add $AllProjects }
 if (Has '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts|tsconfig[^/]*\.json)$') {

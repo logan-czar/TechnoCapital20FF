@@ -7,9 +7,9 @@ import { FRAME_MS, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
 import { loadWorld } from "@tc20ff/sim-data/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { CATCH_UP_TICKS, RealHost } from "../src/sim/real/host.ts";
-import { WorkerLoop } from "../src/sim/real/loop.ts";
-import { worldMini } from "./world-mini.ts";
+import { CATCH_UP_TICKS, RealHost } from "../src/host.ts";
+import { WorkerLoop } from "../src/loop.ts";
+import { worldMini } from "../../sim/test/common/world_mini.ts";
 
 let data: WorldData;
 beforeAll(() => {

@@ -7,7 +7,7 @@
 # whose data or generator changed.
 #
 #   scripts/check-fast.sh                     detect from git
-#   scripts/check-fast.sh sim web             these Vitest projects (sim-data sim headless web mapgen)
+#   scripts/check-fast.sh sim web             these Vitest projects (sim-data sim sim-host headless web desktop mapgen)
 #   scripts/check-fast.sh packages/sim/test/rng.test.ts    these test files (slow ones included)
 #   scripts/check-fast.sh all                 every project
 #   scripts/check-fast.sh none                no tests
@@ -21,7 +21,7 @@ PY=python3; command -v python3 >/dev/null 2>&1 || PY=python
 step() { echo; echo "== $1"; }
 skip() { echo; echo "== $1 (skipped: $2)"; }
 
-ALL_PROJECTS="sim-data sim headless web mapgen"
+ALL_PROJECTS="sim-data sim sim-host headless web desktop mapgen"
 MAX_BIOME_FILES=200 # past this the command line gets long; check the whole tree instead
 
 base="${CHECK_FAST_BASE:-$(git merge-base HEAD main 2>/dev/null || git merge-base HEAD origin/main 2>/dev/null || true)}"
@@ -34,14 +34,16 @@ fi
 has() { echo "$changed" | grep -qE "$1"; }
 
 # Which Vitest projects a path can reach: a package and everything that depends on it
-# (sim-data <- sim <- headless, web; mapgen stands alone). World data, map data and the soak
+# (sim-data <- sim <- sim-host <- web, desktop; sim <- headless; mapgen stands alone). World data, map data and the soak
 # fixtures are read by tests in every project; the root configs steer them all.
 projects=""
 add() { for p in "$@"; do case " $projects " in *" $p "*) ;; *) projects="$projects $p" ;; esac; done; }
-if has '^packages/sim-data/'; then add sim-data sim headless web; fi
-if has '^packages/sim/'; then add sim headless web; fi
+if has '^packages/sim-data/'; then add sim-data sim sim-host headless web desktop; fi
+if has '^packages/sim/'; then add sim sim-host headless web; fi
+if has '^packages/sim-host/'; then add sim-host web desktop; fi
 if has '^apps/headless/'; then add headless; fi
 if has '^apps/web/'; then add web; fi
+if has '^apps/desktop/'; then add desktop; fi
 if has '^apps/mapgen/'; then add mapgen; fi
 if has '^(assets/|docs/design/data/|test/fixtures/)'; then add $ALL_PROJECTS; fi
 if has '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts|tsconfig[^/]*\.json)$'; then
@@ -56,7 +58,7 @@ if [ $# -gt 0 ]; then
     case "$a" in
       all) add $ALL_PROJECTS ;;
       none) ;;
-      sim-data|sim|headless|web|mapgen) add "$a" ;;
+      sim-data|sim|sim-host|headless|web|desktop|mapgen) add "$a" ;;
       *) paths+=("$a") ;;
     esac
   done

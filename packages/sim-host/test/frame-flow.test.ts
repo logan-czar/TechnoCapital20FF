@@ -6,7 +6,7 @@ import { barRows, MAX_SPEED, priceBarsApply } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
 import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
-import { RealHost } from "../src/sim/real/host.ts";
+import { RealHost } from "../src/host.ts";
 
 let data: WorldData;
 beforeAll(() => {

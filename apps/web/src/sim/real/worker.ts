@@ -1,6 +1,7 @@
 // The real sim as a Web Worker: fetches the starting CSVs and the map CSVs (served by the Vite
 // plugin, exactly the files WORLD_FILES and MAP_FILES name), parses them with sim-data's pure core,
-// then speaks the protocol through a RealHost (host.ts) driven by a WorkerLoop (loop.ts).
+// then speaks the protocol through a RealHost driven by a WorkerLoop (both packages/sim-host, which
+// the Electron sim process runs too: apps/desktop/src/sim/entry.ts loads the same files from disk).
 
 import type { ToSim } from "@tc20ff/sim";
 import {
@@ -18,9 +19,8 @@ import {
   type WorldData,
   type WorldManifest,
 } from "@tc20ff/sim-data";
+import { RealHost, WorkerLoop } from "@tc20ff/sim-host";
 import { knownWorld, worldDataBase } from "../world.ts";
-import { RealHost } from "./host.ts";
-import { WorkerLoop } from "./loop.ts";
 
 /** A text file the plugin serves, or null when it is not there (the SPA fallback is HTML). */
 async function fetchText(url: string): Promise<string | null> {

@@ -1,0 +1,19 @@
+{
+  "name": "@tc20ff/sim-host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The sim's host: answers the protocol and paces the clock, in a Web Worker or a Node process (pivot 15.1).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./bridge": "./src/bridge.ts",
+    "./node": "./src/node.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tc20ff/sim": "workspace:*",
+    "@tc20ff/sim-data": "workspace:*"
+  }
+}
