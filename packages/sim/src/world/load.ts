@@ -664,17 +664,10 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     industryRows.map((i) => i.name),
   );
   if (!births.ok) throw badValue("startup-events", "", births.error);
-  // pivot 4.1: with `features.usa_only` a startup's headquarters is drawn in the USA only, so no
-  // foreign company is born during play. The other countries, zones and provinces stay as rows.
-  if (usaOnly) {
-    const usa = countryKeys.map.get(POLITICS_COUNTRY_KEY);
-    const sites = births.value.sites;
-    provinces.forEach((p, id) => {
-      if (p.country === usa) return;
-      sites.weight[id] = 0.0;
-      sites.hq_weight[id] = 0.0;
-    });
-  }
+  // pivot 4.1, 4.2 (D1038): with `features.usa_only` a startup's headquarters is still drawn over
+  // every country by the uncut world's weights, so the USA gets the share of the startups it would
+  // have had; one drawn abroad is not born but joins its industry's rest-of-world block
+  // (`births/jobs.ts` `startupToRowBlock`). The other countries, zones and provinces stay as rows.
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
   // Counties (pivot 5.1), for a world that has the file.

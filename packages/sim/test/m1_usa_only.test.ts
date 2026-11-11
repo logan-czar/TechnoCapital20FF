@@ -1,23 +1,25 @@
-// The USA cut and the rest-of-world block (pivot 4.1, 4.2; lane S3), behind `features.usa_only`,
-// which no shipped manifest sets: a flagged 1995 world keeps only its US companies, each industry's
-// supply at load is what it was with the foreign ones present, startups are born in the USA only,
-// and the world runs. Not a Rust test.
+// The USA cut and the rest-of-world block (pivot 4.1, 4.2; lane S3, D1034, D1038), behind
+// `features.usa_only`, which the 1995 manifest sets: a flagged 1995 world keeps only its US
+// companies, each industry's supply at load is what it was with the foreign ones present, a startup
+// drawn abroad joins the block instead of being born, and the world runs. Not a Rust test.
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseManifest } from "@tc20ff/sim-data";
 import { worldDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
-import { nextCompanyNumber } from "../src/births/jobs.ts";
+import { bornAbroad, nextCompanyNumber, startupToRowBlock } from "../src/births/jobs.ts";
+import { FRINGE_REVENUE_CAP_SHARE } from "../src/births/startup.ts";
+import { setSupply, worldHasRowBlock } from "../src/economy/supply.ts";
 import { leversApply } from "../src/governing/levers.ts";
 import { type Sim, simNew, simRunUntil, simViews, simWorld } from "../src/lib.ts";
-import type { IndustryId } from "../src/types/ids.ts";
+import type { IndustryId, ProvinceId } from "../src/types/ids.ts";
 import type { World } from "../src/types/world.ts";
 import { data1995, unwrap } from "./common/index.ts";
-import { notFinite, usaOnly1995 } from "./common/usa_only.ts";
+import { notFinite, usaOnly1995, whole1995 } from "./common/usa_only.ts";
 
 const flagged = (seed: number): Sim => unwrap(simNew(usaOnly1995(), seed), "flagged 1995 world");
-const whole = (seed: number): Sim => unwrap(simNew(data1995(), seed), "1995 world");
+const whole = (seed: number): Sim => unwrap(simNew(whole1995(), seed), "uncut 1995 world");
 
 describe("features.usa_only in manifest.json", () => {
   const text = readFileSync(join(worldDataDir("1995"), "manifest.json"), "utf8");
@@ -27,9 +29,12 @@ describe("features.usa_only in manifest.json", () => {
     return JSON.stringify(m);
   };
 
-  it("is false when absent, and no shipped world sets it", () => {
-    expect(unwrap(parseManifest(text)).features.usa_only).toBe(false);
-    expect(text).not.toContain("usa_only");
+  it("is set by the 1995 world (D1038), and false when absent", () => {
+    expect(unwrap(parseManifest(text)).features.usa_only).toBe(true);
+    expect(data1995().manifest.features.usa_only).toBe(true);
+    const m = JSON.parse(text) as { features: Record<string, unknown> };
+    delete m.features.usa_only;
+    expect(unwrap(parseManifest(JSON.stringify(m))).features.usa_only).toBe(false);
   });
 
   it("reads a boolean and refuses anything else", () => {
@@ -96,16 +101,49 @@ describe("a 1995 world cut to the USA (pivot 4.1, 4.2)", () => {
     expect(all.industries.every((i) => i.row_assets === 0)).toBe(true);
   });
 
-  it("draws startup headquarters in the USA only", () => {
+  it("keeps every country's startup weights, so the USA draws its uncut share (D1038)", () => {
     const w = simWorld(flagged(1));
+    const all = simWorld(whole(1));
+    expect(w.births.sites.weight).toEqual(all.births.sites.weight);
+    expect(w.births.sites.hq_weight).toEqual(all.births.sites.hq_weight);
     const usa = w.politics.country;
     let home = 0;
+    let abroad = 0;
     w.provinces.forEach((p, id) => {
-      const weight = (w.births.sites.weight[id] as number) + (w.births.sites.hq_weight[id] as number);
+      const weight = w.births.sites.hq_weight[id] as number;
       if (p.country === usa) home += weight;
-      else expect(weight).toBe(0);
+      else abroad += weight;
+      expect(bornAbroad(w, id as ProvinceId)).toBe(p.country !== usa);
     });
     expect(home).toBeGreaterThan(0);
+    expect(abroad).toBeGreaterThan(0);
+    // The cut is what makes a block; the uncut world has none and births every startup.
+    expect(worldHasRowBlock(w)).toBe(true);
+    expect(worldHasRowBlock(all)).toBe(false);
+  });
+
+  it("puts a startup drawn abroad in the rest-of-world block, carved from the fringe (D1038)", () => {
+    const w = simWorld(flagged(2));
+    const id = w.industries.findIndex((i) => i.row_assets > 0 && i.fringe_assets > 0);
+    const ind = w.industries[id] as World["industries"][number];
+    const abroad = w.provinces.findIndex((p) => p.country !== w.politics.country) as ProvinceId;
+    const fringe = ind.fringe_assets;
+    const row = ind.row_assets;
+    const supply = ind.supply;
+    const companies = w.companies.length;
+    const draft = { industry: id as IndustryId, hq: abroad, target_revenue_usd: 20e6, partial: 2 };
+    startupToRowBlock(w, draft);
+    const revenue = Math.min(20e6, FRINGE_REVENUE_CAP_SHARE * fringe * ind.params.asset_turnover);
+    const gross = revenue * ind.params.capital_per_dollar;
+    expect(ind.fringe_assets).toBeCloseTo(fringe - gross, 3);
+    expect(ind.row_assets).toBeCloseTo(row + gross, 3);
+    expect(w.companies.length).toBe(companies);
+    // Supply moves from the fringe to the block: the industry's total is unchanged.
+    setSupply(w);
+    expect(Math.abs(ind.supply - supply)).toBeLessThanOrEqual(1e-9 * supply);
+    // One under $1M is skipped, as `birth` skips it.
+    startupToRowBlock(w, { ...draft, target_revenue_usd: 0.5e6 });
+    expect(ind.row_assets).toBeCloseTo(row + gross, 3);
   });
 
   it("gives a born company a key no kept company holds", () => {
@@ -129,14 +167,19 @@ describe("a 1995 world cut to the USA (pivot 4.1, 4.2)", () => {
     expect(w.companies.length).toBeGreaterThan(loaded);
     expect(w.companies.every((c) => c.hq_country === usa)).toBe(true);
     expect(new Set(w.companies.map((c) => c.key)).size).toBe(w.companies.length);
-    // The blocks moved on their industries' long-term rates (one with a rate of 0 stands still),
-    // and an industry with none still has none.
+    // The blocks moved on their industries' long-term rates (one with a rate of 0 stands still) and
+    // took the startups drawn abroad; an industry with none at load gets one only from those
+    // (D1038), as seed 1 does in two years.
     let grew = 0;
+    let made = 0;
     w.industries.forEach((ind, id) => {
-      if ((block[id] as number) === 0) expect(ind.row_assets).toBe(0);
-      else if (ind.row_assets > (block[id] as number)) grew += 1;
+      expect(ind.row_assets).toBeGreaterThanOrEqual(0);
+      if ((block[id] as number) === 0) {
+        if (ind.row_assets > 0) made += 1;
+      } else if (ind.row_assets > (block[id] as number)) grew += 1;
     });
     expect(grew).toBeGreaterThan(10);
+    expect(made).toBeGreaterThan(0);
     expect(notFinite({ ...w, name_books: null })).toEqual([]);
     expect(notFinite(simViews(sim))).toEqual([]);
   }, 300_000);

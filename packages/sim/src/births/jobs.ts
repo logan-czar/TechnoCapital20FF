@@ -12,6 +12,7 @@
 // (prices stream, D140, D150).
 
 import { quarterIndex } from "../economy/ai_boom.ts";
+import { rowAssetsOfStartup, worldHasRowBlock } from "../economy/supply.ts";
 import { eraAssignFounder } from "../era/characters.ts";
 import { eraSectorDormant } from "../era/jobs.ts";
 import { balanceSheet } from "../finance/balance.ts";
@@ -88,7 +89,7 @@ import {
   RANDOM_EVENTS_MEAN,
   type StartupDraft,
 } from "./random.ts";
-import { buildStartup, fringeRevenue, sizedRevenue } from "./startup.ts";
+import { buildStartup, carve, fringeRevenue, sizedRevenue } from "./startup.ts";
 import { birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
 import { hqWeight, industryWeight, weightedPick } from "./weights.ts";
 
@@ -409,6 +410,35 @@ function castHolder(
 }
 
 /**
+ * Whether a startup headquartered in `hq` is foreign to a world cut to the USA (pivot 4.1): its
+ * province is in another country than the politics country, the USA (D980).
+ */
+export function bornAbroad(world: World, hq: ProvinceId): boolean {
+  return (world.provinces[hq] as World["provinces"][number]).country !== world.politics.country;
+}
+
+/**
+ * A startup drawn abroad in a world cut to the USA (pivot 4.2; D1038): it is sized and carved as
+ * `birth` would (spec 5.19.3: the target capped at its share of the fringe's revenue, skipped under
+ * $1M, `revenue × capital_per_dollar` out of the fringe), and the carved assets join the industry's
+ * rest-of-world block. So the USA gets the startups the uncut world would have placed there, by the
+ * same HQ weights (1995-rework 6.4: each country by its GDP), and the foreign ones still take their
+ * share of the market. No draw, company, event or headline.
+ */
+export function startupToRowBlock(world: World, draft: StartupDraft): void {
+  const ind = world.industries[draft.industry] as Industry;
+  const revenue = sizedRevenue(
+    draft.target_revenue_usd,
+    fringeRevenue(ind.fringe_assets, ind.params.asset_turnover),
+    draft.fringe_cap_share,
+  );
+  if (revenue === null) return;
+  const c = carve(revenue, ind.params.capital_per_dollar, ind.fringe_assets);
+  ind.fringe_assets = c.fringe_assets_after;
+  ind.row_assets += rowAssetsOfStartup(c.gross_assets);
+}
+
+/**
  * Builds an event's startups in draft order and logs the event (spec 3.1 `startup_events`).
  * Returns the event's id and the companies made; an event whose every startup the cap skipped is
  * not logged (D154).
@@ -417,7 +447,14 @@ function fireEvent(world: World, ctx: JobCtx, draft: EventDraft): [StartupEventI
   const date = ctx.facts.date;
   const event = world.births.events.length as StartupEventId;
   const made: CompanyId[] = [];
+  const cut = worldHasRowBlock(world);
   for (const s of draft.startups) {
+    // pivot 4.1, 4.2 (D1038): in a world cut to the USA a startup drawn abroad is not born; what it
+    // would have carved from the fringe joins the rest-of-world block.
+    if (cut && bornAbroad(world, s.hq)) {
+      startupToRowBlock(world, s);
+      continue;
+    }
     const id = birth(world, ctx.draws, s, event, date);
     if (id !== null) {
       made.push(id);
