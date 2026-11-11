@@ -245,6 +245,9 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  /* Its own stacking context, under the resize handles: an app's layers never cover a handle. */
+  isolation: isolate;
+  z-index: 0;
 }
 .os .os-window-loading,
 .os .os-window-fault {
@@ -262,6 +265,7 @@
 /* The resize handles straddle the frame: mostly outside it, so an app's scroll bars stay usable. */
 .os .os-edge {
   position: absolute;
+  z-index: 1;
   touch-action: none;
 }
 .os .os-edge-n,

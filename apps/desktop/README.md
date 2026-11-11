@@ -70,6 +70,7 @@ Every flag is `--name` or `--name=value`. A flag that cannot be read falls back 
 | `--world=<id>` | `1995` (the default) or `2020`. |
 | `--test-hooks` | The page puts its `SimClient` on `window.__tcSim`. |
 | `--hidden` | Does not show the window. |
+| `--background` | Shows the window off the screen and without taking focus, so a test run never comes to the front. It still draws frames, unlike `--hidden`. The end-to-end tests and `drive.ts` pass it; set `TC_E2E_SHOW=1` to watch a run. |
 | `--smoke=<out.json>` | Runs the smoke run below, writes its report to the file, and exits 0, or 1 on failure. Implies `--test-hooks`. |
 | `--smoke-frames=N` | Frames the smoke run waits for. The default is 30; 0 reports the game as it stands without ticking. |
 | `--smoke-save-slot=<name>` | The smoke run saves to this slot before it reports. |
@@ -126,7 +127,7 @@ From the repository root:
 | `corepack pnpm@10.20.0 e2e` | Everything: `@smoke`, the screenshot checks `@visual`, and the real-sim suite `@real`. It takes the machine lock (`scripts/heavy`), because it launches the real sim. |
 | `corepack pnpm@10.20.0 e2e -- --visual` | One suite: `--smoke`, `--visual` or `--real`. Anything else goes to Playwright: `--update-snapshots`, `--repeat-each 3`, `-g "phone"`. |
 
-Each test launches its own app with `--user-data-dir=<a fresh folder under apps/desktop/.scratch/e2e/ud> --window-size=1600x900 --force-device-scale-factor=1 --test-hooks`, plus `--mock` for the smoke and screenshot suites. One worker runs them in turn. The window is shown: a `--hidden` window draws no frames by itself, so a click waits about 1.5 s and a screenshot can time out. A test's app is closed when the test ends, the process tree is killed if the close hangs, and the run fails if any process of it is still alive at the end. A failed test leaves its user-data folder, and Playwright's report of it, under `apps/desktop/.scratch/e2e`.
+Each test launches its own app with `--user-data-dir=<a fresh folder under apps/desktop/.scratch/e2e/ud> --window-size=1600x900 --force-device-scale-factor=1 --test-hooks`, plus `--mock` for the smoke and screenshot suites. One worker runs them in turn. The window is shown off the screen and without focus (`--background`), so a run never comes to the front; `TC_E2E_SHOW=1` shows it. A `--hidden` window is not used: it draws no frames by itself, so a click waits about 1.5 s and a screenshot can time out. A test's app is closed when the test ends, the process tree is killed if the close hangs, and the run fails if any process of it is still alive at the end. A failed test leaves its user-data folder, and Playwright's report of it, under `apps/desktop/.scratch/e2e`.
 
 | Suite | File | What it checks |
 |---|---|---|

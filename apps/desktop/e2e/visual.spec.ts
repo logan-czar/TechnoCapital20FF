@@ -1,5 +1,5 @@
 // Screenshot checks (tag @visual; part of `pnpm e2e`, not of the smoke suite): what the shell
-// looks like on a mock game that has not moved (paused at hour 0, so the clock and the wallpaper's
+// looks like on a mock game that has not moved (paused at its first hour, so the clock and the wallpaper's
 // orrery are always the same), with animations off. The baselines are in __screenshots__, one set
 // per platform; `pnpm e2e -- --visual --update-snapshots` writes them again after a change that is
 // meant to be seen.
@@ -13,7 +13,7 @@ const visual = { tag: "@visual" };
 test("the empty desktop", visual, async ({ game }) => {
   const page = await game.launch();
   await desktop(page);
-  expect(await sim<number>(page, "sim.clock.now")).toBe(0);
+  expect(await sim<number>(page, "sim.clock.now")).toBe(7032);
   await expect(page).toHaveScreenshot("desktop.png");
 });
 

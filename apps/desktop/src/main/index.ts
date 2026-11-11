@@ -169,12 +169,23 @@ function tcFlags(): TcFlags {
   };
 }
 
+/** Where a `--background` window sits: far off any screen, so it is drawn but never seen. */
+const OFF_SCREEN = { x: -32000, y: -32000 };
+if (flags.background) {
+  // A window nobody can see must still draw: stop Chromium treating it as covered or idle.
+  app.commandLine.appendSwitch("disable-features", "CalculateNativeWinOcclusion");
+  app.commandLine.appendSwitch("disable-backgrounding-occluded-windows");
+  app.commandLine.appendSwitch("disable-renderer-backgrounding");
+}
+
 function createWindow(): BrowserWindow {
   const size = flags.windowSize ?? WINDOW_SIZE;
   const win = new BrowserWindow({
     ...size,
     useContentSize: true,
-    show: !flags.hidden,
+    // A background window is shown later, without focus (below).
+    show: !flags.hidden && !flags.background,
+    ...(flags.background ? { ...OFF_SCREEN, skipTaskbar: true } : {}),
     backgroundColor: "#000000",
     autoHideMenuBar: true,
     webPreferences: {
@@ -194,6 +205,10 @@ function createWindow(): BrowserWindow {
   });
   win.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
   void win.loadURL(pageUrl());
+  if (flags.background && !flags.hidden) {
+    win.setPosition(OFF_SCREEN.x, OFF_SCREEN.y);
+    win.showInactive();
+  }
   return win;
 }
 

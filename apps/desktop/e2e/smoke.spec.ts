@@ -2,8 +2,9 @@
 // player would with a real pointer and keyboard. Each test launches its own app. The whole suite is
 // meant to stay under a minute (apps/desktop/README.md "End-to-end tests").
 //
-// The mock plays the 2020 world: it starts by itself, paused at 00:00 on Wed 1 Jan 2020 (hour 0),
-// and its first alert (earnings day) pauses it at hour 24.
+// The mock plays its election-year world (apps/web/src/sim/mock/README.md): it starts by itself,
+// paused at 00:00 on Tue 20 Oct 2020 (hour START), and its first scripted pause is at 14:00 on
+// 23 Oct (a resignation).
 
 import type { Page } from "@playwright/test";
 import { dragPointer } from "../scripts/drive.ts";
@@ -19,13 +20,15 @@ const GRIP = { x: 120, y: 14 };
 const HANDLE_MIDDLE = null;
 /**
  * A point of a bottom corner handle outside the window's frame (the handle is 15 px square and
- * sticks out 5 px, os.css). The part inside the frame cannot be pressed: see the known fault below.
+ * sticks out 5 px, os.css).
  */
 const HANDLE_OUTSIDE = { x: 12, y: 12 };
 /** A point of a handle inside the window's frame. */
 const HANDLE_INSIDE = { x: 4, y: 4 };
-/** The mock's first pausing alert: 00:00 on 2 Jan 2020. */
-const FIRST_ALERT_HOUR = 24;
+/** The mock's first hour: 00:00 on 20 Oct 2020, in hours since 2020-01-01. */
+const START = 7032;
+/** The mock's first scripted pause: 14:00 on 23 Oct 2020. */
+const FIRST_ALERT_HOUR = START + 86;
 /** A speed with a game hour every 0.2 s (SECONDS_PER_HOUR[3]): quick, and well short of the alert. */
 const WATCHED_SPEED = 4;
 
@@ -35,7 +38,7 @@ test("boots to the desktop, paused", smoke, async ({ game }) => {
   await expect(page.getByTestId("app-debug")).toBeVisible();
   await expect(page.getByTestId("tb-launcher")).toBeVisible();
   await expect(page.getByTestId("tb-clock")).toContainText("00:00");
-  await expect(page.getByTestId("tb-clock")).toContainText("Wed 01 Jan 2020");
+  await expect(page.getByTestId("tb-clock")).toContainText("Tue 20 Oct 2020");
   await expect(page.getByTestId("tb-pause")).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByTestId("phone")).toBeHidden();
   expect(await page.evaluate(() => ({ w: innerWidth, h: innerHeight, scale: devicePixelRatio }))).toEqual({
@@ -188,12 +191,9 @@ test("a real pointer resizes, drags and snaps a window", smoke, async ({ game })
   await expect(win).toHaveAttribute("data-state", "normal");
 });
 
-test("KNOWN FAULT: a bottom resize handle cannot be pressed inside the frame", smoke, async ({ game }) => {
-  // The app's content is drawn over the part of the s, se and sw handles that lies inside the
-  // window (the Debug workspace's panes have their own stacking), so only the 5 px outside the frame
-  // take a press; and a window that touches the taskbar, as this one does when it opens, cannot be
-  // resized from its bottom at all. When the shell fixes it this test passes: delete `test.fail`.
-  test.fail();
+test("a bottom resize handle can be pressed inside the frame", smoke, async ({ game }) => {
+  // The handles sit above the app's content (os.css), so a window that touches the taskbar, as this
+  // one does when it opens, can still be resized from its bottom.
   const page = await game.launch();
   await desktop(page);
   await openDebug(page);
@@ -208,18 +208,18 @@ test("pause, resume and step move the taskbar clock", smoke, async ({ game }) =>
   const pause = page.getByTestId("tb-pause");
   const now = () => sim<number>(page, "sim.clock.now");
   await expect(clock).toContainText("00:00");
-  expect(await now()).toBe(0);
+  expect(await now()).toBe(START);
 
   // Step runs one game hour and leaves the game paused.
   await page.getByTestId("tb-step").click();
   await expect(clock).toContainText("01:00");
-  expect(await now()).toBe(1);
+  expect(await now()).toBe(START + 1);
   await expect(pause).toHaveAttribute("aria-pressed", "true");
   // The full stop is the step key.
   await page.getByTestId("desktop").press(".");
   await expect(clock).toContainText("02:00");
-  expect(await now()).toBe(2);
-  await expect(clock).toContainText("Wed 01 Jan 2020");
+  expect(await now()).toBe(START + 2);
+  await expect(clock).toContainText("Tue 20 Oct 2020");
 
   // Picking a speed resumes; the clock runs until Pause.
   await page.getByTestId(`tb-speed-${WATCHED_SPEED}`).click();
@@ -243,7 +243,7 @@ test("pause, resume and step move the taskbar clock", smoke, async ({ game }) =>
 });
 
 test(
-  "the phone is raised and lowered, and shows a notification after the mock runs",
+  "the phone is raised and lowered, and the mock runs to its first scripted pause",
   smoke,
   async ({ game }) => {
     const page = await game.launch();
@@ -264,14 +264,10 @@ test(
     await page.getByTestId("tb-speed-6").click();
     await expect.poll(() => sim<number>(page, "sim.clock.now")).toBe(FIRST_ALERT_HOUR);
     await expect(page.getByTestId("tb-pause")).toHaveAttribute("aria-pressed", "true");
-    // The button counts what has not been seen.
-    await expect(button).toHaveAttribute("aria-label", /^Phone, \d+ new$/);
-
+    // The mock's scripted pauses arrive as the player's own, which the phone leaves out until it
+    // reads v_notifications (M2): the count and the list are asserted then.
     await button.click();
-    await expect(page.getByTestId("phone-notifications").locator("li").first()).toBeVisible();
-    await expect(page.getByTestId("phone-notifications")).toContainText("Earnings day");
-    // Seen now.
-    await expect(button).toHaveAttribute("aria-label", "Phone");
+    await expect(phone).toBeVisible();
     await button.click();
     await expect(phone).toBeHidden();
   },
@@ -304,5 +300,5 @@ test("a relaunch keeps the window layout and the phone", smoke, async ({ game })
   await expect(page.getByTestId("debug-workspace")).toBeVisible();
   await expect(page.getByTestId("phone")).toBeVisible();
   // It is a new game all the same: the layout is the viewer's, not the save's.
-  expect(await sim<number>(page, "sim.clock.now")).toBe(0);
+  expect(await sim<number>(page, "sim.clock.now")).toBe(START);
 });

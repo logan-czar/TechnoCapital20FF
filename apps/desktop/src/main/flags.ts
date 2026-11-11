@@ -43,6 +43,12 @@ export interface Flags {
   devServer: string | null;
   /** `--hidden`: do not show the window (the smoke scripts pass it). */
   hidden: boolean;
+  /**
+   * `--background`: show the window off the screen and without taking focus, so a test run never
+   * comes to the front (the end-to-end tests and drive.ts pass it). Unlike `--hidden` it still
+   * draws frames, so clicks and screenshots stay fast.
+   */
+  background: boolean;
 }
 
 function count(v: string | undefined, fallback: number): number {
@@ -87,5 +93,6 @@ export function parseFlags(argv: readonly string[]): Flags {
     testHooks: given.has("test-hooks") || smoke !== null,
     devServer: text("dev-server"),
     hidden: given.has("hidden"),
+    background: given.has("background"),
   };
 }

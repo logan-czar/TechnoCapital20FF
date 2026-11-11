@@ -76,6 +76,8 @@ export async function launchApp(o: LaunchOptions): Promise<Launched> {
       `--window-size=${size.width}x${size.height}`,
       "--force-device-scale-factor=1",
       "--test-hooks",
+      // Off the screen and without focus, so a run never comes to the front. TC_E2E_SHOW=1 shows it.
+      ...(process.env.TC_E2E_SHOW === "1" ? [] : ["--background"]),
       ...(o.flags ?? []),
     ],
     env,
