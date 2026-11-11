@@ -1,0 +1,101 @@
+culture,family_first,kind,name
+arabic,N,male,Khalid
+arabic,N,male,Faisal
+arabic,N,male,Omar
+arabic,N,male,Hamad
+arabic,N,male,Nasser
+arabic,N,male,Yousef
+arabic,N,male,Saud
+arabic,N,male,Majid
+arabic,N,male,Rashid
+arabic,N,male,Hisham
+arabic,N,male,Karim
+arabic,N,male,Ziad
+arabic,N,female,Noura
+arabic,N,female,Layla
+arabic,N,female,Mariam
+arabic,N,female,Huda
+arabic,N,female,Reem
+arabic,N,female,Dalia
+arabic,N,female,Salma
+arabic,N,female,Yasmin
+arabic,N,surname,Al-Qahtani
+arabic,N,surname,Al-Shamsi
+arabic,N,surname,Al-Nuaimi
+arabic,N,surname,Al-Mansouri
+arabic,N,surname,Haddadin
+arabic,N,surname,Al-Sabeeh
+arabic,N,surname,Al-Tamimi
+arabic,N,surname,Barakat
+arabic,N,surname,El-Sayed
+arabic,N,surname,Al-Ghurair-Nasr
+arabic,N,surname,Zaher
+arabic,N,surname,Al-Otaibi
+arabic,N,surname,Kassab
+arabic,N,company_prefix,Al Waha
+arabic,N,company_prefix,Ras Al Noor
+arabic,N,company_prefix,Sahara Gate
+arabic,N,company_prefix,Al Nakheel
+arabic,N,company_prefix,Rub Al Khali
+arabic,N,company_prefix,Dhow Harbor
+arabic,N,company_prefix,Al Falak
+arabic,N,company_prefix,Najm
+arabic,N,company_prefix,Wadi Fatima
+arabic,N,company_prefix,Al Jazira
+arabic,N,company_prefix,Qasr Al Bahr
+arabic,N,company_prefix,Al Burj
+arabic,N,company_prefix,Hormuz Gate
+arabic,N,company_prefix,Sidra
+arabic,N,company_prefix,Nile Delta
+arabic,N,company_prefix,Atlas Sun
+arabic,N,company_prefix,Al Rawda
+arabic,N,company_prefix,Bayt Al Hikma
+hebrew,N,male,Eitan
+hebrew,N,male,Yoav
+hebrew,N,male,Amir
+hebrew,N,male,Nadav
+hebrew,N,male,Gideon
+hebrew,N,male,Ronen
+hebrew,N,male,Avi
+hebrew,N,female,Tamar
+hebrew,N,female,Yael
+hebrew,N,female,Shira
+hebrew,N,female,Michal
+hebrew,N,female,Orly
+hebrew,N,female,Dafna
+hebrew,N,surname,Shamir-Katz
+hebrew,N,surname,Ben-Haim
+hebrew,N,surname,Rosenthal
+hebrew,N,surname,Golan
+hebrew,N,surname,Weissberg
+hebrew,N,surname,Mizrahi
+hebrew,N,surname,Avneri
+hebrew,N,company_prefix,Galil
+hebrew,N,company_prefix,Negev
+hebrew,N,company_prefix,Carmel
+hebrew,N,company_prefix,Yarden
+hebrew,N,company_prefix,Kinneret
+hebrew,N,company_prefix,Arava
+persian,N,male,Dariush
+persian,N,male,Kourosh
+persian,N,male,Babak
+persian,N,male,Ardeshir
+persian,N,male,Farhad
+persian,N,male,Kaveh
+persian,N,female,Shirin
+persian,N,female,Roxana
+persian,N,female,Parisa
+persian,N,female,Laleh
+persian,N,female,Mitra
+persian,N,surname,Farahani
+persian,N,surname,Mostofi
+persian,N,surname,Kashani
+persian,N,surname,Rafsanjani-Tehrani
+persian,N,surname,Amirzadeh
+persian,N,surname,Ghaffari
+persian,N,company_prefix,Alborz
+persian,N,company_prefix,Zagros
+persian,N,company_prefix,Persepolis
+persian,N,company_prefix,Simorgh
+persian,N,company_prefix,Caspian
+persian,N,company_prefix,Shirazi

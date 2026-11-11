@@ -21,6 +21,7 @@ import { profileOf } from "../economy/profiles.ts";
 import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
 import { seatEffectNow } from "../events/effects.ts";
+import { corpTaxRate } from "../governing/levers.ts";
 import { dataBookFreeRdFraction } from "../ops/data.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import {
@@ -263,7 +264,7 @@ export function runRate(world: World, c: Company): [Ledger, ImpliedRating, Credi
   l.line_fee = MONTHS_PER_YEAR * charges.undrawn_fee;
   l.interest_income = MONTHS_PER_YEAR * charges.cash_interest;
   const quarter_pti = ledgerPreTaxIncome(l) / QUARTERS_PER_YEAR_F64;
-  l.tax = QUARTERS_PER_YEAR_F64 * quarterTax(quarter_pti, 0.0, country.corp_tax_rate).tax;
+  l.tax = QUARTERS_PER_YEAR_F64 * quarterTax(quarter_pti, 0.0, corpTaxRate(world, c.hq_country)).tax;
   l.tax_paid = l.tax;
   l.asset_purchases = l.depreciation;
   return [l, start, line];
@@ -469,8 +470,8 @@ export function ledgerJob(world: World, ctx: JobCtx): void {
   const closed = monthPrev(simDateMonthOf(ctx.facts.date));
   const quarter_end = tickFactsIsQuarterStart(ctx.facts);
   for (let id = 0; id < world.companies.length; id++) {
-    const rate = (world.countries[(world.companies[id] as Company).hq_country] as World["countries"][number])
-      .corp_tax_rate;
+    // pivot 4.3 `corp_tax`: the lever for a US company, its country's rate elsewhere.
+    const rate = corpTaxRate(world, (world.companies[id] as Company).hq_country);
     const f = (world.companies[id] as Company).finance;
     if (!companyFinanceInGame(f)) continue;
     if (f.month_active) {

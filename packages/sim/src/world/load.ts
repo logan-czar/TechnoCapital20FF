@@ -25,9 +25,11 @@ import {
   sharedCostsAtLoadHook,
   startLoadout,
 } from "../economy/start.ts";
-import { fringeAssetsAtLoad } from "../economy/supply.ts";
+import { fringeAssetsAtLoad, rowAssetsAtLoad } from "../economy/supply.ts";
 import { ratingParse } from "../finance/rating.ts";
 import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
+import { geoStateEmpty, geoStateFromData } from "../geo/load.ts";
+import { leversNeutral } from "../governing/levers.ts";
 import { stockAtLoad } from "../market/state.ts";
 import { newsWireDefault } from "../news.ts";
 import { computeBill } from "../ops/compute.ts";
@@ -35,7 +37,7 @@ import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookSto
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
-import { politicsStateFromData } from "../politics/state.ts";
+import { POLITICS_COUNTRY_KEY, politicsStateFromData } from "../politics/state.ts";
 import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
@@ -465,6 +467,8 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       carry_reset: false,
       phase_label: "Normal",
       fringe_assets: 0.0,
+      // The rest-of-world block (pivot 4.2): set with the fringe, once the companies are read.
+      row_assets: 0.0,
       supply: 0.0,
       supply_ratio: 1.0,
       market_factor: 1.0,
@@ -487,14 +491,21 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
   // Companies (spec 3.5), joined with company-start.csv.
   const starts = new Map(data.company_start.rows.map((s) => [s.id, s] as const));
   const companyRows = sortedBy(data.companies.rows, (c) => c.id);
+  // pivot 4.1: with `features.usa_only`, only US-headquartered companies are simulated. The others
+  // leave here, and their supply joins each industry's rest-of-world block below (pivot 4.2; D1034).
+  const usaOnly = data.manifest.features.usa_only;
+  const kept = (c: CompanyRow): boolean => !usaOnly || c.hq_country === POLITICS_COUNTRY_KEY;
+  const removedCompanies = new Set(companyRows.filter((c) => !kept(c)).map((c) => c.id));
+  // Company ids are the ordinals of the companies kept.
   const companyKeys = new Keys<CompanyId>(
     "companies",
-    companyRows.map((c) => c.id),
+    companyRows.filter(kept).map((c) => c.id),
   );
   const companies: Company[] = [];
   const stocks: Stock[] = [];
   const units: BusinessUnit[] = [];
   const namedRevenue: number[] = industries.map(() => 0.0);
+  const rowAssets: number[] = industries.map(() => 0.0);
   for (const c of companyRows) {
     const bad = (message: string): LoadFailure => badValue("companies", c.id, message);
     const start = starts.get(c.id);
@@ -514,6 +525,16 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     // A world without Arrowhead reads its CO-0001 as any other company (1995-rework 3.2).
     const loadoutKey = data.manifest.features.arrowhead ? c.id : "";
     const loadout = deps.startLoadout(loadoutKey, revenue, locationBonus, params);
+    if (!kept(c)) {
+      // pivot 4.2: a removed company's revenue still counts as named above, so the fringe is the
+      // size it was with the company present, and its one unit's supply at load (assets at
+      // productivity 100 plus the loadout's PC bonus) goes to the industry's rest-of-world block.
+      // Total supply at load is then what it was before the cut.
+      rowAssets[industry] =
+        (rowAssets[industry] as number) +
+        rowAssetsAtLoad(gross, deps.START_PRODUCTIVITY + loadout.load_bonus + locationBonus);
+      continue;
+    }
     const labor = deps.laborUnits(gross, params.labor_value_usd);
     const stations = deps.fitStations(loadout.stations, labor);
     const book = deps.dataBookAtLoad(
@@ -523,7 +544,14 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       deps.enterpriseShare(loadoutKey),
     );
     const compute = deps.computeBill(stations, deps.dataBookStoredTb(book));
-    const startCtl = startControl(c, controllers, countryKeys, companyKeys);
+    // pivot 4.1: a kept company whose controller is a removed company starts with no controller
+    // (no row of the shipped worlds has one).
+    const startCtl = startControl(
+      removedCompanies.has(c.controller) ? { ...c, controller: "", controller_stake_pct: null } : c,
+      controllers,
+      countryKeys,
+      companyKeys,
+    );
     const controllerTraits: readonly Trait[] =
       startCtl.controller.kind === "Character" ? startCtl.controller.character.traits : [];
     const archetype = deps.archetypeAtLoad(
@@ -624,6 +652,8 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       namedRevenue[id] as number,
       ind.params.asset_turnover,
     );
+    // The rest-of-world block (pivot 4.2); 0 unless `features.usa_only` removed companies.
+    ind.row_assets = rowAssets[id] as number;
   });
 
   const schedule = aiSchedule(data);
@@ -634,10 +664,31 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     industryRows.map((i) => i.name),
   );
   if (!births.ok) throw badValue("startup-events", "", births.error);
+  // pivot 4.1: with `features.usa_only` a startup's headquarters is drawn in the USA only, so no
+  // foreign company is born during play. The other countries, zones and provinces stay as rows.
+  if (usaOnly) {
+    const usa = countryKeys.map.get(POLITICS_COUNTRY_KEY);
+    const sites = births.value.sites;
+    provinces.forEach((p, id) => {
+      if (p.country === usa) return;
+      sites.weight[id] = 0.0;
+      sites.hq_weight[id] = 0.0;
+    });
+  }
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
+  // Counties (pivot 5.1), for a world that has the file.
+  const geo = data.manifest.features.counties
+    ? geoStateFromData(
+        data,
+        politics.states.map((s) => s.name),
+      )
+    : { ok: true as const, value: geoStateEmpty() };
+  if (!geo.ok) throw new LoadFailure(geo.error);
   return {
     clock: dateTimeMidnight(startDate),
+    // pivot 3.3: a historical world is the Coarse pre-simulation; no job reads this yet (D1029).
+    fidelity: data.manifest.features.era ? "Coarse" : "Full",
     zones: tableFromRows(zones),
     countries: tableFromRows(countries),
     provinces: tableFromRows(provinces),
@@ -671,6 +722,13 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     news: deps.newsWireDefault(),
     recaps: [],
     politics,
+    // pivot 4.3: neutral, so the economy with levers is the economy without.
+    levers: leversNeutral(
+      industries.length,
+      politics.states.length,
+      (countries[politics.country] as Country).corp_tax_rate,
+    ),
+    geo: geo.value,
   };
 }
 

@@ -34,6 +34,32 @@ export type DistrictId = Ordinal<"DistrictId">;
 /** An appointed US post: its row in `PoliticsState.posts` (D983, D984). */
 export type PoliticsPostId = Ordinal<"PoliticsPostId">;
 
+// The pivot's ids (pivot spec; D1029). Each is a row in the table named; the tables arrive with their
+// milestones (M2 to M5), and until then only the contracts (views, actions, protocol) name them.
+
+/** A county: its row in `World.geo.counties`, in FIPS order (pivot 5.1). */
+export type CountyId = Ordinal<"CountyId">;
+/** A person who outlives office (pivot 5.7), from the persons-made count; never a place in a table. */
+export type PersonId = Ordinal<"PersonId">;
+/** A race: an office, a place, its primaries and its general (pivot 6.2). */
+export type RaceId = Ordinal<"RaceId">;
+/** A bill (pivot 7.1). */
+export type BillId = Ordinal<"BillId">;
+/** A news outlet (pivot 8.2). */
+export type OutletId = Ordinal<"OutletId">;
+/** A polling firm (pivot 8.4). */
+export type PollsterId = Ordinal<"PollsterId">;
+/** A social feed account (pivot 8.3): what the player follows there. Not a trading account. */
+export type HandleId = Ordinal<"HandleId">;
+/** A prediction market contract (pivot 10.1). */
+export type ContractId = Ordinal<"ContractId">;
+/** Anything an order book trades: a contract now, a stock or an option later (pivot 11.1). */
+export type InstrumentId = Ordinal<"InstrumentId">;
+/** An order on a book (pivot 11.1), from the orders-made count. */
+export type OrderId = Ordinal<"OrderId">;
+/** A trading account on a venue: the player's two, and each bettor cohort's (pivot 11.3, 14.1). */
+export type AccountId = Ordinal<"AccountId">;
+
 /** Rust's `u32::try_from(index).expect(..)`: an ordinal is a whole number in 0..2^32. */
 export const MAX_ORDINAL = 0xffff_ffff;
 

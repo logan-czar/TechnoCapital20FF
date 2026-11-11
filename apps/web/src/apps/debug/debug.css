@@ -1,0 +1,24 @@
+/* The debug workspace in a window (apps/debug/DebugWorkspace.tsx). The workspace's own styles are
+   the shared styles.css; these are the places where that sheet assumed the workspace was the whole
+   page, put right for a window. `--win-h` is the window's height (os/Window.tsx). */
+.dbg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg);
+}
+/* styles.css pins Pdoomberg to the viewport under the old top bar: here it covers the workspace
+   under this window's bar, which has the same height. */
+.dbg .pdoomberg {
+  position: absolute;
+}
+/* styles.css lets the Panes menu grow to the viewport's height: here to the window's. */
+.dbg .panes-menu {
+  max-height: calc(var(--win-h, 100vh) - var(--top-bar) - 48px);
+}
+/* The Skip menu sits at the bar's left end, so it opens to the right, not off the window. */
+.dbg .dbg-skip-items {
+  left: 0;
+  right: auto;
+}

@@ -1,0 +1,30 @@
+{
+  "id": "2020",
+  "start_date": "2020-01-01",
+  "expected_counts": {
+    "countries": 211,
+    "provinces": 3963,
+    "companies": 651,
+    "characters": 296,
+    "industries": 42,
+    "country-economy": 211,
+    "financial-zones": 26,
+    "ai-boom": 15,
+    "key-cities": 88,
+    "company-start": 651,
+    "startup-events": 9,
+    "politics-usa": 51,
+    "politics-usa-offices": 31
+  },
+  "base_rate": 0.03,
+  "neutral_rate": 0.03,
+  "y10_term": 0.005,
+  "cabinet_seats": 15,
+  "features": {
+    "era": false,
+    "ai_boom": true,
+    "fixed_events": true,
+    "arrowhead": true,
+    "counties": false
+  }
+}

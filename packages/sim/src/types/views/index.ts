@@ -15,6 +15,7 @@
 // trait's consts are `VIEW_SPECS` below. Not ported: Jobs and VIEW_WORKERS (D801: Rust worker
 // threads) and get_map_layer (D700, with the map layers view in Step 3).
 
+import type { AccountView } from "./account.ts";
 import type { BirthsView } from "./births.ts";
 import type { CapTableView } from "./cap_table.ts";
 import type { CharactersView } from "./characters.ts";
@@ -23,29 +24,42 @@ import type { CompanyDetailView } from "./company_detail.ts";
 import type { CompanyRowsView } from "./company_rows.ts";
 import type { CountriesView } from "./countries.ts";
 import type { CycleView } from "./cycle.ts";
+import type { DistrictsView } from "./districts.ts";
 import type { ExchangesView } from "./exchanges.ts";
+import type { FeedView } from "./feed.ts";
 import type { FilingsView } from "./filings.ts";
+import type { ForecastView } from "./forecast.ts";
 import type { HistoryView } from "./history.ts";
 import type { IndustryDetailView } from "./industry_detail.ts";
 import type { IndustryRowsView } from "./industry_rows.ts";
 import type { MapLayersView } from "./map_layers.ts";
 import type { MapStaticView } from "./map_static.ts";
 import type { MarketStatsView } from "./market_stats.ts";
+import type { MarketsView } from "./markets.ts";
 import type { NewsView } from "./news.ts";
+import type { NotificationsView } from "./notifications.ts";
+import type { PeopleView } from "./people.ts";
 import type { PlacesView } from "./places.ts";
 import type { PoliticsView } from "./politics.ts";
+import type { PollsView } from "./polls.ts";
 import type { PriceBarsView } from "./price_bars.ts";
 import type { ProjectionView } from "./projection.ts";
 import type { ProvinceCardsView } from "./province_cards.ts";
 import type { QuotesView } from "./quotes.ts";
+import type { RacesView } from "./races.ts";
 import type { RatesView } from "./rates.ts";
 import type { RatingsView } from "./ratings.ts";
 import type { RecapView } from "./recap.ts";
+import type { RecordsView } from "./records.ts";
+import type { ReturnsView } from "./returns.ts";
+import type { SocialView } from "./social.ts";
 import type { StatementsView } from "./statements.ts";
 import type { TechView } from "./tech.ts";
 import type { UnitsView } from "./units.ts";
+import type { UsMapLayersView } from "./usmap_layers.ts";
 import type { ZonesView } from "./zones.ts";
 
+export * from "./account.ts";
 export * from "./births.ts";
 export * from "./cap_table.ts";
 export * from "./characters.ts";
@@ -54,33 +68,46 @@ export * from "./company_detail.ts";
 export * from "./company_rows.ts";
 export * from "./countries.ts";
 export * from "./cycle.ts";
+export * from "./districts.ts";
+export * from "./entity.ts";
 // Two Rust types are named `Band`: the estimate band wins the plain name here; the rating band
 // (finance::rating::Band, ./shared.ts) is re-exported as `RatingBand` further down.
 export type { Band } from "./estimate.ts";
 export * from "./estimate.ts";
 export * from "./exchanges.ts";
+export * from "./feed.ts";
 export * from "./filings.ts";
+export * from "./forecast.ts";
 export * from "./history.ts";
 export * from "./industry_detail.ts";
 export * from "./industry_rows.ts";
 export * from "./map_layers.ts";
 export * from "./map_static.ts";
 export * from "./market_stats.ts";
+export * from "./markets.ts";
 export * from "./news.ts";
+export * from "./notifications.ts";
+export * from "./people.ts";
 export * from "./places.ts";
 export * from "./politics.ts";
+export * from "./polls.ts";
 export * from "./price_bars.ts";
 export * from "./projection.ts";
 export * from "./province_cards.ts";
 export * from "./quotes.ts";
+export * from "./races.ts";
 export * from "./rates.ts";
 export * from "./ratings.ts";
 export * from "./recap.ts";
+export * from "./records.ts";
+export * from "./returns.ts";
 export type { Band as RatingBand } from "./shared.ts";
 export * from "./shared.ts";
+export * from "./social.ts";
 export * from "./statements.ts";
 export * from "./tech.ts";
 export * from "./units.ts";
+export * from "./usmap_layers.ts";
 export * from "./zones.ts";
 
 /** How often a view is rebuilt (spec 9.4). */
@@ -153,6 +180,21 @@ export interface SimViews {
   map_static: View<MapStaticView>;
   politics: View<PoliticsView>;
   history: View<HistoryView>;
+  // The pivot's views (D1029), after the thirty above so their order does not move. Unported in M1:
+  // each holds its empty value (views/pivot.ts) and is never posted.
+  feed: View<FeedView>;
+  social: View<SocialView>;
+  polls: View<PollsView>;
+  forecast: View<ForecastView>;
+  races: View<RacesView>;
+  people: View<PeopleView>;
+  records: View<RecordsView>;
+  markets: View<MarketsView>;
+  account: View<AccountView>;
+  notifications: View<NotificationsView>;
+  districts: View<DistrictsView>;
+  usmap_layers: View<UsMapLayersView>;
+  returns: View<ReturnsView>;
 }
 
 /** A view's field name in `SimViews`. */
@@ -193,6 +235,19 @@ export const VIEW_NAMES = [
   "map_static",
   "politics",
   "history",
+  "feed",
+  "social",
+  "polls",
+  "forecast",
+  "races",
+  "people",
+  "records",
+  "markets",
+  "account",
+  "notifications",
+  "districts",
+  "usmap_layers",
+  "returns",
 ] as const satisfies readonly ViewName[];
 
 /** One view's `ViewData` constants (Rust trait consts; defaults false). */
@@ -254,4 +309,18 @@ export const VIEW_SPECS: Readonly<Record<ViewName, ViewSpec>> = {
   map_static: spec("OnceAtLoad"),
   politics: spec("PoliticsDays"),
   history: spec("Monthly"),
+  // The pivot's views: the cadence each is meant to have once it has a builder (D1029).
+  feed: spec("Daily", { on_omniscient: true }),
+  social: spec("Daily"),
+  polls: spec("Daily", { on_omniscient: true }),
+  forecast: spec("Daily"),
+  races: spec("Daily", { on_omniscient: true }),
+  people: spec("Daily", { on_omniscient: true }),
+  records: spec("Daily"),
+  markets: spec("EveryTick"),
+  account: spec("EveryTick"),
+  notifications: spec("EveryTick"),
+  districts: spec("Monthly", { on_omniscient: true }),
+  usmap_layers: spec("Monthly", { on_omniscient: true }),
+  returns: spec("EveryTick"),
 };

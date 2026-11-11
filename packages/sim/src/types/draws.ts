@@ -3,7 +3,7 @@
 // the generator, `RngStreams`, `NoNoise` ("no rolls", spec 5.16) and `ScriptedDraws` (replayed
 // validate.py draws, build-plan 4.2) belong to the rng.ts port.
 //
-// One independent stream per system: cycle, growth (the quarterly draws), prices, AI, gen and politics.
+// One independent stream per system (the `Stream` list below).
 // All are seeded from the game seed and told apart by their stream number (D9), so a new draw in
 // one system never shifts another system's numbers. The TS port need not use ChaCha (Logan allows
 // a different seeded generator, e.g. sfc32 or xoshiro128**); only the stream split, the frozen
@@ -24,14 +24,48 @@
  * - Politics: the US politics POC: politicians, votes, appointments (D980).
  * - Era: a historical world's run: its scenario and what the seed picks for it (1995-rework 3.3).
  * - Events: the board-seat events (drift plan lane W, D1024).
+ *
+ * The pivot's five (D1029), appended after the eight above so no earlier stream's numbers move:
+ * - Campaign: money, spending, rallies, debates, endorsements, scandals (pivot 6).
+ * - Governing: agendas, whipping, roll calls, executive actions (pivot 7).
+ * - Media: coverage, slant, errors, rumours, polls' sampling error (pivot 8).
+ * - Bettors: the cohorts' belief noise and order sizes (pivot 11.4).
+ * - Count: the vote's swing, turnout, reporting batches and recounts (pivot 6.7, 9).
  */
-export type Stream = "Cycle" | "Growth" | "Prices" | "Ai" | "Gen" | "Politics" | "Era" | "Events";
+export type Stream =
+  | "Cycle"
+  | "Growth"
+  | "Prices"
+  | "Ai"
+  | "Gen"
+  | "Politics"
+  | "Era"
+  | "Events"
+  | "Campaign"
+  | "Governing"
+  | "Media"
+  | "Bettors"
+  | "Count";
 
 /** Number of streams. */
-export const STREAM_COUNT = 8;
+export const STREAM_COUNT = 13;
 
 /** Rust `Stream::ALL`, in stream-number order. */
-export const STREAM_VALUES = ["Cycle", "Growth", "Prices", "Ai", "Gen", "Politics", "Era", "Events"] as const;
+export const STREAM_VALUES = [
+  "Cycle",
+  "Growth",
+  "Prices",
+  "Ai",
+  "Gen",
+  "Politics",
+  "Era",
+  "Events",
+  "Campaign",
+  "Governing",
+  "Media",
+  "Bettors",
+  "Count",
+] as const;
 
 /**
  * Each stream's number, frozen forever (D9): it seeds the stream and indexes per-stream state
@@ -46,6 +80,11 @@ export const STREAM_NUMBER: Readonly<Record<Stream, number>> = {
   Politics: 5,
   Era: 6,
   Events: 7,
+  Campaign: 8,
+  Governing: 9,
+  Media: 10,
+  Bettors: 11,
+  Count: 12,
 };
 
 /** Rust `Stream::name`: the lowercase name used in messages. */
@@ -58,6 +97,11 @@ export const STREAM_NAME: Readonly<Record<Stream, string>> = {
   Politics: "politics",
   Era: "era",
   Events: "events",
+  Campaign: "campaign",
+  Governing: "governing",
+  Media: "media",
+  Bettors: "bettors",
+  Count: "count",
 };
 
 /**

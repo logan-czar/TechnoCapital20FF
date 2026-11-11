@@ -11,7 +11,7 @@
 // that prints its model's title and slot count.
 
 import type { CompanyId, ToSim } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -29,6 +29,7 @@ import type { SimClient } from "../../src/sim/client.ts";
 import { SimContext } from "../../src/sim/hooks.ts";
 import { RealHost } from "../../src/sim/real/host.ts";
 import { type Frame, SimStore } from "../../src/sim/store.ts";
+import { worldMini } from "../world-mini.ts";
 
 vi.mock("../../src/pages/ChartBlock.tsx", () => ({
   ChartBlock: ({ chart }: { chart: ChartModel }) => (
@@ -57,7 +58,7 @@ const sizes = ["clientWidth", "clientHeight"].map(
 );
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   host = new RealHost(loaded.value);
   store = new SimStore();

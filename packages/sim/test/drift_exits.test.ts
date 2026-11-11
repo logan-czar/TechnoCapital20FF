@@ -1,14 +1,15 @@
 // D1022: the drift plan's lane X. The era worlds' exit rule (D996) runs in the 2020 world under a
 // profile with `exits` (`mature`), and `legacy` keeps spec 5.12, so its results do not move.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { PROFILES, profileById } from "../src/economy/profiles.ts";
 import { EXIT_LOSS_QUARTERS } from "../src/finance/distress.ts";
 import { simNew, simWorld } from "../src/lib.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 function newSim(profile: string) {
-  const r = loadWorld(defaultDataDir());
+  const r = loadWorld(worldMini().dir);
   if (!r.ok) throw new Error("data");
   const made = simNew(structuredClone(r.value), 3, { profile });
   if (!made.ok) throw new Error("sim");

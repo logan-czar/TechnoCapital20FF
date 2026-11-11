@@ -28,6 +28,7 @@
 2020-01-06 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 3.reaction_week 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-01-06 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-01-07 00:00 Tue
@@ -64,6 +65,7 @@
 2020-01-13 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-01-13 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-01-14 00:00 Tue
@@ -99,6 +101,7 @@
 2020-01-20 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-01-20 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-01-21 00:00 Tue
@@ -134,6 +137,7 @@
 2020-01-27 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-01-27 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-01-28 00:00 Tue
@@ -170,6 +174,7 @@
 2020-02-03 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-02-03 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-02-04 00:00 Tue
@@ -205,6 +210,7 @@
 2020-02-10 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-02-10 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-02-11 00:00 Tue
@@ -240,6 +246,7 @@
 2020-02-17 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-02-17 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-02-18 00:00 Tue
@@ -275,6 +282,7 @@
 2020-02-24 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-02-24 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-02-25 00:00 Tue
@@ -311,6 +319,7 @@
 2020-03-02 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-03-02 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-03-03 00:00 Tue
@@ -346,6 +355,7 @@
 2020-03-09 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-03-09 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-03-10 00:00 Tue
@@ -381,6 +391,7 @@
 2020-03-16 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-03-16 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-03-17 00:00 Tue
@@ -416,6 +427,7 @@
 2020-03-23 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-03-23 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-03-24 00:00 Tue
@@ -452,6 +464,7 @@
 2020-03-30 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-03-30 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-03-31 00:00 Tue
@@ -494,6 +507,7 @@
 2020-04-06 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 3.reaction_week 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-04-06 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-04-07 00:00 Tue
@@ -530,6 +544,7 @@
 2020-04-13 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-04-13 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-04-14 00:00 Tue
@@ -565,6 +580,7 @@
 2020-04-20 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-04-20 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-04-21 00:00 Tue
@@ -600,6 +616,7 @@
 2020-04-27 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-04-27 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-04-28 00:00 Tue
@@ -636,6 +653,7 @@
 2020-05-04 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-05-04 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-05-05 00:00 Tue
@@ -671,6 +689,7 @@
 2020-05-11 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-05-11 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-05-12 00:00 Tue
@@ -706,6 +725,7 @@
 2020-05-18 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-05-18 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-05-19 00:00 Tue
@@ -741,6 +761,7 @@
 2020-05-25 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-05-25 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-05-26 00:00 Tue
@@ -776,6 +797,7 @@
 2020-06-01 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
   monthly: 2.demand 3.fringe 4.labor_seats 5.compute 6.supply 7.revenue 8.data 9.expenses 10.productivity 11.assets 12.interest 13.cash_settle 14.ledger
 2020-06-01 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
@@ -812,6 +834,7 @@
 2020-06-08 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-06-08 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-06-09 00:00 Tue
@@ -847,6 +870,7 @@
 2020-06-15 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-06-15 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-06-16 00:00 Tue
@@ -882,6 +906,7 @@
 2020-06-22 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-06-22 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-06-23 00:00 Tue
@@ -918,6 +943,7 @@
 2020-06-29 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-06-29 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-06-30 00:00 Tue
@@ -960,6 +986,7 @@
 2020-07-06 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 3.reaction_week 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-07-06 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-07-07 00:00 Tue
@@ -996,6 +1023,7 @@
 2020-07-13 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-07-13 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-07-14 00:00 Tue
@@ -1031,6 +1059,7 @@
 2020-07-20 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-07-20 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-07-21 00:00 Tue
@@ -1066,6 +1095,7 @@
 2020-07-27 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-07-27 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-07-28 00:00 Tue
@@ -1102,6 +1132,7 @@
 2020-08-03 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-08-03 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-08-04 00:00 Tue
@@ -1137,6 +1168,7 @@
 2020-08-10 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-08-10 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-08-11 00:00 Tue
@@ -1172,6 +1204,7 @@
 2020-08-17 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-08-17 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-08-18 00:00 Tue
@@ -1207,6 +1240,7 @@
 2020-08-24 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-08-24 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-08-25 00:00 Tue
@@ -1242,6 +1276,7 @@
 2020-08-31 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-08-31 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-09-01 00:00 Tue
@@ -1278,6 +1313,7 @@
 2020-09-07 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-09-07 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-09-08 00:00 Tue
@@ -1313,6 +1349,7 @@
 2020-09-14 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-09-14 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-09-15 00:00 Tue
@@ -1348,6 +1385,7 @@
 2020-09-21 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-09-21 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-09-22 00:00 Tue
@@ -1384,6 +1422,7 @@
 2020-09-28 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-09-28 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-09-29 00:00 Tue
@@ -1426,6 +1465,7 @@
 2020-10-05 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 3.reaction_week 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-10-05 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-10-06 00:00 Tue
@@ -1462,6 +1502,7 @@
 2020-10-12 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-10-12 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-10-13 00:00 Tue
@@ -1497,6 +1538,7 @@
 2020-10-19 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-10-19 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-10-20 00:00 Tue
@@ -1532,6 +1574,7 @@
 2020-10-26 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-10-26 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-10-27 00:00 Tue
@@ -1568,6 +1611,7 @@
 2020-11-02 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-11-02 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-11-03 00:00 Tue
@@ -1603,6 +1647,7 @@
 2020-11-09 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-11-09 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-11-10 00:00 Tue
@@ -1638,6 +1683,7 @@
 2020-11-16 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-11-16 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-11-17 00:00 Tue
@@ -1673,6 +1719,7 @@
 2020-11-23 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-11-23 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-11-24 00:00 Tue
@@ -1708,6 +1755,7 @@
 2020-11-30 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-11-30 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-12-01 00:00 Tue
@@ -1744,6 +1792,7 @@
 2020-12-07 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-12-07 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-12-08 00:00 Tue
@@ -1779,6 +1828,7 @@
 2020-12-14 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-12-14 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-12-15 00:00 Tue
@@ -1814,6 +1864,7 @@
 2020-12-21 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-12-21 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-12-22 00:00 Tue
@@ -1850,6 +1901,7 @@
 2020-12-28 00:00 Mon
   hourly: 1.advance_clock 2.share_prices 4.alerts
   daily: 1.price_bars 2.fair_value 4.projections 4b.politics 5.news 6.zone_confidence
+  weekly: 1.jobs
 2020-12-28 01:00..23:00 Mon (23 ticks)
   hourly: 1.advance_clock 2.share_prices 4.alerts
 2020-12-29 00:00 Tue

@@ -72,6 +72,21 @@ import { buildMapLayers, mapLayersViewLayer } from "./map_layers.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews, rebuildNewsFrom } from "./news.ts";
+import {
+  emptyAccount,
+  emptyDistricts,
+  emptyFeed,
+  emptyForecast,
+  emptyMarkets,
+  emptyNotifications,
+  emptyPeople,
+  emptyPolls,
+  emptyRaces,
+  emptyRecords,
+  emptyReturns,
+  emptySocial,
+  emptyUsMapLayers,
+} from "./pivot.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPolitics, emptyPolitics } from "./politics.ts";
 import { buildPriceBars } from "./price_bars.ts";
@@ -342,6 +357,20 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   politics: { rust: "(none: politics POC, D980)", empty: emptyPolitics, build: buildPolitics },
   history: { rust: "(none: 1995-rework 8.1)", empty: emptyHistory, build: buildHistory },
+  // The pivot's views (D1029): unported until their lanes build them (M2 to M5).
+  feed: unported("(none: pivot 8.2)", emptyFeed),
+  social: unported("(none: pivot 8.3)", emptySocial),
+  polls: unported("(none: pivot 8.4)", emptyPolls),
+  forecast: unported("(none: pivot 8.5)", emptyForecast),
+  races: unported("(none: pivot 6.2)", emptyRaces),
+  people: unported("(none: pivot 5.7)", emptyPeople),
+  records: unported("(none: pivot 8.6)", emptyRecords),
+  markets: unported("(none: pivot 10)", emptyMarkets),
+  account: unported("(none: pivot 14)", emptyAccount),
+  notifications: unported("(none: pivot 12)", emptyNotifications),
+  districts: unported("(none: pivot 5.4)", emptyDistricts),
+  usmap_layers: unported("(none: pivot 15.3)", emptyUsMapLayers),
+  returns: unported("(none: pivot 9)", emptyReturns),
 };
 
 /**

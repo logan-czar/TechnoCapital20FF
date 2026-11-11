@@ -1,12 +1,16 @@
-// The typed main-thread client of the sim worker (protocol.ts). Requests return promises resolved
-// by the matching Reply; Frames are merged into the store. The worker posts a request's Frame
-// BEFORE its Reply, so when an awaited request resolves, the store already holds its views.
-// A request never hangs: a Fatal message or a worker error settles every pending one as Refused.
+// The typed main-thread client of the sim (protocol.ts), wherever the sim runs: a Web Worker, or the
+// Electron sim process behind a MessagePort (pivot 15.1). Requests return promises resolved by the
+// matching Reply; Frames are merged into the store. The sim posts a request's Frame BEFORE its
+// Reply, so when an awaited request resolves, the store already holds its views. A request never
+// hangs: a Fatal message or a transport failure settles every pending one as Refused.
 
 import {
+  actErrorMessage,
+  type ClockView,
   type FromSim,
   type Reply,
   type RequestId,
+  type SaveInfo,
   type SimError,
   simErrorMessage,
   type ToSim,
@@ -14,7 +18,7 @@ import {
 } from "@tc20ff/sim";
 import { SimStore } from "./store.ts";
 
-/** Anything that carries protocol messages: a Worker, or a test double. */
+/** Anything that carries protocol messages: a Worker, a MessagePort, or a test double. */
 export interface SimTransport {
   send(msg: ToSim): void;
   onMessage(cb: (msg: FromSim) => void): void;
@@ -29,6 +33,8 @@ export function replyProblem(r: Reply): string | null {
       return simErrorMessage(r.error satisfies SimError);
     case "Refused":
       return r.message;
+    case "ActError":
+      return actErrorMessage(r.error);
     default:
       return null;
   }
@@ -47,6 +53,13 @@ export class SimClient {
   private nextId = 1;
   private pending = new Map<RequestId, Pending>();
   private resolveReady: () => void = () => {};
+  /** Frames read so far, and the ticks they carried: what the desktop's smoke run counts. */
+  frames = 0;
+  ticks = 0;
+  /** The clock of the last Frame; null before the first. */
+  clock: ClockView | null = null;
+  /** A long request's progress (pivot 3.5), for whoever shows it; nothing sends one before lane S4. */
+  onProgress: (p: Extract<FromSim, { kind: "Progress" }>) => void = () => {};
 
   constructor(private readonly transport: SimTransport) {
     this.ready = new Promise((res) => {
@@ -67,6 +80,12 @@ export class SimClient {
         break;
       case "Frame":
         this.store.applyFrame(m);
+        this.frames += 1;
+        this.clock = m.clock;
+        for (const n of m.notices) if (n.kind === "TickDone") this.ticks += 1;
+        // A Frame means a game is running. The sim process may have started one by itself (the
+        // desktop's `--save`), with no request of ours to tell us so.
+        if (!this.store.status.started) this.store.setStatus({ started: true });
         // Read: the worker may post the next one (D1004).
         this.transport.send({ kind: "FrameDone" });
         break;
@@ -80,6 +99,9 @@ export class SimClient {
         p.resolve(m.result);
         break;
       }
+      case "Progress":
+        this.onProgress(m);
+        break;
       case "Fatal":
         this.fail(m.message);
         break;
@@ -129,6 +151,27 @@ export class SimClient {
   control(control: UiControl): Promise<Reply> {
     return this.request((id) => ({ kind: "Control", id, control }));
   }
+
+  /** Writes the game to a named slot on the sim's disk (pivot 15.4). Only the Electron sim has one. */
+  saveSlot(slot: string): Promise<Reply> {
+    return this.request((id) => ({ kind: "SaveSlot", id, slot }));
+  }
+
+  async loadSlot(slot: string): Promise<Reply> {
+    const r = await this.request((id) => ({ kind: "LoadSlot", id, slot }));
+    if (r.kind === "Ok") this.store.setStatus({ started: true });
+    return r;
+  }
+
+  /** The saves on the sim's disk, newest first; null when the request failed (the reason is shown). */
+  async listSaves(): Promise<SaveInfo[] | null> {
+    const r = await this.request((id) => ({ kind: "ListSaves", id }));
+    return r.kind === "Saves" ? r.saves : null;
+  }
+
+  deleteSave(slot: string): Promise<Reply> {
+    return this.request((id) => ({ kind: "DeleteSave", id, slot }));
+  }
 }
 
 /** Wraps a Worker as a transport. */
@@ -142,5 +185,44 @@ export function workerTransport(worker: Worker): SimTransport {
       worker.onerror = (e) => cb(e.message || "the simulation worker failed");
       worker.onmessageerror = () => cb("the simulation worker sent a message that could not be read");
     },
+  };
+}
+
+/** A port transport, with a way to say from outside that the far end is gone. */
+export interface PortTransport extends SimTransport {
+  fail(message: string): void;
+}
+
+/**
+ * Wraps a MessagePort as a transport (the Electron sim process, pivot 15.1). The port may still be
+ * on its way: what is sent before it arrives is kept and sent in order when it does.
+ */
+export function portTransport(source: MessagePort | Promise<MessagePort>): PortTransport {
+  let port: MessagePort | null = null;
+  const waiting: ToSim[] = [];
+  let onMessage: (msg: FromSim) => void = () => {};
+  let onFailure: (message: string) => void = () => {};
+  void Promise.resolve(source).then(
+    (p) => {
+      port = p;
+      // Setting onmessage also starts the port.
+      p.onmessage = (e: MessageEvent<FromSim>) => onMessage(e.data);
+      p.onmessageerror = () => onFailure("the simulation sent a message that could not be read");
+      for (const m of waiting.splice(0)) p.postMessage(m);
+    },
+    (e: unknown) => onFailure(e instanceof Error ? e.message : String(e)),
+  );
+  return {
+    send: (msg) => {
+      if (port === null) waiting.push(msg);
+      else port.postMessage(msg);
+    },
+    onMessage: (cb) => {
+      onMessage = cb;
+    },
+    onFailure: (cb) => {
+      onFailure = cb;
+    },
+    fail: (message) => onFailure(message),
   };
 }

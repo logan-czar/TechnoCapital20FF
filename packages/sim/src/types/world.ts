@@ -35,6 +35,8 @@ import type { BirthsState, RunRate, VoteResult } from "./state/births.ts";
 import type { EraState } from "./state/era.ts";
 import type { SeatEffect, SeatTally } from "./state/events.ts";
 import type { BooksCheck, CompanyFinance, Rating } from "./state/finance.ts";
+import type { GeoState } from "./state/geo.ts";
+import type { Levers } from "./state/governing.ts";
 import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "./state/ops.ts";
@@ -73,6 +75,14 @@ export type {
 export interface World {
   /** The clock: the time of the last finished tick (spec 3.1; starts 2020-01-01 00:00). */
   clock: DateTime;
+  /**
+   * How much of the world runs (pivot 3.3). A job registered for one fidelity runs only while the
+   * world has it (time/scheduler.ts `schedulerRegister`); a job with no tag runs in both, and until
+   * M2 no job has one, so the two play the same. Set at load: Coarse for a historical world (the
+   * 1995 run that pre-simulates each game's 2020, pivot 3.2), Full otherwise (D1029). Hydration
+   * sets Full at 2020-01-01 (pivot 3.4; lane S4).
+   */
+  fidelity: Fidelity;
   zones: Table<ZoneId, Zone>;
   countries: Table<CountryId, Country>;
   provinces: Table<ProvinceId, Province>;
@@ -126,6 +136,13 @@ export interface World {
   /** The US politics POC (D980). */
   politics: PoliticsState;
   /**
+   * What government holds over the economy (pivot 4.3). Neutral at load; the economy does not read
+   * them yet (lane S3), and only laws and executive actions will move them (pivot 7.7).
+   */
+  levers: Levers;
+  /** Counties and district plans (pivot 5.1 to 5.6); empty tables in a world with no counties file. */
+  geo: GeoState;
+  /**
    * A historical world's run (1995-rework 3.3): its scenario and its long history. Absent in the
    * 2020 world, and so out of its state hash.
    */
@@ -136,6 +153,12 @@ export interface World {
    */
   seat_tally?: SeatTally;
 }
+
+/** How much of the world runs (pivot 3.3): the pre-simulation's Coarse, or play's Full. */
+export type Fidelity = "Coarse" | "Full";
+
+/** Fidelity in declaration order. */
+export const FIDELITY_VALUES = ["Coarse", "Full"] as const;
 
 /**
  * An industry with at least one and fewer than this many companies that do not publish shows its
@@ -324,6 +347,14 @@ export interface Industry {
   phase_label: PhaseLabel;
   /** Fringe pool business assets (spec 5.3), USD at cost. */
   fringe_assets: number;
+  /**
+   * The rest-of-world block's business assets (pivot 4.2), USD at cost: one static foreign supplier
+   * per industry, sized at load from the supply the removed foreign companies would have held,
+   * growing at the industry's long-run rate, taking its share of demand like the fringe, and scaled
+   * by `1 − levers.tariff` (pivot 4.3). 0 until lane S3 fills and reads it: until then that supply
+   * is still inside `fringe_assets`.
+   */
+  row_assets: number;
   /** Supply, USD a year (spec 5.2). */
   supply: number;
   /** S = supply ÷ demand (spec 5.2). */

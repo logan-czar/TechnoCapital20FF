@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { brotliCompressSync, gzipSync } from "node:zlib";
-import { ERA_FILES, MANIFEST_FILE, MAP_FILES, WORLD_FILES, WORLD_IDS } from "@tc20ff/sim-data";
+import { ERA_FILES, GEO_FILES, MANIFEST_FILE, MAP_FILES, WORLD_FILES, WORLD_IDS } from "@tc20ff/sim-data";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
@@ -26,6 +26,11 @@ function servedFiles(): Map<string, string> {
   for (const id of WORLD_IDS) {
     for (const f of [...WORLD_FILES, ...ERA_FILES, MANIFEST_FILE]) {
       files.set(`data/worlds/${id}/${f}`, resolve(root, "assets/worlds", id, f));
+    }
+    // The county files (pivot 5.1): served when the world has them, and no error when it does not.
+    for (const f of GEO_FILES) {
+      const path = resolve(root, "assets/worlds", id, f);
+      if (existsSync(path)) files.set(`data/worlds/${id}/${f}`, path);
     }
   }
   for (const f of [...MAP_FILES, TOPOLOGY]) files.set(`data/map/${f}`, resolve(root, "assets/map", f));

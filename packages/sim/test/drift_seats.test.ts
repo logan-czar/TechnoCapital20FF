@@ -1,7 +1,7 @@
 // D1024: the drift plan's lane W board-seat events. Under a profile with `seat_events` (`mature`)
 // every open labor seat rolls d30 + skill each plan lock against a difficulty that rises with
 // revenue; `legacy` plays none, so its results do not move.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { PROFILES, profileById } from "../src/economy/profiles.ts";
 import {
@@ -21,6 +21,7 @@ import {
 import { simNew, simWorld } from "../src/lib.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import type { Company } from "../src/types/world.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 describe("the roll (D1024)", () => {
   it("gets harder by 8.5 a tenfold of revenue from 13 at $100M", () => {
@@ -67,7 +68,7 @@ describe("the profiles (D1024)", () => {
 
   it("mature rolls every open seat at the first plan lock, about half passing; legacy rolls none", () => {
     const run = (profile: string) => {
-      const r = loadWorld(defaultDataDir());
+      const r = loadWorld(worldMini().dir);
       if (!r.ok) throw new Error("data");
       const made = simNew(structuredClone(r.value), 7, { profile });
       if (!made.ok) throw new Error("sim");

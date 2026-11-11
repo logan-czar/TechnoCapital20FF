@@ -8,10 +8,11 @@
 // bankrupt_three_and_four), and the clock-only world and no-draw source of the scheduler tests.
 
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { birthsStateDefault } from "../src/births/state.ts";
 import { RATING_WORST } from "../src/finance/rating.ts";
 import { companyFinanceAtLoad } from "../src/finance/state.ts";
+import { leversNeutral } from "../src/governing/levers.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
 import { stockAtLoad } from "../src/market/state.ts";
 import { newsWireDefault } from "../src/news.ts";
@@ -21,6 +22,7 @@ import { type DrawSource, STREAM_VALUES } from "../src/types/draws.ts";
 import type { CompanyId } from "../src/types/ids.ts";
 import type { World } from "../src/types/world.ts";
 import { viewBuildersOnly } from "../src/views/index.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 function noDraw(): never {
   throw new Error("no draws expected");
@@ -68,6 +70,8 @@ export function clockWorld(): World {
       ai_labs_lt: 0,
       schedule: { preboom_lt: 0, boom_lt: [], bust_lt: 0, postcrash_lt: 0 },
     },
+    // The jobs read the levers (pivot 4.3): neutral, for no industries and no states.
+    levers: leversNeutral(0, 0, 0),
   } as unknown as World;
 }
 
@@ -112,7 +116,7 @@ let cachedData: WorldData | undefined;
 /** The starting data, loaded once. */
 export function data(): WorldData {
   if (cachedData === undefined) {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error(`data loads: ${JSON.stringify(r.error)}`);
     cachedData = r.value;
   }

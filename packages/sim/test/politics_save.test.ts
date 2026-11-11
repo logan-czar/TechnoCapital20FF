@@ -1,7 +1,7 @@
 // A save anywhere between November and the January handovers plays on exactly as an unsaved game
 // does, through the real save codec: the saved world and RNG must hold nothing that differs once
 // decoded (the politics POC, D985).
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { canonicalString } from "../src/canonical.ts";
 import { simNew, simWorld } from "../src/lib.ts";
@@ -12,8 +12,9 @@ import { decode, encode } from "../src/save.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
 import { controlsDefault } from "../src/time/control.ts";
 import type { SimDate } from "../src/types/calendar.ts";
+import { worldMini } from "./common/world_mini.ts";
 
-const loaded = loadWorld(defaultDataDir());
+const loaded = loadWorld(worldMini().dir);
 if (!loaded.ok) throw new Error("data does not load");
 const DATA = loaded.value;
 

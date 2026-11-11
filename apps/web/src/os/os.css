@@ -1,0 +1,740 @@
+/* Orrery, the desktop (pivot 15.2): brass instruments on a verdigris ground. The chrome (title
+   bars, taskbar, icons, phone) is drawn in a narrow engineering face and in brass; what is inside
+   a window keeps the apps' own palette and type (styles.css), so dense tables read as before.
+
+   Every rule starts at `.os`: this sheet loads before styles.css, whose element rules (button,
+   button.on) would otherwise win a tie. */
+.os {
+  /* The ground. */
+  --os-ink: #071312;
+  --os-verdigris: #0f2b29;
+  --os-patina: #1b4a45;
+  /* The chrome. */
+  --os-chrome: #111818;
+  --os-chrome-raised: #1a2424;
+  --os-chrome-line: #2b3a39;
+  /* The instruments. */
+  --os-brass: #d2a95a;
+  --os-brass-dim: #84693a;
+  --os-paper: #ebe5d3;
+  --os-paper-dim: #9aa39b;
+  /* Wants attention: paused, unread, close. */
+  --os-signal: #ff6a4a;
+  --os-taskbar-h: 46px;
+  --os-titlebar-h: 30px;
+  /* Bahnschrift ships with Windows and has a width axis; the others stand in elsewhere. */
+  --os-face:
+    "Bahnschrift", "DIN Alternate", "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", system-ui,
+    sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--os-ink);
+}
+.os .os-dim {
+  color: var(--os-paper-dim);
+}
+.os .os-icon {
+  flex: none;
+  display: block;
+}
+
+/* ---------------------------------------------------------------- the desk and its wallpaper */
+.os .os-desk {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse 70% 90% at 65% 49%,
+    var(--os-patina) 0%,
+    var(--os-verdigris) 42%,
+    var(--os-ink) 100%
+  );
+}
+.os .os-wallpaper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.os .os-wall-rings {
+  fill: none;
+  stroke: var(--os-brass);
+  stroke-width: 1.2;
+  stroke-opacity: 0.42;
+}
+.os .os-wall-rings .os-wall-faint {
+  stroke-opacity: 0.16;
+  stroke-dasharray: 2 9;
+}
+.os .os-wall-rings text {
+  fill: var(--os-brass);
+  fill-opacity: 0.62;
+  stroke: none;
+  font-family: var(--os-face);
+  font-stretch: 85%;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.os .os-wall-arms line {
+  stroke: var(--os-brass);
+  stroke-width: 1.6;
+  stroke-opacity: 0.75;
+}
+.os .os-wall-arms circle {
+  fill: var(--os-paper);
+}
+.os .os-wall-arms .os-wall-hub {
+  fill: var(--os-verdigris);
+  stroke: var(--os-brass);
+  stroke-width: 2;
+}
+
+/* ---------------------------------------------------------------- desktop icons */
+.os .os-icons {
+  position: absolute;
+  top: 18px;
+  left: 14px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.os .os-app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 104px;
+  padding: 10px 6px 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--os-paper);
+  font-family: var(--os-face);
+  font-stretch: 90%;
+  font-size: 13.5px;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 1px 2px var(--os-ink);
+}
+.os .os-app-icon .os-icon {
+  color: var(--os-brass);
+}
+.os .os-app-icon:hover {
+  background: rgba(210, 169, 90, 0.1);
+  border-color: var(--os-brass-dim);
+}
+.os .os-app-icon:focus-visible {
+  outline: 2px solid var(--os-brass);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------- windows */
+.os .os-windows {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* The layer is its own stacking order; only the windows in it take the pointer. */
+  isolation: isolate;
+  pointer-events: none;
+}
+.os .os-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  background: var(--bg);
+  border: 1px solid var(--os-chrome-line);
+  box-shadow: 0 10px 30px rgba(3, 10, 9, 0.55);
+}
+.os .os-window[data-focused="true"] {
+  border-color: var(--os-brass-dim);
+  box-shadow: 0 18px 50px rgba(3, 10, 9, 0.7);
+}
+.os .os-window[data-state="maximised"] {
+  border-width: 0 0 1px;
+  box-shadow: none;
+}
+.os .os-titlebar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--os-titlebar-h);
+  padding-left: 9px;
+  background: var(--os-chrome);
+  border-bottom: 1px solid var(--os-chrome-line);
+  color: var(--os-paper-dim);
+  font-family: var(--os-face);
+  font-size: 14px;
+  cursor: default;
+  user-select: none;
+  touch-action: none;
+}
+.os .os-window[data-focused="true"] .os-titlebar {
+  background: var(--os-chrome-raised);
+  /* The focused window's mark: a brass rule along its top. */
+  box-shadow: inset 0 2px 0 var(--os-brass);
+  color: var(--os-paper);
+}
+.os .os-window[data-focused="true"] .os-titlebar > .os-icon {
+  color: var(--os-brass);
+}
+.os .os-titlebar:focus-visible {
+  outline: 2px solid var(--os-brass);
+  outline-offset: -2px;
+}
+.os .os-title {
+  flex: none;
+  font-stretch: 92%;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.os .os-address {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--os-paper-dim);
+  font-stretch: 85%;
+  font-size: 13px;
+  opacity: 0.8;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.os .os-window-buttons {
+  flex: none;
+  display: flex;
+  height: 100%;
+}
+.os .os-wb {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+}
+.os .os-wb:hover {
+  background: var(--os-chrome-line);
+  color: var(--os-paper);
+}
+.os .os-wb-close:hover {
+  background: var(--os-signal);
+  color: var(--os-ink);
+}
+.os .os-wb:focus-visible {
+  outline: 2px solid var(--os-brass);
+  outline-offset: -2px;
+}
+.os .os-window-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  /* Its own stacking context, under the resize handles: an app's layers never cover a handle. */
+  isolation: isolate;
+  z-index: 0;
+}
+.os .os-window-loading,
+.os .os-window-fault {
+  margin: 0;
+  padding: 24px;
+  color: var(--os-paper-dim);
+  font-family: var(--os-face);
+}
+.os .os-window-fault p {
+  margin: 0 0 6px;
+}
+.os .os-window-fault p:first-child {
+  color: var(--os-signal);
+}
+/* The resize handles straddle the frame: mostly outside it, so an app's scroll bars stay usable. */
+.os .os-edge {
+  position: absolute;
+  z-index: 1;
+  touch-action: none;
+}
+.os .os-edge-n,
+.os .os-edge-s {
+  left: 10px;
+  right: 10px;
+  height: 8px;
+  cursor: ns-resize;
+}
+.os .os-edge-e,
+.os .os-edge-w {
+  top: 10px;
+  bottom: 10px;
+  width: 8px;
+  cursor: ew-resize;
+}
+.os .os-edge-n {
+  top: -5px;
+}
+.os .os-edge-s {
+  bottom: -5px;
+}
+.os .os-edge-e {
+  right: -5px;
+}
+.os .os-edge-w {
+  left: -5px;
+}
+.os .os-edge-ne,
+.os .os-edge-nw,
+.os .os-edge-se,
+.os .os-edge-sw {
+  width: 15px;
+  height: 15px;
+}
+.os .os-edge-ne {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+.os .os-edge-nw {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+.os .os-edge-se {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}
+.os .os-edge-sw {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+/* ---------------------------------------------------------------- taskbar */
+.os .os-taskbar {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  height: var(--os-taskbar-h);
+  padding: 0 8px 0 4px;
+  background: var(--os-chrome);
+  border-top: 1px solid var(--os-brass-dim);
+  color: var(--os-paper);
+  font-family: var(--os-face);
+  font-size: 14px;
+}
+/* An instrument's scale along the taskbar's top edge. */
+.os .os-taskbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--os-brass-dim) 0 1px, transparent 1px 8px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.os .os-taskbar button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+}
+.os .os-taskbar button:focus-visible {
+  outline: 2px solid var(--os-brass);
+  outline-offset: -3px;
+}
+.os .os-launcher {
+  position: relative;
+  display: flex;
+}
+.os .os-launcher-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 10px;
+  color: var(--os-brass);
+  font-stretch: 88%;
+  font-size: 17px;
+  letter-spacing: 0.05em;
+}
+.os .os-launcher-button:hover,
+.os .os-launcher-button.on {
+  background: var(--os-chrome-raised);
+  color: var(--os-paper);
+}
+.os .os-launcher-menu {
+  position: absolute;
+  left: 2px;
+  bottom: calc(100% + 7px);
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-height: calc(100vh - var(--os-taskbar-h) - 24px);
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--os-chrome-raised);
+  border: 1px solid var(--os-brass-dim);
+  box-shadow: 0 14px 40px rgba(3, 10, 9, 0.7);
+}
+.os .os-launcher-menu p {
+  margin: 0;
+  padding: 8px 10px;
+}
+.os .os-launcher-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 15px;
+}
+.os .os-launcher-menu button .os-icon {
+  color: var(--os-brass);
+}
+.os .os-launcher-menu button:hover {
+  background: var(--os-chrome-line);
+}
+.os .os-tasks {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+}
+.os .os-task {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 210px;
+  padding: 0 14px 0 10px;
+  color: var(--os-paper-dim);
+  font-stretch: 90%;
+  white-space: nowrap;
+}
+.os .os-task span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Open: a short brass mark under the button; focused: the full width. Minimised has none. */
+.os .os-task::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 4px;
+  width: 16px;
+  height: 2px;
+  background: var(--os-brass-dim);
+}
+.os .os-task[data-state="minimised"]::after {
+  display: none;
+}
+.os .os-task[data-focused="true"] {
+  background: var(--os-chrome-raised);
+  color: var(--os-paper);
+}
+.os .os-task[data-focused="true"]::after {
+  right: 10px;
+  width: auto;
+  background: var(--os-brass);
+}
+.os .os-task:hover {
+  background: var(--os-chrome-raised);
+  color: var(--os-paper);
+}
+.os .os-tb-text {
+  align-self: center;
+  padding: 4px 9px;
+  border: 1px solid var(--os-chrome-line);
+  color: var(--os-paper-dim);
+  font-stretch: 88%;
+  font-size: 13px;
+}
+.os .os-tb-text:hover {
+  color: var(--os-paper);
+}
+.os .os-tb-text.on {
+  border-color: var(--os-signal);
+  color: var(--os-signal);
+}
+
+/* The clock cluster (pivot 2.2). */
+.os .os-clock-cluster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--os-chrome-line);
+}
+.os .os-tb-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 32px;
+  padding: 0;
+  color: var(--os-paper);
+}
+.os .os-tb-button:hover {
+  background: var(--os-chrome-line);
+}
+/* Paused is the state to notice: the button that resumes is lit. */
+.os .os-tb-pause.on {
+  background: var(--os-signal);
+  color: var(--os-ink);
+}
+.os .os-tb-pause.on .os-icon {
+  fill: currentColor;
+}
+.os .os-speeds {
+  display: flex;
+  margin: 0 8px 0 4px;
+  border: 1px solid var(--os-chrome-line);
+}
+.os .os-speed {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  color: var(--os-paper-dim);
+  font-variant-numeric: tabular-nums;
+  font-stretch: 88%;
+}
+.os .os-speed + .os-speed {
+  border-left: 1px solid var(--os-chrome-line);
+}
+.os .os-speed:hover {
+  background: var(--os-chrome-line);
+  color: var(--os-paper);
+}
+/* The speed picked: outlined in brass while paused, filled while the game runs at it. */
+.os .os-speed.picked {
+  color: var(--os-brass);
+  box-shadow: inset 0 -2px 0 var(--os-brass);
+}
+.os .os-speed.picked.on {
+  background: var(--os-brass);
+  color: var(--os-ink);
+  box-shadow: none;
+}
+.os .os-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 112px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.os .os-clock-hour {
+  font-size: 19px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+}
+.os .os-clock-cluster[data-paused="true"] .os-clock-hour {
+  color: var(--os-paper-dim);
+}
+.os .os-clock-date {
+  color: var(--os-paper-dim);
+  font-stretch: 88%;
+  font-size: 12.5px;
+}
+.os .os-tb-phone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  margin-left: 4px;
+  color: var(--os-paper-dim);
+}
+.os .os-tb-phone:hover,
+.os .os-tb-phone.on {
+  background: var(--os-chrome-raised);
+  color: var(--os-brass);
+}
+.os .os-badge {
+  position: absolute;
+  top: 5px;
+  right: 1px;
+  min-width: 17px;
+  padding: 1px 4px;
+  background: var(--os-signal);
+  border-radius: 9px;
+  color: var(--os-ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- phone */
+.os .os-phone {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 304px;
+  height: min(580px, calc(100% - 20px));
+  padding: 0 9px;
+  /* A device standing in its dock: the top corners are the phone's, the bottom is out of sight. */
+  background: #0a0f0f;
+  border: 1px solid var(--os-chrome-line);
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  box-shadow:
+    0 0 0 1px var(--os-ink),
+    0 -8px 40px rgba(3, 10, 9, 0.75);
+  color: var(--os-paper);
+  font-family: var(--os-face);
+  font-size: 14px;
+  animation: os-phone-up 160ms ease-out;
+}
+.os .os-phone[hidden] {
+  display: none;
+}
+@keyframes os-phone-up {
+  from {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .os .os-phone {
+    animation: none;
+  }
+}
+.os .os-phone-lip {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 0 7px;
+  background: none;
+  border: 0;
+  color: var(--os-paper-dim);
+  font: inherit;
+  font-stretch: 88%;
+  font-size: 12px;
+}
+.os .os-phone-lip:hover {
+  color: var(--os-brass);
+}
+.os .os-phone-lip:focus-visible {
+  outline: 2px solid var(--os-brass);
+  outline-offset: -4px;
+}
+.os .os-phone-speaker {
+  width: 46px;
+  height: 4px;
+  background: var(--os-chrome-line);
+  border-radius: 2px;
+}
+.os .os-phone-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--os-verdigris);
+  border: 1px solid var(--os-chrome-line);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+.os .os-phone-status {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 12px 6px;
+  background: var(--os-ink);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.os .os-phone-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.os .os-phone-empty {
+  margin: 0;
+  padding: 28px 18px;
+  color: var(--os-paper-dim);
+  line-height: 1.45;
+}
+.os .os-phone-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+}
+.os .os-phone-notes li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: rgba(7, 19, 18, 0.72);
+  border-left: 2px solid var(--os-chrome-line);
+  line-height: 1.3;
+}
+.os .os-phone-notes li[data-severity="alert"] {
+  border-left-color: var(--os-brass);
+}
+.os .os-phone-note-when {
+  color: var(--os-paper-dim);
+  font-variant-numeric: tabular-nums;
+  font-stretch: 88%;
+  font-size: 12px;
+}
+.os .os-phone-dock {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+  background: var(--os-ink);
+}
+.os .os-phone-dock button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  color: var(--os-paper-dim);
+}
+.os .os-phone-dock button:hover,
+.os .os-phone-dock button.on {
+  background: var(--os-patina);
+  color: var(--os-brass);
+}
+
+/* The toasts (shell/Toasts.tsx) sat at the page's bottom right, where the taskbar's clock and the
+   phone are now: on the desktop they are at the top right, over the windows. */
+.os .toasts {
+  top: 12px;
+  bottom: auto;
+  z-index: 4;
+}

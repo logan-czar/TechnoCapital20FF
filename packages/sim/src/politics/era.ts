@@ -4,6 +4,7 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
+import { usGdpShare } from "../governing/levers.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { ordinal, type ProvinceId, type UsStateId } from "../types/ids.ts";
 import { expF } from "../types/libm.ts";
@@ -79,9 +80,7 @@ export function startEraPolitics(world: World, data: WorldData, draws: DrawSourc
   return {
     states,
     ideologies,
-    fiscal: 0.0,
-    rate_bias: 0.0,
-    demand_mult: 1.0,
+    us_share: usGdpShare(world),
     next_districts: null,
   };
 }

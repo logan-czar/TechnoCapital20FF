@@ -1,11 +1,12 @@
 // D970: the growth profiles. Legacy is the spec 5.1 table untouched; the others are well formed;
 // a profile reaches the world, the cycle and the long-term rates through simNew.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { phaseSpec } from "../src/economy/cycle.ts";
 import { LEGACY_PROFILE, PROFILES, profileById } from "../src/economy/profiles.ts";
 import { simNew, simWorld } from "../src/lib.ts";
 import type { CyclePhase } from "../src/types/world.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 const PHASES: CyclePhase[] = ["Expansion", "Overheating", "Contraction", "Recovery"];
 
@@ -39,14 +40,14 @@ describe("growth profiles (D970)", () => {
   });
 
   it("an unknown profile is a load error", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     const made = simNew(r.value, 1, { profile: "no_such_profile" });
     expect(made.ok).toBe(false);
   });
 
   it("a profile reaches the world: start phase, scaled long-term rates, no boom date", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     const made = simNew(structuredClone(r.value), 7, { profile: "long_recession" });
     if (!made.ok) throw new Error("sim");

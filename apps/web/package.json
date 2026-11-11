@@ -18,6 +18,7 @@
     "@tanstack/react-virtual": "3.14.22",
     "@tc20ff/sim": "workspace:*",
     "@tc20ff/sim-data": "workspace:*",
+    "@tc20ff/sim-host": "workspace:*",
     "cmdk": "1.1.1",
     "dockview-react": "8.6.1",
     "fuse.js": "7.5.0",

@@ -1,0 +1,9 @@
+[
+  { "wait": { "testId": "desktop" } },
+  { "eval": "({ now: sim.clock.now, date: sim.clock.date, paused: sim.clock.paused })" },
+  { "dblclick": "app-debug" },
+  { "wait": { "testId": "debug-workspace" } },
+  { "click": { "text": "Pdoomberg", "exact": true } },
+  { "wait": 800 },
+  { "screenshot": "apps/desktop/.scratch/drive/load-save.png" }
+]

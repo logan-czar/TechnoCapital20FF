@@ -1,12 +1,14 @@
 // The real sim as a Web Worker: fetches the starting CSVs and the map CSVs (served by the Vite
 // plugin, exactly the files WORLD_FILES and MAP_FILES name), parses them with sim-data's pure core,
-// then speaks the protocol through a RealHost (host.ts) driven by a WorkerLoop (loop.ts).
+// then speaks the protocol through a RealHost driven by a WorkerLoop (both packages/sim-host, which
+// the Electron sim process runs too: apps/desktop/src/sim/entry.ts loads the same files from disk).
 
 import type { ToSim } from "@tc20ff/sim";
 import {
   dataErrorToString,
   ERA_FILES,
   type Files,
+  GEO_FILES,
   MANIFEST_2020,
   MANIFEST_FILE,
   MAP_FILES,
@@ -17,9 +19,8 @@ import {
   type WorldData,
   type WorldManifest,
 } from "@tc20ff/sim-data";
+import { RealHost, WorkerLoop } from "@tc20ff/sim-host";
 import { knownWorld, worldDataBase } from "../world.ts";
-import { RealHost } from "./host.ts";
-import { WorkerLoop } from "./loop.ts";
 
 /** A text file the plugin serves, or null when it is not there (the SPA fallback is HTML). */
 async function fetchText(url: string): Promise<string | null> {
@@ -59,12 +60,15 @@ async function loadManifest(world: string | null, base: string): Promise<WorldMa
 async function loadData(): Promise<WorldData> {
   const selected = knownWorld((self as unknown as { name?: string }).name);
   const base = worldDataBase(selected);
-  const [manifest, worldFiles, mapFiles] = await Promise.all([
+  const [manifest, baseFiles, mapFiles] = await Promise.all([
     loadManifest(selected, base),
     loadFiles(selected === null ? WORLD_FILES : [...WORLD_FILES, ...ERA_FILES], base, false),
     // The map files are optional: no map-meta.toml means no map (parseMap gives null).
     loadFiles(MAP_FILES, "/data/map/", true),
   ]);
+  // The county files, for a world that has them (pivot 5.1).
+  const geoFiles = manifest.features.counties ? await loadFiles(GEO_FILES, base, false) : {};
+  const worldFiles = { ...baseFiles, ...geoFiles };
   const world = parseWorld(worldFiles, manifest);
   if (!world.ok) throw new Error(`starting data: ${dataErrorToString(world.error)}`);
   const map = parseMap(mapFiles);

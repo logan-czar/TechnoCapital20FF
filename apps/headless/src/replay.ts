@@ -315,6 +315,8 @@ export function simErrorToString(e: SimError): string {
   switch (e.kind) {
     case "BadSpeed":
       return `speed ${e.speed} is outside 0 to ${MAX_SPEED}`;
+    case "BadStep":
+      return `a step of ${e.hours} hours is out of range`;
     case "UnknownCompany":
       return `no company ${e.company}`;
     case "DebugOnly":

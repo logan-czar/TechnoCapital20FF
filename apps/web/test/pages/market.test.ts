@@ -24,7 +24,7 @@ import {
   simDateYmd,
   simNew,
 } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNameIndex, eventName, type NameIndex } from "../../src/links/names.ts";
 import {
@@ -67,6 +67,7 @@ import {
   zoneSpreadsTable,
 } from "../../src/pdoomberg/models.ts";
 import { type Cell, cellNumber, display, money, sortOrder } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 const SEED = 42;
 const Q1: Quarter = { year: 2020, q: 1 };
@@ -90,7 +91,7 @@ const snapshot = (): ViewsData => viewsData(structuredClone(sim.views()));
 const now = () => sim.views().clock.data.now;
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   const made = simNew(loaded.value, SEED, { debug: true });
   if (!made.ok) throw new Error(JSON.stringify(made.error));

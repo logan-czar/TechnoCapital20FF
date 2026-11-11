@@ -17,7 +17,7 @@ import {
   simNew,
 } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { priceBarsViewGetPriceHistory } from "../../../../packages/sim/src/views/price_bars.ts";
 import { card } from "../../src/links/cards.ts";
@@ -45,6 +45,7 @@ import { PAGE_BUDGET_MS } from "../../src/pages/PagePane.tsx";
 import { type PageRef, pageEq, setProvinceKeys } from "../../src/pages/ref.ts";
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
 import { type Cell, date, display, money, price } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 /** Ticks to the end of the first plan lock (9 January 2020 00:00 is tick 192, b1_pages.rs). */
 const AFTER_FIRST_LOCK = 200;
@@ -65,7 +66,7 @@ function newSim(debug = false): Sim {
 }
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
   fresh = viewsData(newSim().views());

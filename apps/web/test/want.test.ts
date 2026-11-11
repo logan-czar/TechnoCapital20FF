@@ -5,18 +5,19 @@
 import type { FromSim, SliceKey, ToSim, ViewName, ViewsPatch } from "@tc20ff/sim";
 import { lightView, sliceData } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { mergeSlices, type ViewsData, viewsData } from "../src/pages/views.ts";
 import { RealHost } from "../src/sim/real/host.ts";
 import { SimStore } from "../src/sim/store.ts";
+import { worldMini } from "./world-mini.ts";
 
 /** Ticks to past the Q1 2020 recap and release (a recap and statements to slice). */
 const PAST_Q1 = 24 * 105;
 
 let data: WorldData;
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
 });

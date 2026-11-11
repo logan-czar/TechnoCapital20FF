@@ -7,7 +7,7 @@
 
 import { type CompanyId, type Notice, type Quarter, recapTick, type Sim, simNew } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNameIndex } from "../../src/links/names.ts";
 import { docLinks, docTable, docTexts, type PageDoc } from "../../src/pages/doc.ts";
@@ -22,6 +22,7 @@ import { type PageRef, pageEq, quarterNext, quarterPrev, setProvinceKeys } from 
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
 import { recapPane } from "../../src/shell/Workspace.tsx";
 import { type Cell, display, money } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 const SEED = 42;
 const Q1: Quarter = { year: 2020, q: 1 };
@@ -52,7 +53,7 @@ function runToRecap(s: Sim, watch: readonly CompanyId[]): Notice[] {
 }
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
   sim = newSim();

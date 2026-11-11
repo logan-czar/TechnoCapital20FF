@@ -6,7 +6,7 @@
 // real game's first frame (the worker's host, run in-process).
 
 import type { CompanyId, CountryId } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { IDockviewPanelProps } from "dockview-react";
 import type { ReactNode } from "react";
@@ -27,12 +27,13 @@ import type { SimClient } from "../../src/sim/client.ts";
 import { SimContext } from "../../src/sim/hooks.ts";
 import { RealHost } from "../../src/sim/real/host.ts";
 import { type Frame, SimStore } from "../../src/sim/store.ts";
+import { worldMini } from "../world-mini.ts";
 
 let store: SimStore;
 let views: ViewsData;
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   const host = new RealHost(loaded.value);
   const frame = host.handle({ kind: "NewGame", seed: 42, id: 1 }).find((m) => m.kind === "Frame") as Frame;

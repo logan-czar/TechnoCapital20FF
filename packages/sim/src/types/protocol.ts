@@ -26,12 +26,20 @@
 // slices, each only while wanted: one company's statements, one quarter's whole recap, one
 // exchange's index history. A view or slice posted once is posted again when its version moves.
 // Before any `Want` (tests, the mock) every view is posted whole, as before.
+//
+// The pivot's messages (pivot 3.5, 15; D1029): a new game may start from a baked save or a
+// generated history (`NewGame.start`), a long request reports `Progress` and can be cancelled
+// (`Cancel`), saves live in named slots the sim's process writes (`SaveSlot`, `LoadSlot`,
+// `ListSaves`, `DeleteSave`), and the player acts through `Act`. A host that cannot serve one of
+// these yet answers it `Refused` with `unsupportedMessage`'s text; the hosts of M1 serve only
+// `Act`, which the sim itself refuses (`ActError` NotAvailable).
 
-import type { Quarter } from "./calendar.ts";
+import type { ActError, PlayerAction } from "./action.ts";
+import type { DateTime, Quarter, SimDate } from "./calendar.ts";
 import type { Control } from "./control.ts";
 import type { CompanyId, ZoneId } from "./ids.ts";
 import type { Notice } from "./notice.ts";
-import type { SimError } from "./sim-api.ts";
+import type { SimError, StateHash } from "./sim-api.ts";
 import type { DailyBar, IndexHistory } from "./state/market.ts";
 import type { Headline } from "./state/news.ts";
 import type { ClockView, SimViews, ViewName } from "./views/index.ts";
@@ -56,6 +64,60 @@ export interface NewGameChoices {
   scenarios: { id: string; label: string }[];
 }
 
+/** Where a new game's first day comes from (pivot 3.1 to 3.5). */
+export type GameStart =
+  /** A pre-simulated 2020 that ships with the game (pivot 3.5): one of `Ready`'s `starts`. */
+  | { kind: "baked"; id: string }
+  /**
+   * A new history: the 1995 world run forward to 2020 at Coarse fidelity under a hidden scenario,
+   * then hydrated (pivot 3.2 to 3.4). Reports `Progress` and can be cancelled.
+   */
+  | { kind: "generate" };
+
+/** A pre-baked start as `Ready` lists it (pivot 3.5; `assets/starts/`, written by headless `--bake`). */
+export interface BakedStart {
+  /** Its name in a `NewGame.start`. */
+  id: string;
+  label: string;
+  /** The seed its history was generated from. */
+  seed: number;
+  /** The `SAVE_VERSION` it was written with: a start from another version is not listed. */
+  save_version: number;
+  /** Its state hash on its first day, for the checks. */
+  hash: StateHash;
+}
+
+/** What a long request is doing (pivot 3.5). */
+export type ProgressPhase =
+  /** Reading a save or a baked start. */
+  | "Load"
+  /** The Coarse pre-simulation (pivot 3.2). */
+  | "Presim"
+  /** The switch to Full at 2020-01-01 (pivot 3.4). */
+  | "Hydrate"
+  /** Writing a save. */
+  | "Save";
+
+/** A save in a slot, as `ListSaves` reports it (pivot 15.4). */
+export interface SaveInfo {
+  /** The slot's name: a file name without its folder or extension. */
+  slot: string;
+  /** A rotating autosave, not one the player named. */
+  autosave: boolean;
+  /** The game's clock and seed in it. */
+  time: DateTime;
+  seed: number;
+  /** The `SAVE_VERSION` it was written with; this build loads only its own. */
+  save_version: number;
+  /** Its size on disk. */
+  bytes: number;
+}
+
+/** The text of a `Refused` reply to a request this host does not serve yet. */
+export function unsupportedMessage(kind: ToSim["kind"]): string {
+  return `unsupported: this build's sim does not handle ${kind} yet`;
+}
+
 /** UI → worker. */
 export type ToSim =
   /**
@@ -68,6 +130,11 @@ export type ToSim =
       seed: number;
       /** A historical world's scenario, one of `Ready`'s choices (1995-rework 4.1). */
       scenario?: string;
+      /**
+       * Where the game starts (pivot 3.5). Absent: the loaded world's own first day, as before the
+       * pivot (the 1995 world in 1995, the 2020 world in 2020).
+       */
+      start?: GameStart;
     }
   /** Load a save (D13, D953): pauses and drops any skip. */
   | { kind: "Load"; id: RequestId; bytes: Uint8Array }
@@ -81,7 +148,24 @@ export type ToSim =
    * What the UI reads now (D1016): the views its mounted parts read, and the heavy views' slices
    * its pages read. It has no reply; a frame follows when something wanted is not posted yet.
    */
-  | { kind: "Want"; views: ViewName[]; slices: SliceKey[] };
+  | { kind: "Want"; views: ViewName[]; slices: SliceKey[] }
+  /**
+   * Stop request `id` (a generating NewGame, pivot 3.5). It has no reply of its own: the request
+   * it names replies `Cancelled`, or as usual if it had already finished.
+   */
+  | { kind: "Cancel"; id: RequestId }
+  /** Write the game to a named slot on disk (pivot 15.4). Replies Ok. */
+  | { kind: "SaveSlot"; id: RequestId; slot: string }
+  /** Load the save in a slot: pauses and drops any skip, as `Load`. */
+  | { kind: "LoadSlot"; id: RequestId; slot: string }
+  /** The saves on disk. Replies `Saves`. */
+  | { kind: "ListSaves"; id: RequestId }
+  | { kind: "DeleteSave"; id: RequestId; slot: string }
+  /** A player action (types/action.ts; D1027), applied at once, between ticks. */
+  | { kind: "Act"; id: RequestId; action: PlayerAction };
+
+/** The requests a reply answers: every `ToSim` with an id of its own. */
+export type SimRequest = Exclude<ToSim, { kind: "FrameDone" | "Want" | "Cancel" }>;
 
 /** A slice of a heavy view (D1016). */
 export type SliceKey =
@@ -121,7 +205,24 @@ export type FromSim =
    * Sent once the worker has loaded the data and is ready for NewGame or Load. `choices` says this
    * world's new game needs picking (1995-rework 4.1); absent, the UI starts one at once.
    */
-  | { kind: "Ready"; choices?: NewGameChoices }
+  | {
+      kind: "Ready";
+      choices?: NewGameChoices;
+      /** The pre-baked starts this build ships (pivot 3.5); absent or empty when it has none. */
+      starts?: BakedStart[];
+    }
+  /**
+   * How far request `id` has got (pivot 3.5), posted now and then while it runs: `done` of `total`
+   * in the phase's own units (ticks for Presim), and the game day reached, when the phase has one.
+   */
+  | {
+      kind: "Progress";
+      id: RequestId;
+      phase: ProgressPhase;
+      done: number;
+      total: number;
+      date: SimDate | null;
+    }
   /** The answer to one request, posted after the Frame carrying the views it changed. */
   | { kind: "Reply"; id: RequestId; result: Reply }
   /** Notices in order since the last frame, the clock, and the views whose version moved. */
@@ -157,6 +258,12 @@ export interface PriceBarsDelta {
 export type Reply =
   | { kind: "Ok"; notices: Notice[] }
   | { kind: "Saved"; bytes: Uint8Array }
+  /** The answer to `ListSaves`, newest first. */
+  | { kind: "Saves"; saves: SaveInfo[] }
+  /** The request was stopped by a `Cancel`; nothing changed. */
+  | { kind: "Cancelled" }
+  /** The sim refused a player action (types/action.ts). */
+  | { kind: "ActError"; error: ActError }
   /** A sim error the UI can branch on (BadSpeed, DebugOnly, a bad save …). */
   | { kind: "SimError"; error: SimError }
   /** A request the worker refused before reaching the sim (e.g. a Control of kind NewGame). */

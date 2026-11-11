@@ -21,6 +21,7 @@
 //   D900); `world()` and `register_test_job(slot, name, job)` (feature `test-hooks`, sim's own
 //   tests only).
 
+import type { ActError, PlayerAction } from "./action.ts";
 import type { DateTime } from "./calendar.ts";
 import type { Control, Controls } from "./control.ts";
 import type { CompanyId } from "./ids.ts";
@@ -28,6 +29,7 @@ import type { Notice } from "./notice.ts";
 import type { ClockView, SimViews } from "./views/index.ts";
 import type { LoadError, Result } from "./world.ts";
 
+export type { ActError, PlayerAction } from "./action.ts";
 export type { Control, Controls } from "./control.ts";
 export type { ClockView, SimViews } from "./views/index.ts";
 // World is not re-exported: the public face never exposes raw tables (spec 9; src/index.ts).
@@ -58,6 +60,8 @@ export type SaveError =
 export type SimError =
   /** "speed {speed} is outside 0 to {MAX_SPEED}". Whole number (u8). */
   | { kind: "BadSpeed"; speed: number }
+  /** "a step of {hours} hours is outside 1 to {MAX_STEP_HOURS}". */
+  | { kind: "BadStep"; hours: number }
   /** "no company {company}". */
   | { kind: "UnknownCompany"; company: CompanyId }
   /** "Omniscient is only available in debug builds". */
@@ -77,6 +81,14 @@ export interface SimApi {
 
   /** Applies a control at once (D5) and returns any notices it causes. */
   apply(control: Control): Result<Notice[], SimError>;
+
+  /**
+   * Applies a player action at once, between ticks (pivot 1.2; D1027), and returns any notices it
+   * causes. An action changes the world, so unlike a control it is inside the state hash and is
+   * recorded for replay (types/action.ts). Until the player and the exchange exist (M2, M5) every
+   * action is refused with `NotAvailable` and changes nothing.
+   */
+  act(action: PlayerAction): Result<Notice[], ActError>;
 
   /** The state as save bytes (spec 9.1 `Save`; build-plan M1.7): world, RNG and controls. */
   saveBytes(): Uint8Array;

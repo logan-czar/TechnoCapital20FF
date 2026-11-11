@@ -33,6 +33,17 @@ export interface WorldFeatures {
   fixed_events: boolean;
   /** CO-0001 is Arrowhead, with its own starting loadout (spec 7.1). */
   arrowhead: boolean;
+  /**
+   * The world has counties.csv and county-adjacency.csv (`GEO_FILES`; pivot 5.1). Optional in
+   * manifest.json: absent is false.
+   */
+  counties: boolean;
+  /**
+   * Only US-headquartered companies are simulated: the others are removed at load and their supply
+   * becomes each industry's rest-of-world block (pivot 4.1, 4.2). Optional in manifest.json: absent
+   * is false. No shipped world sets it yet.
+   */
+  usa_only: boolean;
 }
 
 export interface WorldManifest {
@@ -80,7 +91,14 @@ export const MANIFEST_2020: WorldManifest = {
   neutral_rate: 0.03,
   y10_term: 0.005,
   cabinet_seats: 15,
-  features: { era: false, ai_boom: true, fixed_events: true, arrowhead: true },
+  features: {
+    era: false,
+    ai_boom: true,
+    fixed_events: true,
+    arrowhead: true,
+    counties: false,
+    usa_only: false,
+  },
 };
 
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -120,6 +138,12 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
   ) {
     return bad("features: needs era, ai_boom, fixed_events and arrowhead as booleans");
   }
+  if (f.counties !== undefined && typeof f.counties !== "boolean") {
+    return bad("features.counties: not a boolean");
+  }
+  if (f.usa_only !== undefined && typeof f.usa_only !== "boolean") {
+    return bad("features.usa_only: not a boolean");
+  }
   return ok({
     id: m.id,
     start_date: { year: Number(date[1]), month: Number(date[2]), day: Number(date[3]) },
@@ -130,6 +154,13 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
     neutral_rate: m.neutral_rate as number,
     y10_term: m.y10_term as number,
     cabinet_seats: m.cabinet_seats,
-    features: { era: f.era, ai_boom: f.ai_boom, fixed_events: f.fixed_events, arrowhead: f.arrowhead },
+    features: {
+      era: f.era,
+      ai_boom: f.ai_boom,
+      fixed_events: f.fixed_events,
+      arrowhead: f.arrowhead,
+      counties: f.counties ?? false,
+      usa_only: f.usa_only ?? false,
+    },
   });
 }

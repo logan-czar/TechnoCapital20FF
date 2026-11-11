@@ -7,7 +7,7 @@
 
 import { type Sim, simNew, type ViewName } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNameIndex, LIST_PAGES, type NameIndex } from "../../src/links/names.ts";
 import { docLinks, docTable, docTexts, type PageDoc } from "../../src/pages/doc.ts";
@@ -18,6 +18,7 @@ import { PAGE_KINDS, type PageRef, pageEq, pageId, setProvinceKeys } from "../..
 import { pageSpecOf, registeredKinds } from "../../src/pages/registry.ts";
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
 import { display } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 /** Ticks to the end of the first plan lock (9 January 2020 00:00 is tick 192, b1_pages.rs). */
 const AFTER_FIRST_LOCK = 200;
@@ -34,7 +35,7 @@ function newSim(debug = false): Sim {
 }
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
   fresh = viewsData(newSim().views());

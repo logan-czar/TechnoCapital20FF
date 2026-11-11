@@ -23,9 +23,20 @@ export const SAVE_MAGIC: Uint8Array = new TextEncoder().encode("TC20FFJS");
 
 /**
  * Bumped whenever the saved layout changes (any new field in any table). The TS port starts at 1
- * (D953); Rust's versions (up to 11) do not carry over.
+ * (D953); Rust's versions (up to 11) do not carry over. From the pivot on it moves once per
+ * milestone, in that milestone's contracts change (D1029): 6 is M1 (13 RNG streams where 5 had 8,
+ * `World.fidelity`, `World.levers`, `World.geo`, `Industry.row_assets`). An older save is refused
+ * by its version, before its RNG state is looked at.
  */
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
+
+/**
+ * The gzip level saves are written at (fflate's 0 to 9; D1035). Level 1 writes a 2020 save's 250 MB
+ * of text in 2.3 s where fflate's default 6 took 6.0 s, for a file 5% larger (68.2 MB against
+ * 64.7 MB). It is still gzip: a save written at any level loads, and the state and its hash do not
+ * depend on it.
+ */
+export const SAVE_GZIP_LEVEL = 1;
 
 /** The decoded state of a save. */
 export interface SaveState {
@@ -65,7 +76,7 @@ export function encodeVersioned(
   controls: Controls,
 ): Uint8Array {
   const json = canonicalString({ version, state: { controls, rng, world } });
-  const body = gzipSync(new TextEncoder().encode(json), { mtime: 0 });
+  const body = gzipSync(new TextEncoder().encode(json), { mtime: 0, level: SAVE_GZIP_LEVEL });
   const out = new Uint8Array(SAVE_MAGIC.length + body.length);
   out.set(SAVE_MAGIC, 0);
   out.set(body, SAVE_MAGIC.length);

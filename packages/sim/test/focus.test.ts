@@ -1,10 +1,11 @@
 // D972: the focus experiment. Focus 0 is spec 6.2 and 6.3 untouched; a level moves reinvestment
 // between R&D and growth with the dollars conserved. Pure, no RNG.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { applyFocus, FOCUS_RD_SHIFT_PER_LEVEL, type FocusInputs, focusOf } from "../src/ai/focus.ts";
 import { simNew, simWorld } from "../src/lib.ts";
 import { rdEffect } from "../src/ops/productivity.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 const base: FocusInputs = {
   focus: 0,
@@ -63,7 +64,7 @@ describe("focus (D972)", () => {
   });
 
   it("is off by default and set by the option", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     const off = simNew(structuredClone(r.value), 3);
     const on = simNew(structuredClone(r.value), 3, { focus_levels: [0, 1, -1] });
@@ -86,7 +87,7 @@ describe("R&D curve (D973)", () => {
   });
 
   it("is left absent by default and set by the option", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     const on = simNew(structuredClone(r.value), 3, { rd_diminishing_x: 1.0 });
     const off = simNew(structuredClone(r.value), 3);

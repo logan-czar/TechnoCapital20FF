@@ -1,7 +1,7 @@
 // D977, D978: the drift plan's lane G. Industries' long-term rates fade to mature rates under the
 // `mature` profile, the slowdown and volatility levels are scenario tokens on a profile id, and the
 // legacy profile stays on the CSV rates.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { setIndustryLt } from "../src/economy/ai_boom.ts";
 import {
@@ -15,9 +15,10 @@ import {
 import { simNew, simWorld } from "../src/lib.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
 import type { World } from "../src/types/world.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 function newWorld(seed: number, profile: string): World {
-  const r = loadWorld(defaultDataDir());
+  const r = loadWorld(worldMini().dir);
   if (!r.ok) throw new Error("data");
   const made = simNew(structuredClone(r.value), seed, { profile });
   if (!made.ok) throw new Error("sim");
@@ -43,7 +44,7 @@ describe("the fade (D977)", () => {
   });
 
   it("the CSV gives every fast industry a mature rate under its trend and a half life of 15 to 25", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     for (const i of r.value.industries.rows) {
       if (i.trend_growth <= i.mature_rate) {
@@ -144,7 +145,7 @@ describe("scenario tokens on a profile id (D978)", () => {
   });
 
   it("simNew rejects a bad scenario token", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     expect(simNew(structuredClone(r.value), 1, { profile: "legacy+slow-oops" }).ok).toBe(false);
   });

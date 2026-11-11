@@ -13,6 +13,7 @@
 // M 1.0 breaks even.
 
 import { seatEffectNow } from "../events/effects.ts";
+import { regulatedCost } from "../governing/levers.ts";
 import type { JobCtx } from "../time/scheduler.ts";
 import { maxF, minF } from "../types/num.ts";
 import type { BusinessUnit, IndustryParams, World } from "../types/world.ts";
@@ -140,8 +141,11 @@ export function setExpenses(world: World): void {
     );
     // A COO's seat event moves the variable cost share while it fades (D1024); 0 with none.
     const coo = seatEffectNow(world.companies[unit.company]!, "Margin");
-    unit.variable_m = coo === 0.0 ? e.variable : unit.revenue_m * maxF(variableCostShare(params) - coo, 0.0);
-    unit.fixed_m = e.fixed;
+    const variable = coo === 0.0 ? e.variable : unit.revenue_m * maxF(variableCostShare(params) - coo, 0.0);
+    // pivot 4.3 `regulation`: raises the industry's operating cost, the variable and fixed cash
+    // lines; untouched at neutral.
+    unit.variable_m = regulatedCost(world, unit.industry, variable);
+    unit.fixed_m = regulatedCost(world, unit.industry, e.fixed);
     unit.dep_m = e.depreciation;
     unit.rd_m = e.rd;
     unit.shared_m = e.shared;
