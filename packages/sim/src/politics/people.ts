@@ -94,10 +94,40 @@ export function officeSeatOrder(a: OfficeSeat, b: OfficeSeat): number {
   return a0 !== b0 ? a0 - b0 : a1 - b1;
 }
 
+/**
+ * Where `seat` is or would go in the offices table (kept in `officeSeatOrder`): a binary search.
+ * `found` is whether the seat is held.
+ */
+function officeIndex(s: PersonsState, seat: OfficeSeat): { at: number; found: boolean } {
+  let lo = 0;
+  let hi = s.offices.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (officeSeatOrder((s.offices[mid] as OfficeHolder).seat, seat) < 0) lo = mid + 1;
+    else hi = mid;
+  }
+  const at = s.offices[lo];
+  return { at: lo, found: at !== undefined && officeSeatOrder(at.seat, seat) === 0 };
+}
+
 /** Who holds `seat` now, or undefined when it is vacant. */
 export function officeHolderOf(s: PersonsState, seat: OfficeSeat): OfficeHolder | undefined {
-  const key = seatKey(seat);
-  return s.offices.find((o) => seatKey(o.seat) === key);
+  const { at, found } = officeIndex(s, seat);
+  return found ? s.offices[at] : undefined;
+}
+
+/** A person's age in `year` (pivot 5.7: `born` is the year of birth). Whole number. */
+export function personAge(p: Person, year: number): number {
+  return year - p.born;
+}
+
+/** The career line of `seat` that `p` holds now, or undefined. */
+export function careerLineOf(p: Person, seat: OfficeSeat): CareerRecord | undefined {
+  for (let i = p.career.length - 1; i >= 0; i--) {
+    const c = p.career[i] as CareerRecord;
+    if (c.to === null && officeSeatOrder(c.seat, seat) === 0) return c;
+  }
+  return undefined;
 }
 
 /** The seats `person` holds now, in table order. */
@@ -120,16 +150,15 @@ export function officeTake(
 ): void {
   const p = personGet(s, person);
   if (p === undefined) throw new Error(`officeTake: no person ${person}`);
-  if (officeHolderOf(s, seat) !== undefined) throw new Error(`officeTake: ${seatKey(seat)} is held`);
+  const { at, found } = officeIndex(s, seat);
+  if (found) throw new Error(`officeTake: ${seatKey(seat)} is held`);
   const holder: OfficeHolder = { seat, person, since: date, term_ends: termEnds };
-  const at = s.offices.findIndex((o) => officeSeatOrder(o.seat, seat) > 0);
-  if (at < 0) s.offices.push(holder);
-  else s.offices.splice(at, 0, holder);
+  s.offices.splice(at, 0, holder);
   const line: CareerRecord = { seat, how, from: date, to: null, exit: null };
   p.career.push(line);
   p.status = "InOffice";
-  const key = seatKey(seat);
-  s.vacancies = s.vacancies.filter((v) => seatKey(v.seat) !== key);
+  p.left = null;
+  if (s.vacancies.length > 0) s.vacancies = s.vacancies.filter((v) => officeSeatOrder(v.seat, seat) !== 0);
 }
 
 /**
@@ -145,14 +174,13 @@ export function officeLeave(
   date: SimDate,
   vacate = true,
 ): PersonId | null {
-  const key = seatKey(seat);
-  const at = s.offices.findIndex((o) => seatKey(o.seat) === key);
-  if (at < 0) return null;
+  const { at, found } = officeIndex(s, seat);
+  if (!found) return null;
   const holder = s.offices[at] as OfficeHolder;
   s.offices.splice(at, 1);
   const p = personGet(s, holder.person);
   if (p !== undefined) {
-    const line = [...p.career].reverse().find((c) => c.to === null && seatKey(c.seat) === key);
+    const line = careerLineOf(p, seat);
     if (line !== undefined) {
       line.to = date;
       line.exit = exit;
@@ -172,13 +200,16 @@ export function officeLeave(
 }
 
 /**
- * How a vacant seat is filled (pivot 6.1 "by office", T; lane C may refine by state): the
- * presidency by succession, a House seat by special election, everything else by appointment
- * (a Senate seat by the governor until a special election, which lane E schedules for it too).
+ * How a vacant seat is filled (pivot 6.1 "by office", T; D1041): the presidency by succession (the
+ * vice president), a governorship by succession (the lieutenant governor, drawn from the state's
+ * bench), a House seat by special election, everything else by appointment (a Senate seat by the
+ * governor until a special election, which lane E schedules for it: the appointee's career line
+ * reads `Appointed` and their term ends at the next general's handover).
  */
 export function vacancyFillOf(seat: OfficeSeat): VacancyFill {
   switch (seat.kind) {
     case "President":
+    case "Governor":
       return "Succession";
     case "House":
       return "Special";

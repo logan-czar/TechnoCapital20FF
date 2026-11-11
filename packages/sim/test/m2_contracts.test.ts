@@ -57,15 +57,16 @@ describe("M2 contracts: state", () => {
     expect(SAVE_VERSION).toBe(7);
   });
 
-  it("a world loads with empty persons and elections, no player, and empty geo tables", () => {
+  it("a world loads with empty elections, no player, and empty geo tables (persons: lane C, D1041)", () => {
     const w = simWorld(testSim(1));
-    expect(w.persons).toEqual(personsStateEmpty());
+    // Lane C's `personsStart` seats every office at load (packages/sim/test/careers/).
+    expect(w.persons.offices.length).toBeGreaterThan(0);
     expect(w.elections.races).toEqual([]);
     expect(w.elections.calendar.next_general).toBeNull();
     expect(w.player).toBeNull();
     expect(w.geo).toEqual(geoStateEmpty());
     const h = simWorld(unwrap(simNew(data1995(), 1), "1995 world"));
-    expect(h.persons).toEqual(personsStateEmpty());
+    expect(h.persons.offices.length).toBeGreaterThan(0);
     expect(h.player).toBeNull();
     expect({ ...h.geo, counties: [] }).toEqual(geoStateEmpty());
   });
@@ -80,14 +81,11 @@ describe("M2 contracts: state", () => {
     expect(at("HourlyPlayer")).toBe(at("Alerts") - 1);
     expect(slotGroup("HourlyPlayer")).toBe("Hourly");
     const s = scheduler();
-    for (const slot of [
-      "DailyGeo",
-      "DailyCareers",
-      "DailyElections",
-      "HourlyPlayer",
-      "DailyPlayer",
-      "WeeklyJobs",
-    ] as const) {
+    // Lane C's careers job fills `DailyCareers` (D1041), at both fidelities.
+    expect(schedulerJobs(s, "DailyCareers").map(([name, , fidelity]) => [name, fidelity])).toEqual([
+      ["careers.daily", null],
+    ]);
+    for (const slot of ["DailyGeo", "DailyElections", "HourlyPlayer", "DailyPlayer", "WeeklyJobs"] as const) {
       expect(schedulerJobs(s, slot), slot).toEqual([]);
     }
   });
@@ -286,14 +284,15 @@ describe("M2 contracts: the persons table", () => {
     const sim = testSim(2);
     const w = structuredClone(simWorld(sim)) as World;
     const rng = rngStreamsNew(9);
+    const before = w.persons.persons.length;
     const p = challengerFor(w, rngStreamsDraws(rng), {
       state: 0 as UsStateId,
       party: "Republicans",
       ranges: HOUSE_RANGES,
       origin: "Challenger",
     });
-    expect(p).toMatchObject({ id: 0, party: "Republicans", status: "Candidate", origin: "Challenger" });
-    expect(w.persons.persons).toEqual([p]);
+    expect(p).toMatchObject({ id: before, party: "Republicans", status: "Candidate", origin: "Challenger" });
+    expect(w.persons.persons.slice(before)).toEqual([p]);
     const fresh = rngStreamsNew(9);
     for (const s of STREAM_VALUES) {
       if (s === "Politics") continue;
