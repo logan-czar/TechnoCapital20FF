@@ -14,7 +14,7 @@
 
 import { indexCloseRows, type Sim, simNew } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNameIndex } from "../../src/links/names.ts";
 import { docLinks, docTable, docTexts, liveText, type PageDoc } from "../../src/pages/doc.ts";
@@ -30,6 +30,7 @@ import { politicianCount, politicianRoles } from "../../src/pages/tables.ts";
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
 import { buildEntries, makeFuse, search } from "../../src/shell/CommandBar.tsx";
 import { type Cell, cellNumber, date, display, money, number, sortOrder } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 const AFTER_FIRST_LOCK = 200;
 const SEED = 42;
@@ -46,7 +47,7 @@ function newSim(debug = false): Sim {
 }
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
   fresh = viewsData(newSim().views());

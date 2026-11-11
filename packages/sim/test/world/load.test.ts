@@ -2,9 +2,10 @@
 // world/load.rs has no in-file tests; this exercises the ported data conversion with stub Step 2
 // dependencies (the real golden test is crates/sim/tests/golden/world_load.rs, ported by W5).
 import { dataErrorToString, parseWorld, type WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { buildWorld, type LoadDeps, loadErrorToString, UNPORTED_LOAD_DEPS } from "../../src/world/load.ts";
+import { worldMini } from "../common/world_mini.ts";
 
 const STUBS: LoadDeps = {
   ...UNPORTED_LOAD_DEPS,
@@ -32,7 +33,7 @@ const STUBS: LoadDeps = {
 };
 
 function world(): WorldData {
-  const w = loadWorld(defaultDataDir());
+  const w = loadWorld(worldMini().dir);
   if (!w.ok) throw new Error(dataErrorToString(w.error));
   return w.value;
 }

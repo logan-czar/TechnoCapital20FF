@@ -3,17 +3,18 @@
 
 import type { CompanyId, FromSim, SimViews, ToSim } from "@tc20ff/sim";
 import { ALERT_KIND_VALUES, barRows, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { SimClient, type SimTransport } from "../src/sim/client.ts";
 import { SimHost } from "../src/sim/mock/host.ts";
 import { MAX_TICKS_PER_ADVANCE, MockSim } from "../src/sim/mock/mockSim.ts";
 import { buildMockWorld, type MockWorld } from "../src/sim/mock/mockWorld.ts";
 import { SimStore } from "../src/sim/store.ts";
+import { worldMini } from "./world-mini.ts";
 
 let world: MockWorld;
 beforeAll(() => {
-  const data = loadWorld(defaultDataDir());
+  const data = loadWorld(worldMini().dir);
   if (!data.ok) throw new Error(JSON.stringify(data.error));
   world = buildMockWorld(data.value);
 });

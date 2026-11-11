@@ -12,7 +12,7 @@
 //                              Loadout { first_pass_bonus, assets_bonus, pc_bonus,
 //                              gross_assets_usd, labor, stations, pc, barebones },
 //                              stationSplit(inputs) -> Stations
-//   "@tc20ff/sim-data/node"    loadWorld, defaultDataDir (via ./common/index.ts data())
+//   "@tc20ff/sim-data/node"    loadWorld (via ./common/index.ts data())
 import { describe, expect, it } from "vitest";
 import {
   type LoadoutInputs,

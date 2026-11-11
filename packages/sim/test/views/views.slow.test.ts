@@ -16,7 +16,7 @@
 //   "parallel vs sequential" has nothing to compare. It is kept as the same loop over a plain
 //   step and an observed step with a do-nothing observer (the observer path of D400 must not
 //   change a view), and the views are compared with toEqual.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import {
   type Sim,
@@ -38,9 +38,10 @@ import { DATETIME_START } from "../../src/types/calendar.ts";
 import { MAX_SPEED } from "../../src/types/control.ts";
 import { VIEW_SPECS } from "../../src/types/views/index.ts";
 import { unwrap } from "../common/index.ts";
+import { worldMini } from "../common/world_mini.ts";
 
 function mkSim(): Sim {
-  const data = unwrap(loadWorld(defaultDataDir()), "load_world");
+  const data = unwrap(loadWorld(worldMini().dir), "load_world");
   return unwrap(simNew(data, 5), "Sim::new");
 }
 

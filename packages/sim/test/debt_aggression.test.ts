@@ -1,12 +1,13 @@
 // D971: the debt aggression experiment. Level 0 is spec 6.5 and 6.2 untouched; higher levels hold
 // more of the credit line drawn, borrow for the quarter's purchases, spend more of their liquidity
 // and grow harder while profitable. Pure, no RNG.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { archetypeParams } from "../src/ai/archetype.ts";
 import { debtAggressionOf, type FinancingInputs, financing } from "../src/ai/financing.ts";
 import { type FundingInputs, fundingCap, growthPlan } from "../src/ai/growth.ts";
 import { simNew, simWorld } from "../src/lib.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 function inputs(cash: number, drawn: number, purchases: number, level?: number): FinancingInputs {
   return {
@@ -100,7 +101,7 @@ describe("debt aggression growth (D971)", () => {
 
 describe("debt aggression in the world (D971)", () => {
   it("is off by default and set by the option", () => {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMini().dir);
     if (!r.ok) throw new Error("data");
     const off = simNew(structuredClone(r.value), 3);
     const on = simNew(structuredClone(r.value), 3, { debt_levels: [0, 1, 2] });

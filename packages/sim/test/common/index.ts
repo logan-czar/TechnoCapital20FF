@@ -4,14 +4,14 @@
 //
 // Expects:
 //   "@tc20ff/sim-data"       type WorldData
-//   "@tc20ff/sim-data/node"  loadWorld, defaultDataDir
+//   "@tc20ff/sim-data/node"  loadWorld
 //   ../../src/lib.ts      Sim (type), simNew(data, seed) -> Result<Sim, LoadError>,
 //                            simRegisterTestJob(sim, slot, name, job)   [Sim::register_test_job]
 //   ../../src/time        type JobCtx { facts: TickFacts, draws: DrawSource, ... },
 //                            raiseAlert(ctx, kind, payload) [JobCtx::raise_alert]
 //   ../../src/types/views/estimate.ts  type Figure (the Figure::Exact / Figure::Band enum)
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
+import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { expect } from "vitest";
 import { type Sim, simNew, simRegisterTestJob } from "../../src/lib.ts";
 import type { JobCtx } from "../../src/time/scheduler.ts";
@@ -19,6 +19,7 @@ import { jobCtxRaiseAlert } from "../../src/time/scheduler.ts";
 import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import type { Figure } from "../../src/types/views/estimate.ts";
 import type { Result, World } from "../../src/types/world.ts";
+import { worldMini } from "./world_mini.ts";
 
 /** Rust .unwrap() / .expect(): a Result in a test is its value or a thrown error. */
 export function unwrap<T, E>(r: Result<T, E>, what = "unwrap"): T {
@@ -46,7 +47,7 @@ export function data1995(): WorldData {
 
 /** The starting data, loaded once; every call returns its own copy (Rust loads a fresh value). */
 export function data(): WorldData {
-  if (cached === undefined) cached = unwrap(loadWorld(defaultDataDir()), "data loads");
+  if (cached === undefined) cached = unwrap(loadWorld(worldMini().dir), "data loads");
   return structuredClone(cached);
 }
 

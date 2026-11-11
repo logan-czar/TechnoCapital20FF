@@ -29,9 +29,10 @@ import {
   WHEEL_STEP,
   wrapX,
 } from "../src/map/view.ts";
+import { worldMini } from "./world-mini.ts";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-const dataDir = resolve(repo, "docs/design/data");
+const dataDir = worldMini().dir;
 const readCsv = (path: string) => parseCsv(readFileSync(path, "utf8"));
 
 function loadRows(): ProvinceRow[] {

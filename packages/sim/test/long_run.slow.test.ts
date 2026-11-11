@@ -7,18 +7,19 @@
 //   ../src/lib.ts      simNew(data, seed) -> Result<Sim, LoadError>, simStep(sim) -> Notice[],
 //                         simNow(sim), simSetTrace(sim, on) [Sim::set_trace], simLastTrace(sim)
 //                         -> Slot[] [Sim::last_trace]
-//   "@tc20ff/sim-data/node"  loadWorld, defaultDataDir
+//   "@tc20ff/sim-data/node"  loadWorld
 //
 // Changed from the Rust: none in the assertions (the job order and the notice counts do not
 // depend on draws). SimApi has no set_trace / last_trace (types/sim-api.ts), so they are Sim
 // functions in lib.ts; if W1 puts them elsewhere, change the import.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { simLastTrace, simNew, simNow, simSetTrace, simStep } from "../src/lib.ts";
 import { dateTimeDate, dateTimeHour, dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import type { Slot } from "../src/time/scheduler.ts";
 import type { DateTime } from "../src/types/calendar.ts";
 import { unwrap } from "./common/index.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 /** The slots spec 4 runs at `t`, in order. */
 function specOrder(t: DateTime): Slot[] {
@@ -104,7 +105,7 @@ function specOrder(t: DateTime): Slot[] {
 
 describe("long run", () => {
   it("ten_years_tick_in_spec_order", () => {
-    const data = unwrap(loadWorld(defaultDataDir()), "load_world");
+    const data = unwrap(loadWorld(worldMini().dir), "load_world");
     const sim = unwrap(simNew(data, 2020), "Sim::new");
     simSetTrace(sim, true);
     const end = dateTimeMidnight(simDateYmd(2030, 1, 1));

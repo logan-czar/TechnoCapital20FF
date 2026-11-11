@@ -1,6 +1,6 @@
 // The politics POC running on the real world (D980 to D988): seats stay full across decades of
 // elections, the calendar fires on its days, and the same seed gives the same government.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { type Sim, simNew, simStep, simViews, simWorld } from "../src/lib.ts";
 import { electionDay } from "../src/politics/calendar.ts";
@@ -8,8 +8,9 @@ import { partySeats } from "../src/politics/state.ts";
 import { dateTimeDate } from "../src/time/calendar.ts";
 import { cmpDate } from "../src/types/calendar.ts";
 import type { PoliticsState } from "../src/types/state/politics.ts";
+import { worldMini } from "./common/world_mini.ts";
 
-const loaded = loadWorld(defaultDataDir());
+const loaded = loadWorld(worldMini().dir);
 if (!loaded.ok) throw new Error("data does not load");
 const DATA = loaded.value;
 
