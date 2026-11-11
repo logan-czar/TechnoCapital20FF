@@ -70,7 +70,7 @@ describe("the tax year and the April bill (pivot 14.2)", () => {
     const paid = daily(w, at(4, 15, 0, 2021));
     expect(p.tax_due).toBe(0);
     expect(brokerage(w).cash).toBeCloseTo(cash - 184.335, 9);
-    expect(p.notifications.at(-1)).toMatchObject({ kind: "Alert", rule: null, paused: false });
+    expect(p.notifications.at(-1)).toMatchObject({ kind: "Tax", rule: null, paused: false });
     // 184.335 in binary is just under the half cent.
     expect(p.notifications.at(-1)?.text).toBe("Tax bill for 2020 paid: $184.33");
     expect(paid.pause).toBeNull();
@@ -112,7 +112,7 @@ describe("the tax year and the April bill (pivot 14.2)", () => {
     expect(brokerage(w).cash).toBeCloseTo(29_910, 9);
     expect(p.tax_due).toBe(0);
     expect(p.bankrupt).toBe(false);
-    expect(p.notifications.at(-1)).toMatchObject({ kind: "MarginCall", paused: true, fixed: "MarginCall" });
+    expect(p.notifications.at(-1)).toMatchObject({ kind: "Tax", paused: true, fixed: "MarginCall" });
     expect(ran.pause).toEqual({ kind: "Notification", id: p.notifications.length - 1 });
   });
 });
@@ -128,7 +128,7 @@ describe("bankruptcy (pivot 14.5)", () => {
     expect(netWorth(w, p)).toBe(-30_000);
     expect(p.bankrupt).toBe(true);
     expect(p.ended).toEqual({ year: 2020, month: 4, day: 15 });
-    expect(p.notifications.map((n) => n.kind)).toEqual(["MarginCall", "MarginCall"]);
+    expect(p.notifications.map((n) => n.kind)).toEqual(["Tax", "Bankruptcy"]);
     expect(p.notifications[1]?.text).toMatch(/^Bankrupt/);
     // The run is over: the jobs stop.
     w.base_rate = 0.05;
