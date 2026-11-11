@@ -1,0 +1,300 @@
+/* The Pdoomberg app (apps/terminal): amber on black, a monospace terminal that fills its window.
+   Everything is scoped under .term-root. pdoomberg/Pdoomberg.tsx brings its own look from
+   styles.css (.pdoomberg, .pdb-*); the first block puts that sheet right for a window, since it
+   pinned the terminal to the viewport. Its container is the window's body, so layout answers to
+   the window's size (container queries), not the screen's: it reads at 640x400 and up. */
+.term-root {
+  --term-text: #ffb000;
+  --term-dim: #996b00;
+  --term-rule: #5a3d00;
+  --term-bg: #050505;
+  --term-raised: #14100a;
+  --term-gain: #6fd16f;
+  --term-loss: #ff6a4a;
+  --term-warn: #ffd24a;
+  container: term / size;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--term-bg);
+  color: var(--term-text);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 13px;
+}
+
+/* ---- Pdoomberg, un-pinned ---- */
+.term-root .pdoomberg {
+  position: static;
+  flex: 1;
+  min-height: 0;
+  z-index: auto;
+  overflow: hidden;
+  padding: 6px 8px 6px;
+}
+/* Its hint names Ctrl+K and Esc, which are not this window's keys; the bar below has its own. */
+.term-root .pdoomberg > .pdb-head:nth-child(3) .pdb-dim {
+  display: none;
+}
+/* "ESC MAP" closed the overlay; a window has its own close button. */
+.term-root .pdb-keys .pdb-key:last-child {
+  display: none;
+}
+/* The F4 page's lock is replaced by the ticket. */
+.term-root .pdb-area > .pdb-lock {
+  display: none;
+}
+/* Under the Account page Pdoomberg's own key row still marks F4: dim it. */
+.term-root[data-page="F8"] .pdb-key.on {
+  color: var(--term-dim);
+}
+/* Its command line would read "F4 ORDER" over the Account page. */
+.term-root[data-page="F8"] .pdb-command {
+  visibility: hidden;
+}
+.term-root .pdb-key {
+  cursor: pointer;
+}
+.term-root .pdb-key:focus-visible,
+.term-root .term-btn:focus-visible,
+.term-root input:focus-visible {
+  outline: 1px solid var(--term-text);
+  outline-offset: 1px;
+}
+/* A short window: the footer's cadence lines go first, then the security line's padding. */
+@container term (max-height: 520px) {
+  .term-root .pdb-footer {
+    display: none;
+  }
+  .term-root .pdoomberg {
+    gap: 2px;
+    padding-top: 4px;
+  }
+}
+
+/* ---- the command bar ---- */
+.term-bar {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--term-rule);
+  background: var(--term-raised);
+}
+.term-grow {
+  flex: 1;
+}
+.term-command {
+  display: flex;
+  flex: 0 1 26em;
+  min-width: 10em;
+}
+.term-command label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+}
+.term-prompt {
+  color: var(--term-dim);
+}
+.term-root input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 1px solid var(--term-rule);
+  border-radius: 0;
+  background: var(--term-bg);
+  color: var(--term-text);
+  font: inherit;
+}
+.term-root input::placeholder {
+  color: var(--term-dim);
+}
+.term-btn {
+  padding: 2px 8px;
+  border: 1px solid var(--term-rule);
+  border-radius: 0;
+  background: transparent;
+  color: var(--term-text);
+  font: inherit;
+  cursor: pointer;
+}
+.term-btn:hover:not(:disabled) {
+  background: #2a2000;
+}
+.term-btn:disabled {
+  color: var(--term-dim);
+  cursor: default;
+}
+.term-btn.on {
+  background: #2a2000;
+  border-color: var(--term-text);
+}
+
+/* ---- the pages this app adds (F4 Order, F8 Account) ---- */
+.term-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+.term-page h3 {
+  margin: 0 0 4px;
+  color: var(--term-text);
+  font-size: 1em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.term-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  color: var(--term-dim);
+}
+.term-summary strong {
+  color: var(--term-text);
+}
+.term-block {
+  flex: none;
+}
+.term-scroll {
+  max-height: 14em;
+  overflow: auto;
+}
+.term-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.term-table th,
+.term-table td {
+  padding: 2px 10px 2px 0;
+  border-bottom: 1px solid #1f1700;
+  text-align: left;
+  white-space: nowrap;
+}
+.term-table th {
+  position: sticky;
+  top: 0;
+  background: var(--term-bg);
+  color: var(--term-dim);
+  font-weight: 400;
+}
+.term-table .num {
+  text-align: right;
+}
+.term-table .app-link {
+  color: var(--term-text);
+}
+.term-empty,
+.term-empty-page {
+  margin: 0;
+  color: var(--term-dim);
+}
+.t-gain {
+  color: var(--term-gain);
+}
+.t-loss {
+  color: var(--term-loss);
+}
+.t-flat {
+  color: inherit;
+}
+.term-error {
+  margin: 0;
+  color: var(--term-loss);
+}
+.term-warn {
+  margin: 2px 0 0;
+  color: var(--term-warn);
+}
+.term-ok {
+  margin: 2px 0 0;
+  color: var(--term-gain);
+}
+
+/* The order ticket: the form, the quote beside it, the open orders under both. */
+.term-order {
+  display: grid;
+  grid-template-columns: minmax(15em, 20em) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  gap: 10px 24px;
+}
+.term-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.term-field {
+  display: grid;
+  grid-template-columns: 8em minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+.term-field > span {
+  color: var(--term-dim);
+}
+.term-toggle {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+}
+.term-toggle button {
+  flex: 1;
+  padding: 2px 8px;
+  border: 1px solid var(--term-rule);
+  border-radius: 0;
+  background: transparent;
+  color: var(--term-dim);
+  font: inherit;
+  cursor: pointer;
+}
+.term-toggle button.on {
+  background: #2a2000;
+  border-color: var(--term-text);
+  color: var(--term-text);
+}
+.term-toggle button:focus-visible {
+  outline: 1px solid var(--term-text);
+  outline-offset: 1px;
+}
+.term-submit {
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: #2a2000;
+  border-color: var(--term-text);
+  font-weight: 600;
+}
+.term-quote dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 2px 16px;
+  margin: 0;
+}
+.term-quote dt {
+  color: var(--term-dim);
+}
+.term-quote dd {
+  margin: 0;
+}
+.term-orders {
+  grid-column: 1 / -1;
+}
+@container term (max-width: 560px) {
+  .term-order {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+  .term-field {
+    grid-template-columns: 6.5em minmax(0, 1fr);
+  }
+}
