@@ -34,6 +34,8 @@ function servedFiles(): Map<string, string> {
     }
   }
   for (const f of [...MAP_FILES, TOPOLOGY]) files.set(`data/map/${f}`, resolve(root, "assets/map", f));
+  // The USA map app's county shapes (tools/usmap/build.py; D1048).
+  files.set("data/usmap/counties.topo.json", resolve(root, "assets/usmap/counties.topo.json"));
   return files;
 }
 
