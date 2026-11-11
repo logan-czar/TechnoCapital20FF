@@ -16,12 +16,15 @@ import type { World } from "../types/world.ts";
 
 /** The strength of a drawer of middling intrigue and integrity and no telling trait (pivot 5.5, T). */
 export const STRENGTH_BASE = 0.5;
-/** Strength added from intrigue 15 to 30 (and taken from 15 to 0) (pivot 5.5, T). */
+/** Strength added from intrigue `SKILL_MID` to twice that (and taken from it to 0) (pivot 5.5, T). */
 export const STRENGTH_INTRIGUE_K = 0.35;
 /** Strength taken from integrity 50 to 100 (and added from 50 to 0) (pivot 5.5, T). */
 export const STRENGTH_INTEGRITY_K = 0.3;
-/** The middle of a skill (mvp-spec 3.7.1: 0 to 30). */
-export const SKILL_MID = 15.0;
+/**
+ * A middling politician's skill (pivot 5.5, T): the middle of the skills elected officials are drawn
+ * with (D980's House and Senate ranges run from 2 to 16), not of the 0 to 30 scale.
+ */
+export const SKILL_MID = 10.0;
 /** The middle of integrity (0 to 100), and a stand-in's integrity. */
 export const INTEGRITY_MID = 50.0;
 /** Strength added by a trait (pivot 5.5 "falls with integrity traits", T). Traits not listed add 0. */

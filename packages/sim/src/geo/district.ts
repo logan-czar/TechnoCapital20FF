@@ -323,13 +323,23 @@ function sweep(
 /** Which end of a split county's interval the first side of a cut takes (pivot 5.4, D1028). */
 type End = "A" | "B";
 
-interface Cut {
+/** A cut as found, before a strength scores it: the same for every strength above 0. */
+interface RawCut {
   a: Region;
   b: Region;
   k1: number;
   ok: boolean;
-  score: number;
+  /** The share of the region's spread left inside the sides (lower is more compact). */
   cost: number;
+  /** The drawer's optimistic seats from both sides (0 for the neutral map). */
+  value: number;
+}
+
+/** Cuts found per region and seat count, shared by the maps of one drawer at strengths above 0. */
+export type CutMemo = Map<string, RawCut[]>;
+
+interface Cut extends RawCut {
+  score: number;
 }
 
 interface CutSides {
@@ -537,6 +547,7 @@ export function drawPlan(
   theta0: number,
   stats: DrawStats,
   guard = true,
+  memo: CutMemo = new Map(),
 ): Plan {
   const n = g.pop.length;
   const geoKeys: number[][] = [];
@@ -578,9 +589,9 @@ export function drawPlan(
   const done = new Map<string, Plan | null>();
   const wCompact = maxF(1.0 - s, TIE_COMPACT);
 
-  const candidates = (r: Region, k: number): Cut[] => {
-    const sig = signature(r, k);
-    const hit = cache.get(sig);
+  /** Every distinct cut of a region (spike `candidates`), unscored; memoised in `memo`. */
+  const rawCuts = (r: Region, k: number, sig: string): RawCut[] => {
+    const hit = memo.get(sig);
     if (hit !== undefined) return hit;
     const half = Math.floor(k / 2);
     let sizes: number[];
@@ -600,7 +611,7 @@ export function drawPlan(
     }
     const whole = inertia(g, r);
     const slices = s > 0.0 ? regionSlices(g, r, sign) : null;
-    const found: Cut[] = [];
+    const found: RawCut[] = [];
     const seen = new Set<string>();
     for (const key of keysFor(r)) {
       const sw = sweep(g, r, amt, key, stats, sc);
@@ -611,20 +622,32 @@ export function drawPlan(
           if (!seen.has(sa)) {
             seen.add(sa);
             const cost = whole > 0.0 ? (inertia(g, c.a) + inertia(g, c.b)) / whole : 0.0;
-            let score = -wCompact * CUT_KAPPA * cost;
-            if (slices !== null) {
-              score +=
-                s *
-                (sideValue(g, slices, c.a, c.split, k1, sign, sc) +
-                  sideValue(g, slices, c.b, c.split, k - k1, sign, sc));
-            }
-            found.push({ a: c.a, b: c.b, k1, ok: c.ok, score, cost });
+            const value =
+              slices === null
+                ? 0.0
+                : sideValue(g, slices, c.a, c.split, k1, sign, sc) +
+                  sideValue(g, slices, c.b, c.split, k - k1, sign, sc);
+            found.push({ a: c.a, b: c.b, k1, ok: c.ok, cost, value });
           }
           // pivot 5.4: the other end of a split county is a different map only for the partisan drawer.
           if (s <= 0.0 || !c.splitSpread) break;
         }
       }
     }
+    memo.set(sig, found);
+    return found;
+  };
+
+  /** A region's cuts scored at this strength, best first (spike `candidates`). */
+  const candidates = (r: Region, k: number): Cut[] => {
+    const sig = signature(r, k);
+    const hit = cache.get(sig);
+    if (hit !== undefined) return hit;
+    const found: Cut[] = rawCuts(r, k, sig).map((c) => {
+      let score = -wCompact * CUT_KAPPA * c.cost;
+      if (s > 0.0) score += s * c.value;
+      return { ...c, score };
+    });
     // Contiguous cuts first, then by score; a stable sort keeps sweep order on ties.
     found.sort((p, q) => Number(!p.ok) - Number(!q.ok) || q.score - p.score);
     cache.set(sig, found);
@@ -714,7 +737,8 @@ export function drawPlan(
     // Never worse for the drawer, by this strength's objective, than a weaker strength's map.
     const whole = inertia(g, start);
     for (const weaker of [0.5 * s, 0.0]) {
-      const other = drawPlan(g, seats, weaker, sign, theta0, stats, false);
+      // The half-strength map finds the same cuts (only their scores differ): it shares the memo.
+      const other = drawPlan(g, seats, weaker, sign, theta0, stats, false, weaker > 0.0 ? memo : new Map());
       if (objective(other, whole) > objective(plan, whole) + 1e-12) {
         stats.kept_weaker++;
         plan = other;
