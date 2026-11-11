@@ -67,6 +67,7 @@ A change that moves the state hash or a view must re-record these in the same co
 |---|---|
 | `packages/sim/test/results_pinned.slow.test.ts` | `GOLDEN_STATE`, `GOLDEN_VIEWS`, `GOLDEN_MONTHLY`, `GOLDEN_PATCHES`: a year of seed 1 in the 2020 world |
 | `packages/sim/test/golden/job-order-2020.txt` | The slots each tick of 2020 visits (`UPDATE_GOLDEN=1` rewrites it) |
+| `packages/sim/test/long_run.slow.test.ts` (`specOrder`) | The same order for ten years, written out by hand: a new slot is added there too |
 | `packages/sim/test/m1_contracts.test.ts` | The first draws of the eight pre-pivot RNG streams |
 | `test/fixtures/ts-soak/` | The 50-seed soak baseline; its `state_hash` column is from before M1 and is not compared by `headless parity` |
 
