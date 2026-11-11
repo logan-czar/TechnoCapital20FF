@@ -68,7 +68,33 @@ export function districtUnits(
   if (plan !== undefined && plan.districts.length === seats) {
     return plan.districts[number - 1]?.shares ?? [];
   }
-  return fallbackPlan(world.geo.counties, counties, seats)[number - 1] ?? [];
+  return cachedFallback(world.geo.counties, state, counties, seats)[number - 1] ?? [];
+}
+
+/**
+ * The fallback plans already cut, per county table: a plan is a pure function of the state's
+ * counties (their people and centroids) and its seats, so it is kept under a key holding the seats
+ * and the people of each county. Never saved; a cache only.
+ */
+const FALLBACK_CACHE = new WeakMap<readonly County[], Map<number, { key: string; plan: CountyShare[][] }>>();
+
+function cachedFallback(
+  all: readonly County[],
+  state: UsStateId,
+  counties: readonly CountyId[],
+  seats: number,
+): CountyShare[][] {
+  let byState = FALLBACK_CACHE.get(all);
+  if (byState === undefined) {
+    byState = new Map();
+    FALLBACK_CACHE.set(all, byState);
+  }
+  const key = `${seats}:${counties.map((c) => (all[c] as County).population).join(",")}`;
+  const hit = byState.get(state);
+  if (hit !== undefined && hit.key === key) return hit.plan;
+  const plan = fallbackPlan(all, counties, seats);
+  byState.set(state, { key, plan });
+  return plan;
 }
 
 /**

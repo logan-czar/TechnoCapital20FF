@@ -32,6 +32,7 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D1040 (lane E's elections): v_races and v_returns have builders, so they are rebuilt (daily, every tick) and posted though they stay empty in this world without counties, and v_politics also rebuilds the day after Election Day; their versions, the monthly digest and the patch digest moved. The state hash and every view's data digest are unchanged: this world keeps the POC's vote.
 // Re-recorded for D1037 (the pivot's M2 contracts): the world gained `persons`, `elections`, `player` and four geo tables, so the state hash moved; v_clock gained `fixed_pauses` and five pivot views' empty values gained fields (forecast `states`, people `chambers`, account `settlements`, notifications `read_through`, usmap_layers `turnout` and `last_votes`), so those digests and the monthly digest moved; the patch digest is unchanged. A probe of 24 month starts of this world and 36 of the 1995 world found the state hash without the new fields, and the 30 older views (the clock without `fixed_pauses`), equal to the base's at every one.
 // Re-recorded for D1029 (the pivot's M1 contracts): the world gained `fidelity`, `levers` and `geo`, each industry `row_assets`, and the saved RNG five streams, so the state hash moved; 13 unported pivot views joined the list, each empty at version 1, so the monthly digest moved. The hash of the state without those fields and streams is still a56475a84805444ae625018f75a3481a, and the 30 older views' digests, the monthly digest over those 30 (d7d84581a03b2f6844e20a4e) and the patch digest are unchanged.
 // Re-recorded for D1022: the profile gained `exits`, so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
@@ -46,8 +47,8 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
 const GOLDEN_STATE = "17bb726a620fc38aa6dd8b7c34df917a";
-const GOLDEN_MONTHLY = "79e5e4d93b42914dc9f4fe67";
-const GOLDEN_PATCHES = "a8c30b5b8333e63d248f5595";
+const GOLDEN_MONTHLY = "17873b1c66acb387502de86c";
+const GOLDEN_PATCHES = "539439d4f36152e15227bda9";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["f7cc508c07c87cda3927d6d8", 8785],
@@ -84,7 +85,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   social: ["41acd9a2c224b075b28c0aaf", 1],
   polls: ["66f490e3432976fdbfc95485", 1],
   forecast: ["e3ae3632c2838aeb6d729301", 1],
-  races: ["59923a8a46fcb9581c1acb8a", 1],
+  races: ["59923a8a46fcb9581c1acb8a", 8785],
   people: ["26707fe6db39003d15281499", 1],
   records: ["6df68f989ab8c28290a21f7d", 1],
   markets: ["3312b062bb7ccfa55b0b7d0a", 1],
@@ -92,7 +93,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   notifications: ["924140588434f28477897e50", 1],
   districts: ["d2162f6f6799d28562484c4a", 1],
   usmap_layers: ["12fc1f378991a03ed0dc45e6", 1],
-  returns: ["2492e5a3c809942bb06a61ed", 1],
+  returns: ["2492e5a3c809942bb06a61ed", 8785],
 };
 
 const sha = (s: string): string => createHash("sha256").update(s).digest("hex").slice(0, 24);
