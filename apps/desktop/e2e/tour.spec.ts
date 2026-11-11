@@ -741,6 +741,12 @@ async function followLinks(s: Session, app: string, routes: readonly (string | n
       await expect(tw).toBeVisible();
       await expect(tw.getByTestId(rootId(target))).toBeVisible();
       const verdict = await judge(page, tw);
+      if (target === "social" && /^person\/\d+$/.test(targetRoute)) {
+        // Social turns a person route into that person's handle page once its view has loaded.
+        await expect(tw.locator(".os-address"))
+          .toHaveText(/^orr:\/\/social(\/handle\/\d+)?$/, { timeout: 5_000 })
+          .catch(() => undefined);
+      }
       const address = (await tw.locator(".os-address").innerText()).trim();
       let problem: string | null = null;
       if (verdict.fault !== null) problem = `error boundary: ${verdict.fault}`;
