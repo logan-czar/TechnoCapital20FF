@@ -1,0 +1,633 @@
+culture,family_first,kind,name
+anglo,N,male,Bradley
+anglo,N,male,Graham
+anglo,N,male,Russell
+anglo,N,male,Duncan
+anglo,N,male,Wade
+anglo,N,male,Calvin
+anglo,N,male,Preston
+anglo,N,male,Barrett
+anglo,N,male,Lionel
+anglo,N,male,Norris
+anglo,N,male,Desmond
+anglo,N,male,Clifford
+anglo,N,male,Mitchell
+anglo,N,male,Dwight
+anglo,N,male,Gordon
+anglo,N,male,Spencer
+anglo,N,female,Maxine
+anglo,N,female,Lorraine
+anglo,N,female,Bridget
+anglo,N,female,Colleen
+anglo,N,female,Harriet
+anglo,N,female,Joanne
+anglo,N,female,Delphine
+anglo,N,female,Wilma
+anglo,N,female,Rosalind
+anglo,N,female,Tamsin
+anglo,N,female,Gwendolyn
+anglo,N,female,Celeste
+anglo,N,female,Marjorie
+anglo,N,female,Paige
+anglo,N,female,Imogen
+anglo,N,female,Darlene
+anglo,N,surname,Ashby
+anglo,N,surname,Hargreave
+anglo,N,surname,Calloway
+anglo,N,surname,Pembrook
+anglo,N,surname,Dunmore
+anglo,N,surname,Thackeray
+anglo,N,surname,Whitcombe
+anglo,N,surname,Prescott
+anglo,N,surname,Ridley
+anglo,N,surname,Galloway
+anglo,N,surname,Stanhope
+anglo,N,surname,Kincaid
+anglo,N,surname,Merriweather
+anglo,N,surname,Holcombe
+anglo,N,surname,Fairbairn
+anglo,N,surname,Langridge
+anglo,N,surname,Burroughs
+anglo,N,surname,Tolliver
+anglo,N,surname,Cardwell
+anglo,N,surname,Ainsworth
+anglo,N,surname,Drummond
+anglo,N,surname,Vickery
+anglo,N,surname,Hollister
+anglo,N,surname,Brannock
+anglo,N,company_prefix,Ironbark
+anglo,N,company_prefix,Redwater
+anglo,N,company_prefix,Bluestem
+anglo,N,company_prefix,Kingsbridge
+anglo,N,company_prefix,Copperline
+anglo,N,company_prefix,Granite Peak
+anglo,N,company_prefix,Harrowgate
+anglo,N,company_prefix,Thornfield
+anglo,N,company_prefix,Northgate
+anglo,N,company_prefix,Blackfen
+anglo,N,company_prefix,Saltmarsh
+anglo,N,company_prefix,Highmoor
+anglo,N,company_prefix,Lodestar
+anglo,N,company_prefix,Bramblewood
+anglo,N,company_prefix,Coldwater
+anglo,N,company_prefix,Westerly
+anglo,N,company_prefix,Halyard
+anglo,N,company_prefix,Crossfield
+anglo,N,company_prefix,Tidewater
+anglo,N,company_prefix,Long Prairie
+anglo,N,company_prefix,Ashgrove
+anglo,N,company_prefix,Marrow Creek
+anglo,N,company_prefix,Juniper Ridge
+anglo,N,company_prefix,Pinecrest
+anglo,N,company_prefix,Driftwood
+anglo,N,company_prefix,Ironwood
+anglo,N,company_prefix,Brightwater
+anglo,N,company_prefix,Hawthorne
+anglo,N,company_prefix,Fenmore
+anglo,N,company_prefix,Silverbell
+anglo,N,company_prefix,Cobalt Bay
+anglo,N,company_prefix,Dunmore
+anglo,N,company_prefix,Rockledge
+anglo,N,company_prefix,Larkspur
+anglo,N,company_prefix,Wolf River
+anglo,N,company_prefix,Gallowglass
+anglo,N,company_prefix,Foxhollow
+anglo,N,company_prefix,Quarry Hill
+anglo,N,company_prefix,Ember Point
+anglo,N,company_prefix,Crowsnest
+anglo,N,company_prefix,Bridgeport
+anglo,N,company_prefix,Ravenwood
+anglo,N,company_prefix,Sentinel Rock
+anglo,N,company_prefix,Big Sky
+anglo,N,company_prefix,Lone Pine
+anglo,N,company_prefix,Cutbank
+anglo,N,company_prefix,Graystone
+anglo,N,company_prefix,Midvale
+anglo,N,company_prefix,Oakhurst
+anglo,N,company_prefix,Riverbend
+anglo,N,company_prefix,Northwind
+anglo,N,company_prefix,Sawtooth
+anglo,N,company_prefix,Bluewater
+anglo,N,company_prefix,Kestrel
+anglo,N,company_prefix,Granite Falls
+anglo,N,company_prefix,Ironhorse
+anglo,N,company_prefix,Prairie Star
+anglo,N,company_prefix,Cinderhill
+anglo,N,company_prefix,Copperhead
+anglo,N,company_prefix,Waverly
+anglo,N,company_prefix,Steelhead
+anglo,N,company_prefix,Eastbrook
+anglo,N,company_prefix,Sandstone
+anglo,N,company_prefix,Harborview
+anglo,N,company_prefix,Clearwater Basin
+anglo,N,company_prefix,Fairhaven
+anglo,N,company_prefix,Black Spruce
+anglo,N,company_prefix,Stonegate
+anglo,N,company_prefix,Saltgrass
+anglo,N,company_prefix,Windward
+anglo,N,company_prefix,Coalbrook
+anglo,N,company_prefix,Muskeg
+anglo,N,company_prefix,Red Mesa
+anglo,N,company_prefix,Bitterroot
+anglo,N,company_prefix,Chinook
+anglo,N,company_prefix,High Desert
+anglo,N,company_prefix,Silver Creek
+anglo,N,company_prefix,Thunder Bay
+anglo,N,company_prefix,Gilded Age
+anglo,N,company_prefix,Iron Range
+anglo,N,company_prefix,Seven Hills
+anglo,N,company_prefix,Cold Spring
+anglo,N,company_prefix,Hollowell
+anglo,N,company_prefix,Kittiwake
+anglo,N,company_prefix,Mariner's Rest
+anglo,N,company_prefix,Old Post Road
+anglo,N,company_prefix,Paragon Point
+anglo,N,company_prefix,Tamarack
+anglo,N,company_prefix,Wildrose
+dutch,N,male,Joost
+dutch,N,male,Maarten
+dutch,N,male,Willem
+dutch,N,male,Sjoerd
+dutch,N,male,Bram
+dutch,N,male,Jeroen
+dutch,N,male,Floris
+dutch,N,male,Diederik
+dutch,N,female,Femke
+dutch,N,female,Marijke
+dutch,N,female,Anneloes
+dutch,N,female,Sanne
+dutch,N,female,Wilhelmina
+dutch,N,female,Liesbeth
+dutch,N,female,Noor
+dutch,N,surname,Van
+dutch,N,surname,Haeften
+dutch,N,surname,Brouwershaven
+dutch,N,surname,Ter
+dutch,N,surname,Meulen
+dutch,N,surname,Kuipers
+dutch,N,surname,Van
+dutch,N,surname,Rensselaer-Bos
+dutch,N,surname,Hoogendijk
+dutch,N,surname,Van
+dutch,N,surname,der
+dutch,N,surname,Ploeg
+dutch,N,surname,Visscher
+dutch,N,surname,Den
+dutch,N,surname,Uyl-Blom
+dutch,N,surname,Schimmelpenninck
+dutch,N,company_prefix,Zuiderwind
+dutch,N,company_prefix,Hollandse Kust
+dutch,N,company_prefix,Waddenzee
+dutch,N,company_prefix,Rijnmond
+dutch,N,company_prefix,Kempenland
+dutch,N,company_prefix,Oranjewoud
+dutch,N,company_prefix,Veluwe
+dutch,N,company_prefix,Ijsselmeer
+dutch,N,company_prefix,Duinrand
+dutch,N,company_prefix,Polderhaven
+french,N,male,Thibault
+french,N,male,Gaspard
+french,N,male,Arnaud
+french,N,male,Lucien
+french,N,male,Benoit
+french,N,male,Clement
+french,N,male,Edouard
+french,N,male,Florian
+french,N,male,Honore
+french,N,male,Remy
+french,N,male,Sylvain
+french,N,female,Apolline
+french,N,female,Capucine
+french,N,female,Solene
+french,N,female,Eloise
+french,N,female,Marguerite
+french,N,female,Oriane
+french,N,female,Sabine
+french,N,female,Clemence
+french,N,female,Ines
+french,N,female,Bérénice
+french,N,surname,Delacroix-Morel
+french,N,surname,Fauconnier
+french,N,surname,Lambertin
+french,N,surname,Beaumarchais
+french,N,surname,Rocheval
+french,N,surname,Desjardins
+french,N,surname,Montclair
+french,N,surname,Vasseur
+french,N,surname,Haussmann
+french,N,surname,Chevrier
+french,N,surname,Leclerc-Dumas
+french,N,surname,Arnoux
+french,N,surname,Villeneuve
+french,N,company_prefix,Rive Gauche
+french,N,company_prefix,Belle-Ile
+french,N,company_prefix,Montrouge
+french,N,company_prefix,Haute-Seine
+french,N,company_prefix,Mistral
+french,N,company_prefix,Saint-Ambroise
+french,N,company_prefix,Chateaurouge
+french,N,company_prefix,Valmont
+french,N,company_prefix,Lumiere du Nord
+french,N,company_prefix,Clairefontaine
+french,N,company_prefix,Pont-Neuf
+french,N,company_prefix,Grand Large
+french,N,company_prefix,Fleur-de-Sel
+french,N,company_prefix,Beaulieu
+french,N,company_prefix,Marne-Vallee
+french,N,company_prefix,Ardoise
+german,N,male,Friedrich
+german,N,male,Joachim
+german,N,male,Matthias
+german,N,male,Ulrich
+german,N,male,Wolfram
+german,N,male,Dietrich
+german,N,male,Konstantin
+german,N,male,Leopold
+german,N,male,Henning
+german,N,male,Rupert
+german,N,male,Tobias
+german,N,female,Annegret
+german,N,female,Friederike
+german,N,female,Henrike
+german,N,female,Sieglinde
+german,N,female,Theresa
+german,N,female,Ottilie
+german,N,female,Mechthild
+german,N,female,Larissa
+german,N,female,Wiebke
+german,N,female,Cosima
+german,N,surname,Lindqvist-Bauer
+german,N,surname,Hohenstein
+german,N,surname,Brandauer
+german,N,surname,Kesselring
+german,N,surname,Achenbach
+german,N,surname,Waldmann
+german,N,surname,Steinhauer
+german,N,surname,Ortlepp
+german,N,surname,Rautenberg
+german,N,surname,Falkenhayn
+german,N,surname,Wurmbach
+german,N,surname,Eichhorn
+german,N,surname,Grauwinkel
+german,N,surname,Liebermann
+german,N,company_prefix,Rheinwerk
+german,N,company_prefix,Edelweiss
+german,N,company_prefix,Nordwind
+german,N,company_prefix,Schwarzwald
+german,N,company_prefix,Isartal
+german,N,company_prefix,Kaiserstuhl
+german,N,company_prefix,Moselblick
+german,N,company_prefix,Elbstern
+german,N,company_prefix,Brandberg
+german,N,company_prefix,Lindenhof
+german,N,company_prefix,Alpenglut
+german,N,company_prefix,Spreeufer
+german,N,company_prefix,Taunus
+german,N,company_prefix,Falkenstein
+german,N,company_prefix,Donaugrund
+german,N,company_prefix,Mainblick
+german,N,company_prefix,Hohenfels
+german,N,company_prefix,Bergkristall
+greek,N,male,Spyros
+greek,N,male,Konstantinos
+greek,N,male,Aristides
+greek,N,male,Panagiotis
+greek,N,male,Dimitris
+greek,N,male,Themis
+greek,N,female,Eleni
+greek,N,female,Ioanna
+greek,N,female,Kalliope
+greek,N,female,Despina
+greek,N,female,Athina
+greek,N,surname,Vardinoyannis-Kos
+greek,N,surname,Lekkas
+greek,N,surname,Papadimas
+greek,N,surname,Karamanlidis
+greek,N,surname,Xenakis
+greek,N,surname,Doukas
+greek,N,surname,Mavrogenis
+greek,N,company_prefix,Aegean Star
+greek,N,company_prefix,Olympia
+greek,N,company_prefix,Kyklades
+greek,N,company_prefix,Poseidonia
+greek,N,company_prefix,Parnassos
+greek,N,company_prefix,Ionian
+hispanic,N,male,Joaquin
+hispanic,N,male,Rodrigo
+hispanic,N,male,Ignacio
+hispanic,N,male,Esteban
+hispanic,N,male,Aurelio
+hispanic,N,male,Fernando
+hispanic,N,male,Ramiro
+hispanic,N,male,Octavio
+hispanic,N,male,Leandro
+hispanic,N,male,Mateo
+hispanic,N,male,Gerardo
+hispanic,N,male,Benicio
+hispanic,N,male,Emilio
+hispanic,N,male,Rafael
+hispanic,N,female,Ximena
+hispanic,N,female,Catalina
+hispanic,N,female,Florencia
+hispanic,N,female,Inmaculada
+hispanic,N,female,Renata
+hispanic,N,female,Paloma
+hispanic,N,female,Graciela
+hispanic,N,female,Lucrecia
+hispanic,N,female,Mercedes
+hispanic,N,female,Soledad
+hispanic,N,female,Ainhoa
+hispanic,N,female,Macarena
+hispanic,N,female,Dolores
+hispanic,N,surname,Echeverria
+hispanic,N,surname,Montalvo
+hispanic,N,surname,Iturbide
+hispanic,N,surname,Zubieta
+hispanic,N,surname,Cardenal
+hispanic,N,surname,Villalobos
+hispanic,N,surname,Arrizabalaga
+hispanic,N,surname,Benavides
+hispanic,N,surname,Olmedo
+hispanic,N,surname,Quiroga
+hispanic,N,surname,Santamaria
+hispanic,N,surname,Urrutia
+hispanic,N,surname,Bermejo
+hispanic,N,surname,Llorente
+hispanic,N,surname,Escobedo
+hispanic,N,surname,Ocampo
+hispanic,N,surname,Garrido
+hispanic,N,surname,Aldana
+hispanic,N,surname,Maldonado
+hispanic,N,surname,Sepulveda
+hispanic,N,company_prefix,Sierra Alta
+hispanic,N,company_prefix,Rio Bravo
+hispanic,N,company_prefix,Cerro Azul
+hispanic,N,company_prefix,Valle Dorado
+hispanic,N,company_prefix,Puerto Viejo
+hispanic,N,company_prefix,Altiplano
+hispanic,N,company_prefix,Mar del Sur
+hispanic,N,company_prefix,Cumbre
+hispanic,N,company_prefix,Llano Grande
+hispanic,N,company_prefix,Monte Claro
+hispanic,N,company_prefix,Bahia Blanca
+hispanic,N,company_prefix,Tierra Firme
+hispanic,N,company_prefix,Estrella del Norte
+hispanic,N,company_prefix,Cordillera
+hispanic,N,company_prefix,Pampa Norte
+hispanic,N,company_prefix,Sol de Mayo
+hispanic,N,company_prefix,Laguna Verde
+hispanic,N,company_prefix,Rio Hondo
+hispanic,N,company_prefix,Atalaya
+hispanic,N,company_prefix,Faro Rojo
+hispanic,N,company_prefix,Puente Real
+hispanic,N,company_prefix,Torre Sur
+hispanic,N,company_prefix,Campo Alegre
+hispanic,N,company_prefix,Cielo Abierto
+italian,N,male,Lorenzo
+italian,N,male,Ottavio
+italian,N,male,Ludovico
+italian,N,male,Tommaso
+italian,N,male,Giacomo
+italian,N,male,Vittorio
+italian,N,male,Cosimo
+italian,N,male,Ascanio
+italian,N,male,Pietro
+italian,N,male,Raimondo
+italian,N,female,Ginevra
+italian,N,female,Ludovica
+italian,N,female,Beatrice
+italian,N,female,Serafina
+italian,N,female,Costanza
+italian,N,female,Benedetta
+italian,N,female,Ottavia
+italian,N,female,Allegra
+italian,N,surname,Castelvecchi
+italian,N,surname,Brambati
+italian,N,surname,Ruspoli-Neri
+italian,N,surname,Pellegrini
+italian,N,surname,Trivulzi
+italian,N,surname,Malaspina-Conti
+italian,N,surname,Bonfanti
+italian,N,surname,Sartori
+italian,N,surname,Visconteo
+italian,N,surname,Lanzavecchia
+italian,N,surname,Ferrandi
+italian,N,surname,Moratto
+italian,N,company_prefix,Lago Maggiore
+italian,N,company_prefix,Monte Rosa
+italian,N,company_prefix,Porta Nuova
+italian,N,company_prefix,Stella Alpina
+italian,N,company_prefix,Val d'Orcia
+italian,N,company_prefix,Ponte Vecchio
+italian,N,company_prefix,Dolomiti
+italian,N,company_prefix,Riva Blu
+italian,N,company_prefix,Castelfranco
+italian,N,company_prefix,Laguna Veneta
+italian,N,company_prefix,Montecastello
+italian,N,company_prefix,Trinacria
+italian,N,company_prefix,Valtellina
+lusophone,N,male,Joao
+lusophone,N,male,Rodrigo
+lusophone,N,male,Thiago
+lusophone,N,male,Caio
+lusophone,N,male,Heitor
+lusophone,N,male,Otavio
+lusophone,N,male,Leandro
+lusophone,N,male,Rogerio
+lusophone,N,male,Marcelo
+lusophone,N,male,Anselmo
+lusophone,N,male,Vinicius
+lusophone,N,female,Beatriz
+lusophone,N,female,Leticia
+lusophone,N,female,Glaucia
+lusophone,N,female,Rosangela
+lusophone,N,female,Marisa
+lusophone,N,female,Tatiana
+lusophone,N,female,Fernanda
+lusophone,N,female,Iracema
+lusophone,N,female,Luciana
+lusophone,N,female,Helena
+lusophone,N,surname,Albuquerque
+lusophone,N,surname,Figueiredo
+lusophone,N,surname,Brandao
+lusophone,N,surname,Siqueira
+lusophone,N,surname,Cavalcanti
+lusophone,N,surname,Monteiro
+lusophone,N,surname,Vasconcelos
+lusophone,N,surname,Bittencourt
+lusophone,N,surname,Guimaraes
+lusophone,N,surname,Teixeira
+lusophone,N,surname,Queiroz
+lusophone,N,surname,Magalhaes
+lusophone,N,surname,Prado
+lusophone,N,surname,Rezende
+lusophone,N,company_prefix,Serra Azul
+lusophone,N,company_prefix,Rio Claro
+lusophone,N,company_prefix,Mata Atlantica
+lusophone,N,company_prefix,Cerrado
+lusophone,N,company_prefix,Vale Verde
+lusophone,N,company_prefix,Porto Novo
+lusophone,N,company_prefix,Ipe Amarelo
+lusophone,N,company_prefix,Tucano
+lusophone,N,company_prefix,Guanabara
+lusophone,N,company_prefix,Paraiba
+lusophone,N,company_prefix,Aurora Paulista
+lusophone,N,company_prefix,Sertao
+lusophone,N,company_prefix,Boa Vista
+lusophone,N,company_prefix,Itaipava
+lusophone,N,company_prefix,Corcovado
+lusophone,N,company_prefix,Jacaranda
+lusophone,N,company_prefix,Pau-Brasil
+lusophone,N,company_prefix,Litoral
+nordic,N,male,Henrik
+nordic,N,male,Torsten
+nordic,N,male,Magnus
+nordic,N,male,Leif
+nordic,N,male,Anders
+nordic,N,male,Sigurd
+nordic,N,male,Espen
+nordic,N,male,Mikkel
+nordic,N,female,Ingrid
+nordic,N,female,Solveig
+nordic,N,female,Astrid
+nordic,N,female,Sigrid
+nordic,N,female,Liv
+nordic,N,female,Freja
+nordic,N,female,Malin
+nordic,N,surname,Lindgaard
+nordic,N,surname,Ekholm
+nordic,N,surname,Haraldsen
+nordic,N,surname,Bjornstad
+nordic,N,surname,Wennerstrom
+nordic,N,surname,Aasgaard
+nordic,N,surname,Strandvik
+nordic,N,surname,Lofqvist
+nordic,N,surname,Nyborg
+nordic,N,company_prefix,Fjordlys
+nordic,N,company_prefix,Nordkapp
+nordic,N,company_prefix,Isbjorn
+nordic,N,company_prefix,Vinterhav
+nordic,N,company_prefix,Skagerrak
+nordic,N,company_prefix,Polarstjerne
+nordic,N,company_prefix,Midnattsol
+nordic,N,company_prefix,Lofoten
+nordic,N,company_prefix,Kattegat
+russian,N,male,Arkady
+russian,N,male,Gennady
+russian,N,male,Vsevolod
+russian,N,male,Rostislav
+russian,N,male,Timur
+russian,N,male,Yaroslav
+russian,N,male,Lev
+russian,N,male,Boris
+russian,N,male,Kirill
+russian,N,male,Stanislav
+russian,N,male,Ruslan
+russian,N,female,Yelena
+russian,N,female,Svetlana
+russian,N,female,Margarita
+russian,N,female,Oksana
+russian,N,female,Zinaida
+russian,N,female,Alina
+russian,N,female,Valentina
+russian,N,female,Ludmila
+russian,N,surname,Belozersky
+russian,N,surname,Kalashnin
+russian,N,surname,Voronov
+russian,N,surname,Zhdanko
+russian,N,surname,Gromyko-Vasin
+russian,N,surname,Tarkhanov
+russian,N,surname,Lebedinsky
+russian,N,surname,Shuvalin
+russian,N,surname,Kuzmenko
+russian,N,surname,Ostrovsky
+russian,N,surname,Dobrynin
+russian,N,surname,Polyansky
+russian,N,company_prefix,Sever
+russian,N,company_prefix,Uralsky Kamen
+russian,N,company_prefix,Baikal
+russian,N,company_prefix,Volga-Don
+russian,N,company_prefix,Kamchatka
+russian,N,company_prefix,Sibirsky Les
+russian,N,company_prefix,Taimyr
+russian,N,company_prefix,Polyarny
+russian,N,company_prefix,Zarya
+russian,N,company_prefix,Neva
+russian,N,company_prefix,Yenisei
+russian,N,company_prefix,Amur
+russian,N,company_prefix,Kuzbass
+russian,N,company_prefix,Belaya Rus
+russian,N,company_prefix,Tundra
+russian,N,company_prefix,Krasny Yar
+slavic,N,male,Tomasz
+slavic,N,male,Radoslaw
+slavic,N,male,Miroslav
+slavic,N,male,Zdenek
+slavic,N,male,Lukas
+slavic,N,male,Dragan
+slavic,N,male,Bogdan
+slavic,N,male,Andrzej
+slavic,N,male,Istvan
+slavic,N,male,Mihai
+slavic,N,female,Agnieszka
+slavic,N,female,Katarzyna
+slavic,N,female,Zuzana
+slavic,N,female,Milena
+slavic,N,female,Jadwiga
+slavic,N,female,Ilona
+slavic,N,female,Dorota
+slavic,N,female,Irina
+slavic,N,surname,Wisniewski
+slavic,N,surname,Kowalik
+slavic,N,surname,Dvorak-Hruby
+slavic,N,surname,Zielinski
+slavic,N,surname,Novotny
+slavic,N,surname,Jankowiak
+slavic,N,surname,Szabolcs
+slavic,N,surname,Radulescu
+slavic,N,surname,Petrovic
+slavic,N,surname,Brzezinski-Lis
+slavic,N,company_prefix,Vistula
+slavic,N,company_prefix,Tatra
+slavic,N,company_prefix,Bialowieza
+slavic,N,company_prefix,Morava
+slavic,N,company_prefix,Karpaty
+slavic,N,company_prefix,Danubia
+slavic,N,company_prefix,Balaton
+slavic,N,company_prefix,Pannonia
+slavic,N,company_prefix,Bohemia Stella
+slavic,N,company_prefix,Mazury
+turkish,N,male,Selim
+turkish,N,male,Kerem
+turkish,N,male,Murat
+turkish,N,male,Burak
+turkish,N,male,Cem
+turkish,N,male,Orhan
+turkish,N,male,Levent
+turkish,N,male,Tarik
+turkish,N,male,Emre
+turkish,N,female,Elif
+turkish,N,female,Zeynep
+turkish,N,female,Defne
+turkish,N,female,Nilufer
+turkish,N,female,Selin
+turkish,N,female,Gulsen
+turkish,N,female,Ayla
+turkish,N,surname,Karakaya
+turkish,N,surname,Ozdemiroglu
+turkish,N,surname,Yalcintas
+turkish,N,surname,Sabanci-Kaya
+turkish,N,surname,Erkmen
+turkish,N,surname,Gokturk
+turkish,N,surname,Demirtepe
+turkish,N,surname,Uzunoglu
+turkish,N,surname,Celikbas
+turkish,N,company_prefix,Bosphorus
+turkish,N,company_prefix,Anatolia
+turkish,N,company_prefix,Kapadokya
+turkish,N,company_prefix,Karadeniz
+turkish,N,company_prefix,Ege Yildizi
+turkish,N,company_prefix,Toros
+turkish,N,company_prefix,Altin Hilal
+turkish,N,company_prefix,Marmara
+turkish,N,company_prefix,Firat

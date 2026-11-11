@@ -1,0 +1,16 @@
+stage,boom_year,default_year,ai_labs_lt,notes
+preboom,,2020-2029,0.05,"Really small AI with low growth (Logan, batch 151); world size about $5B to $8B"
+boom,0,2030,1,"The tipped lab launches its chatbot: the boom event, 1 Jan 2030 00:00 (7.7)"
+boom,1,2031,1,"Unprecedented growth (Logan, batch 151)"
+boom,2,2032,0.9,
+boom,3,2033,0.8,
+boom,4,2034,0.6,Tapering as the bubble nears
+boom,5,2035,0.45,
+boom,6,2036,0.35,
+boom,7,2037,0.25,
+boom,8,2038,0.2,Earliest pop year (2040 - 2)
+boom,9,2039,0.15,
+boom,10,2040+,0.12,Only if the pop is rolled after 1 Jan 2040; holds until the pop
+pop,,2040 on average,,"The bubble pops: demand x (1 - crash_drop) once; the year is 2040 + a roll of -2 to +2, the quarter rolled (A)"
+bust,,8 quarters from the pop,-0.1,Two years of shrinking AI demand (T)
+postcrash,,after the bust,0.08,The post-crash era (T)

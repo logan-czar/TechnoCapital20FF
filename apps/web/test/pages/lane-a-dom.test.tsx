@@ -6,7 +6,7 @@
 // in-process by the worker's host.
 
 import type { CompanyId, Notice } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -27,12 +27,13 @@ import { SimContext } from "../../src/sim/hooks.ts";
 import { RealHost } from "../../src/sim/real/host.ts";
 import { type Frame, SimStore } from "../../src/sim/store.ts";
 import { price } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 let host: RealHost;
 let store: SimStore;
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   host = new RealHost(loaded.value);
   const frame = host.handle({ kind: "NewGame", seed: 42, id: 1 }).find((m) => m.kind === "Frame") as Frame;

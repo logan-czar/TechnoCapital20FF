@@ -1,0 +1,10 @@
+id,name,trigger,date,startups,revenue_min_usd_m,revenue_max_usd_m,full_min,full_max,partial_min,partial_max,notes
+F1,The transformer paper: researchers leave to build on it,date,2020-04-09,2:AI labs@north-america,5,15,2,3,1,2,"mvp-spec 5.19.2 (A, T)"
+F2,The crypto and SPAC mania,date,2021-04-09,1:Software@any;1:E-commerce@any;1:Gambling@any,10,40,1,2,2,4,"mvp-spec 5.19.2 (A, T)"
+F3,Suppliers to the Ukraine drone war,date,2022-01-09,2:Drones@europe;1:Defense@europe,5,30,1,3,1,3,"mvp-spec 5.19.2 (A, T)"
+F4,The tipped lab launches its chatbot: the boom event (5.1.1),date,2030-01-09,5:AI labs@any;1:Cloud@any,10,50,3,5,2,4,"mvp-spec 5.19.2 (A, T)"
+F5,The GPU gold rush,date,2031-01-09,2:Semiconductors@east-asia-oceania|north-america;2:Data centers@east-asia-oceania|north-america,20,50,2,3,2,4,"mvp-spec 5.19.2 (A, T)"
+F6,Power deals and the cheap Chinese open model,date,2032-01-09,2:AI labs@CHN;1:Data centers@any;1:Renewables@any,10,50,2,4,2,4,"mvp-spec 5.19.2 (A, T)"
+F7,AI agents run whole departments,date,2033-01-09,2:Software@any;2:SaaS@any,5,30,1,3,1,3,"mvp-spec 5.19.2 (A, T)"
+F8,Humanoid robots in factories,date,2035-01-09,1:Robotics@east-asia-oceania;1:Robotics@north-america;1:Robotics@europe,10,50,2,4,2,4,"mvp-spec 5.19.2 (A, T)"
+F9,The post-crash rebuild,after_bust,,2:AI labs@any;1:Cloud@any,5,20,2,3,1,3,"mvp-spec 5.19.2 (A, T)"

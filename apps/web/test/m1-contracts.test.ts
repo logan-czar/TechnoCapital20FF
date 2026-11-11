@@ -5,7 +5,7 @@
 import type { FromSim, PlayerAction, Reply, ToSim } from "@tc20ff/sim";
 import { unsupportedMessage, VIEW_NAMES } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { openApp, setAppOpener } from "../src/links/nav.ts";
 import { type AppSpec, appSpecOf, buildAppRegistry, entityRoute, registeredApps } from "../src/os/apps.ts";
@@ -13,11 +13,12 @@ import { replyProblem } from "../src/sim/client.ts";
 import { SimHost } from "../src/sim/mock/host.ts";
 import { buildMockWorld, type MockWorld } from "../src/sim/mock/mockWorld.ts";
 import { RealHost } from "../src/sim/real/host.ts";
+import { worldMini } from "./world-mini.ts";
 
 let data: WorldData;
 let mockWorld: MockWorld;
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
   mockWorld = buildMockWorld(data);

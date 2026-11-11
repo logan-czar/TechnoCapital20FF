@@ -5,14 +5,15 @@
 import type { FromSim, Reply, ToSim } from "@tc20ff/sim";
 import { FRAME_MS, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CATCH_UP_TICKS, RealHost } from "../src/sim/real/host.ts";
 import { WorkerLoop } from "../src/sim/real/loop.ts";
+import { worldMini } from "./world-mini.ts";
 
 let data: WorldData;
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   data = loaded.value;
 });

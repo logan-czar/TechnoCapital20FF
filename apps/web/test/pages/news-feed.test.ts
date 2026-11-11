@@ -19,7 +19,7 @@ import {
   simDateYmd,
   simNew,
 } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNameIndex, type NameIndex } from "../../src/links/names.ts";
 import {
@@ -32,6 +32,7 @@ import {
 } from "../../src/pages/kinds/news.tsx";
 import { type PageRef, setProvinceKeys } from "../../src/pages/ref.ts";
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
+import { worldMini } from "../world-mini.ts";
 
 /** Industries in the synthetic feed. */
 const INDUSTRIES = 42;
@@ -131,7 +132,7 @@ let real: ViewsData;
 let index: NameIndex;
 
 beforeAll(() => {
-  const loaded = loadWorld(defaultDataDir());
+  const loaded = loadWorld(worldMini().dir);
   if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
   const made = simNew(loaded.value, 3);
   if (!made.ok) throw new Error(JSON.stringify(made.error));

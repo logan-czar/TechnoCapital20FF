@@ -1,7 +1,7 @@
 // D1023: the drift plan's lane W caps. Under a profile with `winners` (`mature`) free R&D stops at
 // two R&D norms and productivity gains taper from 120 to a quarter at 200; `legacy` keeps spec 5.6
 // and 5.9, so its results do not move.
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { PROFILES, profileById } from "../src/economy/profiles.ts";
 import { simNew, simWorld } from "../src/lib.ts";
@@ -20,6 +20,7 @@ import {
   taperShare,
 } from "../src/ops/productivity.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
+import { worldMini } from "./common/world_mini.ts";
 
 describe("the free R&D cap (D1023)", () => {
   it("is two R&D norms, in whole percent", () => {
@@ -75,7 +76,7 @@ describe("the profiles (D1023)", () => {
 
   it("mature holds every data book at its cap after a month; legacy does not cap", () => {
     const run = (profile: string) => {
-      const r = loadWorld(defaultDataDir());
+      const r = loadWorld(worldMini().dir);
       if (!r.ok) throw new Error("data");
       const made = simNew(structuredClone(r.value), 5, { profile });
       if (!made.ok) throw new Error("sim");

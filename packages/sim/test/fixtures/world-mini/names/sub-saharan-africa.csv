@@ -1,0 +1,231 @@
+culture,family_first,kind,name
+congolese,N,male,Jean-Pierre
+congolese,N,male,Albert
+congolese,N,male,Dieudonne
+congolese,N,male,Patrice
+congolese,N,male,Olivier
+congolese,N,male,Fiston
+congolese,N,male,Christian
+congolese,N,female,Mireille
+congolese,N,female,Clarisse
+congolese,N,female,Esperance
+congolese,N,female,Nadine
+congolese,N,female,Grace
+congolese,N,female,Pascaline
+congolese,N,surname,Kabongo
+congolese,N,surname,Mwamba
+congolese,N,surname,Ilunga
+congolese,N,surname,Tshibanda
+congolese,N,surname,Kasongo
+congolese,N,surname,Lukusa
+congolese,N,surname,Mutombo-Ngoy
+congolese,N,surname,Kapinga
+congolese,N,surname,Banza
+congolese,N,surname,Nkulu
+congolese,N,company_prefix,Lualaba
+congolese,N,company_prefix,Kivu Bleu
+congolese,N,company_prefix,Grand Fleuve
+congolese,N,company_prefix,Mont Ngaliema
+congolese,N,company_prefix,Katanga Etoile
+congolese,N,company_prefix,Kasai Diamant
+congolese,N,company_prefix,Malebo
+eastafrican,N,male,Wanjiru
+eastafrican,N,male,Kamau
+eastafrican,N,male,Otieno
+eastafrican,N,male,Abebe
+eastafrican,N,male,Juma
+eastafrican,N,male,Baraka
+eastafrican,N,male,Tesfaye
+eastafrican,N,female,Wairimu
+eastafrican,N,female,Achieng
+eastafrican,N,female,Makena
+eastafrican,N,female,Aster
+eastafrican,N,female,Zawadi
+eastafrican,N,female,Nyokabi
+eastafrican,N,surname,Kenyatta-Ruto
+eastafrican,N,surname,Odinga-Were
+eastafrican,N,surname,Mwangi
+eastafrican,N,surname,Gebremedhin
+eastafrican,N,surname,Kimani
+eastafrican,N,surname,Ochieng
+eastafrican,N,surname,Njoroge
+eastafrican,N,surname,Haile
+eastafrican,N,company_prefix,Kilimanjaro
+eastafrican,N,company_prefix,Rift Valley
+eastafrican,N,company_prefix,Serengeti
+eastafrican,N,company_prefix,Great Lakes
+eastafrican,N,company_prefix,Simba
+eastafrican,N,company_prefix,Zanzibar
+eastafrican,N,company_prefix,Ngong
+eastafrican,N,company_prefix,Turkana
+eastafrican,N,company_prefix,Blue Nile
+french,N,male,Thibault
+french,N,male,Gaspard
+french,N,male,Arnaud
+french,N,male,Lucien
+french,N,male,Benoit
+french,N,male,Clement
+french,N,male,Edouard
+french,N,male,Florian
+french,N,male,Honore
+french,N,male,Remy
+french,N,male,Sylvain
+french,N,female,Apolline
+french,N,female,Capucine
+french,N,female,Solene
+french,N,female,Eloise
+french,N,female,Marguerite
+french,N,female,Oriane
+french,N,female,Sabine
+french,N,female,Clemence
+french,N,female,Ines
+french,N,female,Bérénice
+french,N,surname,Delacroix-Morel
+french,N,surname,Fauconnier
+french,N,surname,Lambertin
+french,N,surname,Beaumarchais
+french,N,surname,Rocheval
+french,N,surname,Desjardins
+french,N,surname,Montclair
+french,N,surname,Vasseur
+french,N,surname,Haussmann
+french,N,surname,Chevrier
+french,N,surname,Leclerc-Dumas
+french,N,surname,Arnoux
+french,N,surname,Villeneuve
+french,N,company_prefix,Rive Gauche
+french,N,company_prefix,Belle-Ile
+french,N,company_prefix,Montrouge
+french,N,company_prefix,Haute-Seine
+french,N,company_prefix,Mistral
+french,N,company_prefix,Saint-Ambroise
+french,N,company_prefix,Chateaurouge
+french,N,company_prefix,Valmont
+french,N,company_prefix,Lumiere du Nord
+french,N,company_prefix,Clairefontaine
+french,N,company_prefix,Pont-Neuf
+french,N,company_prefix,Grand Large
+french,N,company_prefix,Fleur-de-Sel
+french,N,company_prefix,Beaulieu
+french,N,company_prefix,Marne-Vallee
+french,N,company_prefix,Ardoise
+lusophone,N,male,Joao
+lusophone,N,male,Rodrigo
+lusophone,N,male,Thiago
+lusophone,N,male,Caio
+lusophone,N,male,Heitor
+lusophone,N,male,Otavio
+lusophone,N,male,Leandro
+lusophone,N,male,Rogerio
+lusophone,N,male,Marcelo
+lusophone,N,male,Anselmo
+lusophone,N,male,Vinicius
+lusophone,N,female,Beatriz
+lusophone,N,female,Leticia
+lusophone,N,female,Glaucia
+lusophone,N,female,Rosangela
+lusophone,N,female,Marisa
+lusophone,N,female,Tatiana
+lusophone,N,female,Fernanda
+lusophone,N,female,Iracema
+lusophone,N,female,Luciana
+lusophone,N,female,Helena
+lusophone,N,surname,Albuquerque
+lusophone,N,surname,Figueiredo
+lusophone,N,surname,Brandao
+lusophone,N,surname,Siqueira
+lusophone,N,surname,Cavalcanti
+lusophone,N,surname,Monteiro
+lusophone,N,surname,Vasconcelos
+lusophone,N,surname,Bittencourt
+lusophone,N,surname,Guimaraes
+lusophone,N,surname,Teixeira
+lusophone,N,surname,Queiroz
+lusophone,N,surname,Magalhaes
+lusophone,N,surname,Prado
+lusophone,N,surname,Rezende
+lusophone,N,company_prefix,Serra Azul
+lusophone,N,company_prefix,Rio Claro
+lusophone,N,company_prefix,Mata Atlantica
+lusophone,N,company_prefix,Cerrado
+lusophone,N,company_prefix,Vale Verde
+lusophone,N,company_prefix,Porto Novo
+lusophone,N,company_prefix,Ipe Amarelo
+lusophone,N,company_prefix,Tucano
+lusophone,N,company_prefix,Guanabara
+lusophone,N,company_prefix,Paraiba
+lusophone,N,company_prefix,Aurora Paulista
+lusophone,N,company_prefix,Sertao
+lusophone,N,company_prefix,Boa Vista
+lusophone,N,company_prefix,Itaipava
+lusophone,N,company_prefix,Corcovado
+lusophone,N,company_prefix,Jacaranda
+lusophone,N,company_prefix,Pau-Brasil
+lusophone,N,company_prefix,Litoral
+southafrican,N,male,Sipho
+southafrican,N,male,Thabo
+southafrican,N,male,Pieter
+southafrican,N,male,Johan
+southafrican,N,male,Mandla
+southafrican,N,male,Riaan
+southafrican,N,male,Kagiso
+southafrican,N,female,Nomvula
+southafrican,N,female,Lindiwe
+southafrican,N,female,Annelie
+southafrican,N,female,Zanele
+southafrican,N,female,Marike
+southafrican,N,female,Palesa
+southafrican,N,surname,Mokoena
+southafrican,N,surname,Van
+southafrican,N,surname,Rooyen
+southafrican,N,surname,Dlamini-Steyn
+southafrican,N,surname,Oppenheim-Naidoo
+southafrican,N,surname,Botha
+southafrican,N,surname,Ndlovu
+southafrican,N,surname,Marais
+southafrican,N,surname,Khumalo
+southafrican,N,company_prefix,Highveld
+southafrican,N,company_prefix,Karoo
+southafrican,N,company_prefix,Table Bay
+southafrican,N,company_prefix,Drakensberg
+southafrican,N,company_prefix,Limpopo
+southafrican,N,company_prefix,Witwater
+southafrican,N,company_prefix,Kalahari
+southafrican,N,company_prefix,Protea
+southafrican,N,company_prefix,Bushveld
+westafrican,N,male,Chukwuemeka
+westafrican,N,male,Babatunde
+westafrican,N,male,Olumide
+westafrican,N,male,Kwabena
+westafrican,N,male,Adebayo
+westafrican,N,male,Ikenna
+westafrican,N,male,Femi
+westafrican,N,male,Kofi
+westafrican,N,male,Tunde
+westafrican,N,female,Ngozi
+westafrican,N,female,Folake
+westafrican,N,female,Adaeze
+westafrican,N,female,Abena
+westafrican,N,female,Yewande
+westafrican,N,female,Chiamaka
+westafrican,N,female,Efua
+westafrican,N,surname,Adeyemi-Coker
+westafrican,N,surname,Okonjo-Bello
+westafrican,N,surname,Ekwueme
+westafrican,N,surname,Danjuma
+westafrican,N,surname,Akintola
+westafrican,N,surname,Mensah-Bonsu
+westafrican,N,surname,Oyelaran
+westafrican,N,surname,Nwachukwu
+westafrican,N,surname,Bankole
+westafrican,N,surname,Adeleke
+westafrican,N,company_prefix,Niger Delta
+westafrican,N,company_prefix,Eko Bridge
+westafrican,N,company_prefix,Gold Coast
+westafrican,N,company_prefix,Volta
+westafrican,N,company_prefix,Oyo Crown
+westafrican,N,company_prefix,Benin Bight
+westafrican,N,company_prefix,Zuma Rock
+westafrican,N,company_prefix,Olumo
+westafrican,N,company_prefix,Calabar
+westafrican,N,company_prefix,Kano Gate

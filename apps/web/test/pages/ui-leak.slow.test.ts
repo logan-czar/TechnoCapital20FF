@@ -57,7 +57,7 @@ import {
   type ViewName,
 } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
+import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { afterAll, describe, expect, it } from "vitest";
 import { type Card, card, zoneHoverCard } from "../../src/links/cards.ts";
 import { buildNameIndex, LIST_PAGES, type NameIndex } from "../../src/links/names.ts";
@@ -100,6 +100,7 @@ import {
 } from "../../src/pdoomberg/models.ts";
 import { buildEntries, makeFuse, search } from "../../src/shell/CommandBar.tsx";
 import { display, fixed, gain, money, number, percent, price, ratio } from "../../src/widgets/cells.ts";
+import { worldMini } from "../world-mini.ts";
 
 /** The bench's world (D459): seed 1. */
 const SEED = 1;
@@ -949,7 +950,7 @@ describe("no true private value on any screen (m9_leak.rs, D574)", () => {
   it("in the 2020 world", () => {
     scanWorld({
       label: "2020",
-      data: loaded(defaultDataDir()),
+      data: loaded(worldMini().dir),
       q1: { year: 2020, q: 1 },
       min: { banded: 100, subjects: 100, bands: 1000, pins: 500, heat: 250 },
     });

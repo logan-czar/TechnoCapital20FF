@@ -1,0 +1,217 @@
+culture,family_first,kind,name
+anglo,N,male,Bradley
+anglo,N,male,Graham
+anglo,N,male,Russell
+anglo,N,male,Duncan
+anglo,N,male,Wade
+anglo,N,male,Calvin
+anglo,N,male,Preston
+anglo,N,male,Barrett
+anglo,N,male,Lionel
+anglo,N,male,Norris
+anglo,N,male,Desmond
+anglo,N,male,Clifford
+anglo,N,male,Mitchell
+anglo,N,male,Dwight
+anglo,N,male,Gordon
+anglo,N,male,Spencer
+anglo,N,female,Maxine
+anglo,N,female,Lorraine
+anglo,N,female,Bridget
+anglo,N,female,Colleen
+anglo,N,female,Harriet
+anglo,N,female,Joanne
+anglo,N,female,Delphine
+anglo,N,female,Wilma
+anglo,N,female,Rosalind
+anglo,N,female,Tamsin
+anglo,N,female,Gwendolyn
+anglo,N,female,Celeste
+anglo,N,female,Marjorie
+anglo,N,female,Paige
+anglo,N,female,Imogen
+anglo,N,female,Darlene
+anglo,N,surname,Ashby
+anglo,N,surname,Hargreave
+anglo,N,surname,Calloway
+anglo,N,surname,Pembrook
+anglo,N,surname,Dunmore
+anglo,N,surname,Thackeray
+anglo,N,surname,Whitcombe
+anglo,N,surname,Prescott
+anglo,N,surname,Ridley
+anglo,N,surname,Galloway
+anglo,N,surname,Stanhope
+anglo,N,surname,Kincaid
+anglo,N,surname,Merriweather
+anglo,N,surname,Holcombe
+anglo,N,surname,Fairbairn
+anglo,N,surname,Langridge
+anglo,N,surname,Burroughs
+anglo,N,surname,Tolliver
+anglo,N,surname,Cardwell
+anglo,N,surname,Ainsworth
+anglo,N,surname,Drummond
+anglo,N,surname,Vickery
+anglo,N,surname,Hollister
+anglo,N,surname,Brannock
+anglo,N,company_prefix,Ironbark
+anglo,N,company_prefix,Redwater
+anglo,N,company_prefix,Bluestem
+anglo,N,company_prefix,Kingsbridge
+anglo,N,company_prefix,Copperline
+anglo,N,company_prefix,Granite Peak
+anglo,N,company_prefix,Harrowgate
+anglo,N,company_prefix,Thornfield
+anglo,N,company_prefix,Northgate
+anglo,N,company_prefix,Blackfen
+anglo,N,company_prefix,Saltmarsh
+anglo,N,company_prefix,Highmoor
+anglo,N,company_prefix,Lodestar
+anglo,N,company_prefix,Bramblewood
+anglo,N,company_prefix,Coldwater
+anglo,N,company_prefix,Westerly
+anglo,N,company_prefix,Halyard
+anglo,N,company_prefix,Crossfield
+anglo,N,company_prefix,Tidewater
+anglo,N,company_prefix,Long Prairie
+anglo,N,company_prefix,Ashgrove
+anglo,N,company_prefix,Marrow Creek
+anglo,N,company_prefix,Juniper Ridge
+anglo,N,company_prefix,Pinecrest
+anglo,N,company_prefix,Driftwood
+anglo,N,company_prefix,Ironwood
+anglo,N,company_prefix,Brightwater
+anglo,N,company_prefix,Hawthorne
+anglo,N,company_prefix,Fenmore
+anglo,N,company_prefix,Silverbell
+anglo,N,company_prefix,Cobalt Bay
+anglo,N,company_prefix,Dunmore
+anglo,N,company_prefix,Rockledge
+anglo,N,company_prefix,Larkspur
+anglo,N,company_prefix,Wolf River
+anglo,N,company_prefix,Gallowglass
+anglo,N,company_prefix,Foxhollow
+anglo,N,company_prefix,Quarry Hill
+anglo,N,company_prefix,Ember Point
+anglo,N,company_prefix,Crowsnest
+anglo,N,company_prefix,Bridgeport
+anglo,N,company_prefix,Ravenwood
+anglo,N,company_prefix,Sentinel Rock
+anglo,N,company_prefix,Big Sky
+anglo,N,company_prefix,Lone Pine
+anglo,N,company_prefix,Cutbank
+anglo,N,company_prefix,Graystone
+anglo,N,company_prefix,Midvale
+anglo,N,company_prefix,Oakhurst
+anglo,N,company_prefix,Riverbend
+anglo,N,company_prefix,Northwind
+anglo,N,company_prefix,Sawtooth
+anglo,N,company_prefix,Bluewater
+anglo,N,company_prefix,Kestrel
+anglo,N,company_prefix,Granite Falls
+anglo,N,company_prefix,Ironhorse
+anglo,N,company_prefix,Prairie Star
+anglo,N,company_prefix,Cinderhill
+anglo,N,company_prefix,Copperhead
+anglo,N,company_prefix,Waverly
+anglo,N,company_prefix,Steelhead
+anglo,N,company_prefix,Eastbrook
+anglo,N,company_prefix,Sandstone
+anglo,N,company_prefix,Harborview
+anglo,N,company_prefix,Clearwater Basin
+anglo,N,company_prefix,Fairhaven
+anglo,N,company_prefix,Black Spruce
+anglo,N,company_prefix,Stonegate
+anglo,N,company_prefix,Saltgrass
+anglo,N,company_prefix,Windward
+anglo,N,company_prefix,Coalbrook
+anglo,N,company_prefix,Muskeg
+anglo,N,company_prefix,Red Mesa
+anglo,N,company_prefix,Bitterroot
+anglo,N,company_prefix,Chinook
+anglo,N,company_prefix,High Desert
+anglo,N,company_prefix,Silver Creek
+anglo,N,company_prefix,Thunder Bay
+anglo,N,company_prefix,Gilded Age
+anglo,N,company_prefix,Iron Range
+anglo,N,company_prefix,Seven Hills
+anglo,N,company_prefix,Cold Spring
+anglo,N,company_prefix,Hollowell
+anglo,N,company_prefix,Kittiwake
+anglo,N,company_prefix,Mariner's Rest
+anglo,N,company_prefix,Old Post Road
+anglo,N,company_prefix,Paragon Point
+anglo,N,company_prefix,Tamarack
+anglo,N,company_prefix,Wildrose
+hispanic,N,male,Joaquin
+hispanic,N,male,Rodrigo
+hispanic,N,male,Ignacio
+hispanic,N,male,Esteban
+hispanic,N,male,Aurelio
+hispanic,N,male,Fernando
+hispanic,N,male,Ramiro
+hispanic,N,male,Octavio
+hispanic,N,male,Leandro
+hispanic,N,male,Mateo
+hispanic,N,male,Gerardo
+hispanic,N,male,Benicio
+hispanic,N,male,Emilio
+hispanic,N,male,Rafael
+hispanic,N,female,Ximena
+hispanic,N,female,Catalina
+hispanic,N,female,Florencia
+hispanic,N,female,Inmaculada
+hispanic,N,female,Renata
+hispanic,N,female,Paloma
+hispanic,N,female,Graciela
+hispanic,N,female,Lucrecia
+hispanic,N,female,Mercedes
+hispanic,N,female,Soledad
+hispanic,N,female,Ainhoa
+hispanic,N,female,Macarena
+hispanic,N,female,Dolores
+hispanic,N,surname,Echeverria
+hispanic,N,surname,Montalvo
+hispanic,N,surname,Iturbide
+hispanic,N,surname,Zubieta
+hispanic,N,surname,Cardenal
+hispanic,N,surname,Villalobos
+hispanic,N,surname,Arrizabalaga
+hispanic,N,surname,Benavides
+hispanic,N,surname,Olmedo
+hispanic,N,surname,Quiroga
+hispanic,N,surname,Santamaria
+hispanic,N,surname,Urrutia
+hispanic,N,surname,Bermejo
+hispanic,N,surname,Llorente
+hispanic,N,surname,Escobedo
+hispanic,N,surname,Ocampo
+hispanic,N,surname,Garrido
+hispanic,N,surname,Aldana
+hispanic,N,surname,Maldonado
+hispanic,N,surname,Sepulveda
+hispanic,N,company_prefix,Sierra Alta
+hispanic,N,company_prefix,Rio Bravo
+hispanic,N,company_prefix,Cerro Azul
+hispanic,N,company_prefix,Valle Dorado
+hispanic,N,company_prefix,Puerto Viejo
+hispanic,N,company_prefix,Altiplano
+hispanic,N,company_prefix,Mar del Sur
+hispanic,N,company_prefix,Cumbre
+hispanic,N,company_prefix,Llano Grande
+hispanic,N,company_prefix,Monte Claro
+hispanic,N,company_prefix,Bahia Blanca
+hispanic,N,company_prefix,Tierra Firme
+hispanic,N,company_prefix,Estrella del Norte
+hispanic,N,company_prefix,Cordillera
+hispanic,N,company_prefix,Pampa Norte
+hispanic,N,company_prefix,Sol de Mayo
+hispanic,N,company_prefix,Laguna Verde
+hispanic,N,company_prefix,Rio Hondo
+hispanic,N,company_prefix,Atalaya
+hispanic,N,company_prefix,Faro Rojo
+hispanic,N,company_prefix,Puente Real
+hispanic,N,company_prefix,Torre Sur
+hispanic,N,company_prefix,Campo Alegre
+hispanic,N,company_prefix,Cielo Abierto

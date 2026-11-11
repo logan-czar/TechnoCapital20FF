@@ -1,6 +1,6 @@
 // The politics POC's rules (D980 to D988): the calendar, the vote, retirements, seat allocation and
 // fifty years of US government driven through the job alone (the economy need not run for it).
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { simNew, simWorld } from "../src/lib.ts";
 import {
@@ -34,8 +34,9 @@ import type { SimDate } from "../src/types/calendar.ts";
 import { TRAIT_VALUES } from "../src/types/state/people.ts";
 import type { Politician, PoliticsState } from "../src/types/state/politics.ts";
 import type { World } from "../src/types/world.ts";
+import { worldMini } from "./common/world_mini.ts";
 
-const loaded = loadWorld(defaultDataDir());
+const loaded = loadWorld(worldMini().dir);
 if (!loaded.ok) throw new Error("data does not load");
 const DATA = loaded.value;
 

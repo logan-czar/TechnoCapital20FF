@@ -2,11 +2,12 @@
 // takes one, and the picker's seed field; the 2020 world needs no picking.
 
 import type { FromSim, ToSim } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
+import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { parseSeed } from "../src/shell/NewGamePicker.tsx";
 import { RealHost } from "../src/sim/real/host.ts";
 import { WorkerLoop } from "../src/sim/real/loop.ts";
+import { worldMini } from "./world-mini.ts";
 
 function host(dir: string): RealHost {
   const loaded = loadWorld(dir);
@@ -44,7 +45,7 @@ describe("Ready", () => {
   });
 
   it("lists none for the 2020 world", async () => {
-    expect(await readyOf(host(defaultDataDir()))).toEqual({ kind: "Ready" });
+    expect(await readyOf(host(worldMini().dir))).toEqual({ kind: "Ready" });
   });
 });
 
