@@ -11,7 +11,10 @@
     "start": "electron .",
     "smoke": "node scripts/smoke.ts",
     "determinism": "node scripts/determinism.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "node e2e/run.ts",
+    "e2e:smoke": "node e2e/run.ts --smoke",
+    "drive": "node scripts/drive.ts"
   },
   "dependencies": {
     "@tc20ff/sim": "workspace:*",
@@ -19,6 +22,7 @@
     "@tc20ff/sim-host": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.0",
     "electron": "45.3.0",
     "esbuild": "0.25.12",
     "vite": "7.1.6"
