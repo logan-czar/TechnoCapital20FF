@@ -67,7 +67,8 @@ describe("M2 contracts: state", () => {
     const h = simWorld(unwrap(simNew(data1995(), 1), "1995 world"));
     expect(h.persons).toEqual(personsStateEmpty());
     expect(h.player).toBeNull();
-    expect({ ...h.geo, counties: [] }).toEqual(geoStateEmpty());
+    // Lane G fills the 1995 world's seats and plans at load (D1039); no census or challenge yet.
+    expect([h.geo.censuses, h.geo.challenges, h.geo.history]).toEqual([[], [], []]);
   });
 
   it("the lanes' slots follow DailyPolitics in G, C, E order, the player's are hourly and daily, and all are empty", () => {
@@ -80,8 +81,9 @@ describe("M2 contracts: state", () => {
     expect(at("HourlyPlayer")).toBe(at("Alerts") - 1);
     expect(slotGroup("HourlyPlayer")).toBe("Hourly");
     const s = scheduler();
+    // DailyGeo holds lane G's job (D1039).
+    expect(schedulerJobs(s, "DailyGeo").map(([name]) => name)).toEqual(["geo.calendar"]);
     for (const slot of [
-      "DailyGeo",
       "DailyCareers",
       "DailyElections",
       "HourlyPlayer",
