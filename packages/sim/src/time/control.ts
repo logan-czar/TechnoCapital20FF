@@ -8,7 +8,7 @@
 
 import type { DateTime } from "../types/calendar.ts";
 import { type Controls, MAX_SPEED, SECONDS_PER_HOUR, START_SPEED, WATCH_SPEED } from "../types/control.ts";
-import type { SkipKind } from "../types/notice.ts";
+import type { FixedPauses, SkipKind } from "../types/notice.ts";
 import { alertLevelsDefault, alertLevelsHistorical } from "../world/notice.ts";
 import { dateTimeDate, dateTimeMidnight, monthFirstDay, monthNext, simDateMonthOf } from "./calendar.ts";
 import { nextPhaseStart } from "./quarter.ts";
@@ -26,7 +26,13 @@ export function controlsDefault(historical = false): Controls {
     alerts: historical ? alertLevelsHistorical() : alertLevelsDefault(),
     omniscient: false,
     watchlist: new Set(),
+    fixed_pauses: fixedPausesDefault(),
   };
+}
+
+/** Every fixed auto-pause on (pivot 2.4; D1037). */
+export function fixedPausesDefault(): FixedPauses {
+  return { OwnFill: true, MarginCall: true, ElectionDay: true, Holding: true };
 }
 
 /** The speed the runner should run at: 0 when paused, max while skipping (spec 9.1). */

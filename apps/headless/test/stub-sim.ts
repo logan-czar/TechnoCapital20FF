@@ -14,6 +14,7 @@ function freshControls(): Controls {
     alerts: ALERT_KIND_VALUES.map((k) => ALERT_KIND_DEFAULT_LEVEL[k]),
     omniscient: false,
     watchlist: new Set(),
+    fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: true, Holding: true },
   };
 }
 
@@ -75,6 +76,9 @@ export class StubSim {
 
   now(): number {
     return this.now_;
+  }
+  slice(): null {
+    return null;
   }
   stateHash(): string {
     return `h${this.now_}`;

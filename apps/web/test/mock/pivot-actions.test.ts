@@ -71,7 +71,7 @@ describe("the mock's player actions", () => {
     expect(g.views().account.data.orders[0]?.status).toBe("Open");
     // It rests behind the best bid: the row is unchanged, the book's level holds it, the cash is untouched.
     expect(row(g, c.id).bid).toBe(bid);
-    const level = (g.host.slice({ view: "markets", contract: c.id })?.bids ?? []).find(
+    const level = (g.host.slice({ view: "markets", slice: "book", contract: c.id })?.bids ?? []).find(
       (l) => l.price === bid - 3,
     );
     const plain = g.sim.pivot?.markets.contracts[c.id]?.bids.find((l) => l.price === bid - 3)?.qty ?? 0;
@@ -114,18 +114,19 @@ describe("the mock's player actions", () => {
     const fills = g.views().account.data.fills.filter((f) => f.order === o.id);
     expect(fills.reduce((a, f) => a + f.qty, 0)).toBe(40);
     expect(fills.every((f) => f.price <= price)).toBe(true);
-    // The player's own fill is a fixed pause (pivot 2.4 item 1).
-    expect(notices).toContainEqual({ kind: "Paused", reason: { kind: "Player" } });
-    expect(
-      g.views().notifications.data.items.some((n) => n.kind === "Fill" && n.paused && n.refs[0]?.id === c.id),
-    ).toBe(true);
+    // The player's own fill is a fixed pause (pivot 2.4 item 1), paused as its notification (D1037).
+    const fill = g
+      .views()
+      .notifications.data.items.find((n) => n.kind === "Fill" && n.paused && n.refs[0]?.id === c.id);
+    expect(fill?.fixed).toBe("OwnFill");
+    expect(notices).toContainEqual({ kind: "Paused", reason: { kind: "Notification", id: fill?.id } });
     checkPivotViews(g.views(), false);
   });
 
   it("a marketable order fills against the book at once, moves the price, and pauses a running game", () => {
     const g = newGame(7);
     const c = freshContract(g);
-    const book = g.host.slice({ view: "markets", contract: c.id });
+    const book = g.host.slice({ view: "markets", slice: "book", contract: c.id });
     const top = book?.asks[0];
     if (!top) throw new Error("no asks");
     const qty = top.qty + 10;
@@ -134,7 +135,10 @@ describe("the mock's player actions", () => {
     g.control({ kind: "Resume" });
     expect(g.sim.paused).toBe(false);
     const reply = g.act(order(c, "Buy", qty, null));
-    expect(reply).toEqual({ kind: "Ok", notices: [{ kind: "Paused", reason: { kind: "Player" } }] });
+    expect(reply).toEqual({
+      kind: "Ok",
+      notices: [{ kind: "Paused", reason: { kind: "Notification", id: notes } }],
+    });
     expect(g.sim.paused).toBe(true);
     expect(g.views().clock.data.paused).toBe(true);
 
@@ -152,7 +156,7 @@ describe("the mock's player actions", () => {
     expect(pos).toMatchObject({ venue: "Exchange", qty, what: { kind: "Contract", id: c.id } });
     expect(pos?.avg_cost).toBeCloseTo((cost * 100) / qty, 6);
     // The book lost what was taken, and the row shows the new best ask and the last trade.
-    const now = g.host.slice({ view: "markets", contract: c.id });
+    const now = g.host.slice({ view: "markets", slice: "book", contract: c.id });
     expect(now?.asks[0]).toEqual({ price: top.price + 1, qty: (book?.asks[1]?.qty as number) - 10 });
     expect(row(g, c.id)).toMatchObject({ ask: top.price + 1, last: top.price + 1 });
     expect(row(g, c.id).volume).toBe(c.volume + qty);
@@ -168,7 +172,9 @@ describe("the mock's player actions", () => {
     // Selling it back closes the position; selling more than is held opens the No side (pivot 10.5).
     expect(g.act(order(c, "Sell", qty + 100, null)).kind).toBe("Ok");
     const short = g.views().account.data.positions.find((p) => p.instrument === c.instrument);
-    expect(short?.qty).toBe(-100);
+    // A No side is its own position (D1037): 100 contracts of No, with their collateral.
+    expect(short).toMatchObject({ side: "No", qty: 100 });
+    expect(short?.collateral).toBeGreaterThan(0);
     expect(g.views().account.data.realised_gains).not.toBe(0);
     checkPivotViews(g.views(), false);
   });

@@ -36,14 +36,18 @@
 import * as ai from "./ai/jobs.ts";
 import * as births from "./births/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
+import { registerElectionJobs } from "./elections/index.ts";
 import { eraActivateSectorsJob, eraMacroJob, eraRevealJob, eraYearCloseJob } from "./era/jobs.ts";
 import { eraPolicyJob } from "./era/policy.ts";
 import { seatEventsJob } from "./events/seats.ts";
 import * as finance from "./finance/jobs.ts";
+import { registerGeoJobs } from "./geo/index.ts";
 import * as market from "./market/jobs.ts";
 import * as news from "./news/jobs.ts";
 import { register as opsRegister } from "./ops/index.ts";
 import { newSeatsJob } from "./people/seating.ts";
+import { registerPlayerJobs } from "./player/index.ts";
+import { registerCareerJobs } from "./politics/careers.ts";
 import { register as politicsRegister } from "./politics/jobs.ts";
 import * as recap from "./recap/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
@@ -70,7 +74,8 @@ export function registerJobs(s: Scheduler): void {
   // ops::register (crates/sim/src/ops/mod.rs)
   opsRegister(s);
 
-  // politics (D980; no Rust twin)
+  // politics (D980; no Rust twin): the POC's daily job in `DailyPolitics`. Lane E owns its removal
+  // (pivot-lanes.md "The politics POC"); the call stays, and the POC's `register` may become empty.
   politicsRegister(s);
 
   // people::register (crates/sim/src/people/mod.rs)
@@ -127,6 +132,16 @@ export function registerJobs(s: Scheduler): void {
 
   // recap::jobs::register (crates/sim/src/recap/jobs.rs)
   r(s, "RecapBuild", "recap.build", recap.recapJob); // recap/jobs recapJob
+
+  // The M2 lanes (D1037; no Rust twin). Each lane registers its jobs in its own folder's function,
+  // which this file calls and no lane edits: lane G in `DailyGeo`, lane C in `DailyCareers`, lane E
+  // in `DailyElections` and `WeeklyJobs`, lane P in `HourlyPlayer` and `DailyPlayer`. Their slots are
+  // theirs alone, so the order of these calls fixes only the order inside `WeeklyJobs` (lane E's
+  // first). Fidelity tags follow pivot 3.3 (each function's comment).
+  registerGeoJobs(s); // geo/index.ts
+  registerCareerJobs(s); // politics/careers.ts
+  registerElectionJobs(s); // elections/index.ts
+  registerPlayerJobs(s); // player/index.ts
 }
 
 /**

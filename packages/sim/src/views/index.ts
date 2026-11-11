@@ -44,6 +44,7 @@ import {
   tickFactsNew,
 } from "../time/scheduler.ts";
 import type { Controls } from "../types/control.ts";
+import type { SliceData, SliceKey } from "../types/protocol.ts";
 import {
   type Cadence,
   type ClockView,
@@ -55,6 +56,7 @@ import {
 } from "../types/views/index.ts";
 import type { MapLayer, MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
+import { accountBuilder } from "./account.ts";
 import { buildBirths } from "./births.ts";
 import { buildCapTable } from "./cap_table.ts";
 import { buildCharacters } from "./characters.ts";
@@ -63,6 +65,7 @@ import { buildCompanyDetail } from "./company_detail.ts";
 import { buildCompanyRows } from "./company_rows.ts";
 import { buildCountries } from "./countries.ts";
 import { buildCycle } from "./cycle.ts";
+import { districtsBuilder } from "./districts.ts";
 import { buildExchanges } from "./exchanges.ts";
 import { buildFilings } from "./filings.ts";
 import { buildHistory, emptyHistory } from "./history.ts";
@@ -72,33 +75,25 @@ import { buildMapLayers, mapLayersViewLayer } from "./map_layers.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews, rebuildNewsFrom } from "./news.ts";
-import {
-  emptyAccount,
-  emptyDistricts,
-  emptyFeed,
-  emptyForecast,
-  emptyMarkets,
-  emptyNotifications,
-  emptyPeople,
-  emptyPolls,
-  emptyRaces,
-  emptyRecords,
-  emptyReturns,
-  emptySocial,
-  emptyUsMapLayers,
-} from "./pivot.ts";
+import { notificationsBuilder } from "./notifications.ts";
+import { sliceData } from "./patch.ts";
+import { peopleBuilder } from "./people.ts";
+import { emptyFeed, emptyForecast, emptyMarkets, emptyPolls, emptyRecords, emptySocial } from "./pivot.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPolitics, emptyPolitics } from "./politics.ts";
 import { buildPriceBars } from "./price_bars.ts";
 import { buildProjection } from "./projection.ts";
 import { buildProvinceCards } from "./province_cards.ts";
 import { buildQuotes } from "./quotes.ts";
+import { racesBuilder } from "./races.ts";
 import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
 import { buildRecap } from "./recap.ts";
+import { returnsBuilder } from "./returns.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
 import { buildTech } from "./tech.ts";
 import { buildUnits } from "./units.ts";
+import { usMapLayersBuilder } from "./usmap_layers.ts";
 import { buildZones } from "./zones.ts";
 
 // ---------------------------------------------------------------- Cadence
@@ -170,6 +165,13 @@ export interface ViewBuilder<T> {
    * never changes it; the result must equal `build`'s. Omitted: the view is built anew.
    */
   readonly rebuildFrom?: ((prev: T, input: ViewInput) => T) | null;
+  /**
+   * A heavy part of this view as a slice (protocol.ts `SliceKey`; D1037): a contract's book, a
+   * race's county returns, a roll call's votes, a day's front pages. Built from the state when a
+   * frame carries it, at the view's version, and never kept in the view's data. Omitted: the view's
+   * slices come from its data (patch.ts `sliceData`, the three pre-pivot heavy views).
+   */
+  readonly slice?: (input: ViewInput, key: SliceKey) => SliceData;
 }
 
 /** Every view's builder slot. */
@@ -357,20 +359,23 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   politics: { rust: "(none: politics POC, D980)", empty: emptyPolitics, build: buildPolitics },
   history: { rust: "(none: 1995-rework 8.1)", empty: emptyHistory, build: buildHistory },
-  // The pivot's views (D1029): unported until their lanes build them (M2 to M5).
+  // The pivot's views (D1029): unported until their lanes build them (M2 to M5). The seven of M2's
+  // sim lanes (D1037) each have a builder slot in the view's own file, which the lane fills there:
+  // races and returns (lane E), people (C), districts and usmap_layers (G), account and
+  // notifications (P). The others wait for M3 to M5.
   feed: unported("(none: pivot 8.2)", emptyFeed),
   social: unported("(none: pivot 8.3)", emptySocial),
   polls: unported("(none: pivot 8.4)", emptyPolls),
   forecast: unported("(none: pivot 8.5)", emptyForecast),
-  races: unported("(none: pivot 6.2)", emptyRaces),
-  people: unported("(none: pivot 5.7)", emptyPeople),
+  races: racesBuilder,
+  people: peopleBuilder,
   records: unported("(none: pivot 8.6)", emptyRecords),
   markets: unported("(none: pivot 10)", emptyMarkets),
-  account: unported("(none: pivot 14)", emptyAccount),
-  notifications: unported("(none: pivot 12)", emptyNotifications),
-  districts: unported("(none: pivot 5.4)", emptyDistricts),
-  usmap_layers: unported("(none: pivot 15.3)", emptyUsMapLayers),
-  returns: unported("(none: pivot 9)", emptyReturns),
+  account: accountBuilder,
+  notifications: notificationsBuilder,
+  districts: districtsBuilder,
+  usmap_layers: usMapLayersBuilder,
+  returns: returnsBuilder,
 };
 
 /**
@@ -593,6 +598,48 @@ export function simViewsRefreshAfterControl(
     }
   }
   if (changed) views.refresh = next;
+}
+
+/**
+ * After a player action (lib.ts `simAct`; D1037): rebuilds the views marked `on_act` (the
+ * account, the notifications, the markets) whose data changed. The refresh number moves only if a
+ * view changed. Not a Rust function.
+ */
+export function simViewsRefreshAfterAct(
+  views: SimViews,
+  input: ViewInput,
+  builders: ViewBuilders = VIEW_BUILDERS,
+): void {
+  const next = views.refresh + 1;
+  let changed = false;
+  for (const n of VIEW_NAMES) {
+    const b = builderOf(builders, n);
+    if (b.build === null || !VIEW_SPECS[n].on_act) continue;
+    const v = viewOf(views, n);
+    const data = b.build(input);
+    if (plainEqual(data, v.data)) continue;
+    setView(views, n, { data, version: next, dirty: true });
+    changed = true;
+  }
+  if (changed) views.refresh = next;
+}
+
+/**
+ * A slice of a view (protocol.ts `SliceKey`; D1016, D1037) from the state now, at the view's
+ * version: the three pre-pivot slices from the views' own data (patch.ts `sliceData`), the pivot's
+ * from the view's builder (`ViewBuilder.slice`). Null when the view has no builder or no such
+ * slice.
+ */
+export function simViewsSlice(
+  views: SimViews,
+  input: ViewInput,
+  key: SliceKey,
+  builders: ViewBuilders = VIEW_BUILDERS,
+): SliceData {
+  const b = builderOf(builders, key.view);
+  if (b.build === null) return null;
+  if (b.slice !== undefined) return b.slice(input, key);
+  return sliceData(views, key);
 }
 
 /** Rust `SimViews::refresh`: the latest refresh number. */

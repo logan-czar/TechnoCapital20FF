@@ -1,6 +1,6 @@
 // Player actions (pivot 1.2, 11, 13.1, 14; D1027): what the player does to the world, as plain
-// data. Types only: until the player and the exchange exist (M2, M5) the sim rejects every action
-// with `NotAvailable` (lib.ts `simAct`).
+// data. Lane P applies them from M2 (player/index.ts `playerAct`, through lib.ts `simAct`); until it
+// does, and for the exchange's until M5, the sim rejects an action with `NotAvailable`.
 //
 // An action is not a `Control` (./control.ts). A control changes only how the runner runs the sim
 // (speed, pause, alerts) and is outside the state hash (D5, D13). An action changes the world: an
@@ -11,7 +11,7 @@
 // world state under `World` (the player's accounts, orders, follows and alert rules), never
 // `Controls`.
 
-import type { InstrumentId, OrderId } from "./ids.ts";
+import type { CompanyId, ContractId, InstrumentId, OrderId } from "./ids.ts";
 import type { EntityRef } from "./views/entity.ts";
 
 /** Where the player holds cash and trades (pivot 14.1). */
@@ -84,7 +84,13 @@ export type PlayerAction =
   | { kind: "Unfollow"; target: EntityRef }
   /** Add an alert (pivot 14.4). */
   | { kind: "AlertRuleAdd"; rule: AlertRule }
-  | { kind: "AlertRuleRemove"; rule: AlertRuleId };
+  | { kind: "AlertRuleRemove"; rule: AlertRuleId }
+  /**
+   * The player has read the phone's notifications up to and including `through` (a
+   * v_notifications row id; D1037). Kept in the world so a save keeps what was read; a `through`
+   * below the one held changes nothing.
+   */
+  | { kind: "NotificationsRead"; through: number };
 
 /** Every action kind, in declaration order. */
 export const PLAYER_ACTION_KINDS = [
@@ -95,7 +101,39 @@ export const PLAYER_ACTION_KINDS = [
   "Unfollow",
   "AlertRuleAdd",
   "AlertRuleRemove",
+  "NotificationsRead",
 ] as const satisfies readonly PlayerAction["kind"][];
+
+// ---------------------------------------------------------------- instruments (D1037)
+
+/**
+ * The first stock instrument (D1037): a contract's `InstrumentId` is its `ContractId` (below this),
+ * and a company's stock is this plus its `CompanyId`. Options (pivot 13.2) will take the range above
+ * `2 × STOCK_INSTRUMENT_BASE`.
+ */
+export const STOCK_INSTRUMENT_BASE = 1_000_000_000;
+
+/** What an order names to trade company `company`'s stock. */
+export function stockInstrument(company: CompanyId): InstrumentId {
+  return (STOCK_INSTRUMENT_BASE + company) as InstrumentId;
+}
+
+/** What an order names to trade contract `contract` (pivot 10.1). */
+export function contractInstrument(contract: ContractId): InstrumentId {
+  return contract as number as InstrumentId;
+}
+
+/** The company or contract an instrument trades, as an `EntityRef`. */
+export function instrumentTarget(instrument: InstrumentId): EntityRef {
+  return instrument >= STOCK_INSTRUMENT_BASE
+    ? { kind: "Company", id: instrument - STOCK_INSTRUMENT_BASE }
+    : { kind: "Contract", id: instrument };
+}
+
+/** The venue an instrument trades on: a stock at the brokerage, a contract on the exchange. */
+export function instrumentVenue(instrument: InstrumentId): Venue {
+  return instrument >= STOCK_INSTRUMENT_BASE ? "Brokerage" : "Exchange";
+}
 
 /** Why an action was not applied. A rejected action changes nothing and is not recorded. */
 export type ActError =
