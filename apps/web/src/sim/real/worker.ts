@@ -18,9 +18,8 @@ import {
   type WorldData,
   type WorldManifest,
 } from "@tc20ff/sim-data";
+import { RealHost, WorkerLoop } from "@tc20ff/sim-host";
 import { knownWorld, worldDataBase } from "../world.ts";
-import { RealHost } from "./host.ts";
-import { WorkerLoop } from "./loop.ts";
 
 /** A text file the plugin serves, or null when it is not there (the SPA fallback is HTML). */
 async function fetchText(url: string): Promise<string | null> {
