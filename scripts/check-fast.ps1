@@ -53,7 +53,7 @@ if (Has '^apps/headless/') { Add @('headless') }
 if (Has '^apps/web/') { Add @('web') }
 if (Has '^apps/desktop/') { Add @('desktop') }
 if (Has '^apps/mapgen/') { Add @('mapgen') }
-if (Has '^(assets/|docs/design/data/|test/fixtures/)') { Add $AllProjects }
+if (Has '^(assets/|test/fixtures/)') { Add $AllProjects }
 if (Has '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts|tsconfig[^/]*\.json)$') {
     Add $AllProjects
 }
@@ -111,17 +111,13 @@ if ($args.Count -eq 0 -and (Has '^(apps/desktop/|apps/web/src/os/)')) {
     Skip 'e2e smoke' 'arguments given, or apps/desktop and apps/web/src/os unchanged'
 }
 
-if (Has '^docs/design/(data|tools/mvp-data)/') {
-    Step 'validate' {
-        $data = (Resolve-Path docs/design/data).Path
-        Push-Location docs/design/tools/mvp-data
-        try { $out = python -B validate.py $data } finally { Pop-Location }
-        $out | Select-String -Pattern '^(ERROR|OK$|[0-9]+ errors)' | ForEach-Object { $_.Line }
-        if (-not ($out -contains 'OK')) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
+if (Has '^packages/sim/test/fixtures/world-mini/') {
+    Step 'check-data-mini' {
+        $mini = (Resolve-Path packages/sim/test/fixtures/world-mini).Path
+        corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data --data-dir $mini
     }
-    Step 'check-data' { corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data --world 2020 }
 } else {
-    Skip 'validate' '2020 world data unchanged'
+    Skip 'check-data-mini' 'the frozen test world unchanged'
 }
 if (Has '^(assets/worlds/|tools/world-1995/)') {
     Step 'validate-1995' {

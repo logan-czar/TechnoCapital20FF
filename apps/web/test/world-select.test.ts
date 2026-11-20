@@ -8,21 +8,23 @@ describe("the starting world", () => {
     vi.unstubAllGlobals();
   });
 
-  const at = (search: string): string | null => {
+  const at = (search: string): string => {
     vi.stubGlobal("location", { search });
     return selectedWorld();
   };
 
-  it("is 1995 unless the URL asks for the 2020 world, or the mock sim, which plays it", () => {
+  it("is 1995 unless the URL names another folder world; the mock sim plays the default", () => {
     expect(at("")).toBe("1995");
     expect(at("?world=1995")).toBe("1995");
     expect(at("?world=1984")).toBe("1995");
-    expect(at("?world=2020")).toBeNull();
-    expect(at("?mock=1")).toBeNull();
+    // The hand-built 2020 world is gone (D1055): its id is an unknown world now.
+    expect(at("?world=2020")).toBe("1995");
+    expect(at("?mock=1")).toBe("1995");
   });
 
-  it("reads a worker's name as one of the folder worlds, else the 2020 world", () => {
+  it("reads a worker's name as one of the folder worlds, else none", () => {
     expect(knownWorld("1995")).toBe("1995");
+    expect(knownWorld("2020")).toBeNull();
     expect(knownWorld("1984")).toBeNull();
     expect(knownWorld("")).toBeNull();
     expect(knownWorld("../secrets")).toBeNull();
@@ -31,7 +33,6 @@ describe("the starting world", () => {
   });
 
   it("names where its CSVs are served", () => {
-    expect(worldDataBase(null)).toBe("/data/design/");
     expect(worldDataBase("1995")).toBe("/data/worlds/1995/");
   });
 });

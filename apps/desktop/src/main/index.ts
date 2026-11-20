@@ -10,7 +10,7 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { DEFAULT_WORLD_ID, WORLD_2020_ID } from "@tc20ff/sim-data";
+import { DEFAULT_WORLD_ID } from "@tc20ff/sim-data";
 import type { TcFlags } from "@tc20ff/sim-host/bridge";
 import {
   app,
@@ -58,7 +58,6 @@ function dataDirs(): DataDirs {
     return {
       renderer: rendererDir,
       worlds: join(base, "worlds"),
-      design: join(base, "design"),
       map: join(base, "map"),
       starts: join(base, "starts"),
     };
@@ -67,15 +66,14 @@ function dataDirs(): DataDirs {
   return {
     renderer: rendererDir,
     worlds: join(repo, "assets", "worlds"),
-    design: join(repo, "docs", "design", "data"),
     map: join(repo, "assets", "map"),
     starts: join(repo, "assets", "starts"),
   };
 }
 
-/** The sim's world: null is the 2020 world (sim-data MANIFEST_2020), which the mock always plays. */
-function simWorld(): string | null {
-  return flags.world === WORLD_2020_ID ? null : (flags.world ?? DEFAULT_WORLD_ID);
+/** The sim's world: `--world`, or the default. */
+function simWorld(): string {
+  return flags.world ?? DEFAULT_WORLD_ID;
 }
 
 // ---------------------------------------------------------------- the sim process
@@ -126,7 +124,7 @@ function connectSim(page: WebContents, dirs: DataDirs): void {
   const world = simWorld();
   const config: SimConfig = {
     world,
-    worldDir: world === null ? dirs.design : join(dirs.worlds, world),
+    worldDir: join(dirs.worlds, world),
     mapDir: dirs.map,
     savesDir: join(app.getPath("userData"), "saves"),
     startsDir: dirs.starts,
@@ -227,8 +225,8 @@ function writeJson(path: string, value: unknown): void {
 
 /** `--smoke`: drive the page (smoke.ts), ask the sim process what it holds, write both down, exit. */
 async function smoke(win: BrowserWindow, out: string): Promise<void> {
-  // The mock always plays the 2020 world (apps/web/src/sim/mock/worker.ts).
-  const world = flags.mock ? WORLD_2020_ID : (flags.world ?? DEFAULT_WORLD_ID);
+  // The mock always plays the default world (apps/web/src/sim/mock/worker.ts).
+  const world = flags.mock ? DEFAULT_WORLD_ID : simWorld();
   const base = { mode: flags.mock ? "mock" : "real", world, versions: versions() };
   try {
     const options: SmokeOptions = {
@@ -288,11 +286,11 @@ async function run(out: string, dirs: DataDirs): Promise<void> {
         id,
         run: {
           world,
-          worldDir: world === null ? dirs.design : join(dirs.worlds, world),
+          worldDir: join(dirs.worlds, world),
           // `headless run` plays with no map, and this run is compared with it.
           mapDir: null,
           seed: flags.seed,
-          scenario: world === null ? null : (flags.scenario ?? SMOKE_SCENARIO),
+          scenario: flags.scenario ?? SMOKE_SCENARIO,
           years: flags.years,
         },
       }),

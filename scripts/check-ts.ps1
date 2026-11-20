@@ -1,5 +1,5 @@
 # The local gate for TypeScript PRs (CLAUDE.md; there is no CI): typecheck, Biome, the sim
-# boundary scan, Vitest, then the design data checks. Uses pnpm via corepack.
+# boundary scan, Vitest, then the data checks. Uses pnpm via corepack.
 $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
 
@@ -14,14 +14,11 @@ Step 'typecheck' { corepack pnpm@10.20.0 exec tsc -b }
 Step 'biome'     { corepack pnpm@10.20.0 exec biome check . }
 Step 'boundary'  { node scripts/ts/boundary.ts }
 Step 'test'      { corepack pnpm@10.20.0 exec vitest run }
-Step 'validate'  {
-    $data = (Resolve-Path docs/design/data).Path
-    Push-Location docs/design/tools/mvp-data
-    try { $out = python -B validate.py $data } finally { Pop-Location }
-    $out | Select-String -Pattern '^(ERROR|OK$|[0-9]+ errors)' | ForEach-Object { $_.Line }
-    if (-not ($out -contains 'OK')) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
+# The frozen test world loads and passes the load-time checks (D1055).
+Step 'check-data-mini' {
+    $mini = (Resolve-Path packages/sim/test/fixtures/world-mini).Path
+    corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data --data-dir $mini
 }
-Step 'check-data' { corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data --world 2020 }
 Step 'validate-1995' {
     $out = python -B tools/world-1995/validate.py
     $out | Select-String -Pattern '^(ERROR|OK$|[0-9]+ errors)' | ForEach-Object { $_.Line }

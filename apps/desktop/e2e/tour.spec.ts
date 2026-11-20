@@ -365,7 +365,8 @@ async function dismiss(win: Locator): Promise<void> {
 /**
  * True for a page that may rightly say "no article": the encyclopedia covers only the USA
  * (browser/sanitize.ts `isOutside`), so the page of a company, industry or exchange of another
- * country is a "no article yet" page by design (D1047). The mock's companies are mostly not American.
+ * country is a "no article yet" page by design (D1047). The mock plays the 1995 world cut to the
+ * USA (D1055), but an industry or exchange page may still be another country's.
  */
 function mayBeOutside(app: string, route: string | null): boolean {
   return app === "browser" && route !== null && /^(company|industry|exchange)\/\d+$/.test(route);

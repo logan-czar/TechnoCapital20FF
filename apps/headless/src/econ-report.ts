@@ -32,7 +32,8 @@ import {
   simViews,
   simWorld,
 } from "@tc20ff/sim/internal";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
+import { worldMiniDir } from "./world-mini.ts";
 
 type Row = Record<string, string | number>;
 
@@ -642,7 +643,7 @@ async function main(args: string[]): Promise<number> {
   if (cmd === "run") {
     const [, profile = "", ys = "", lo = "", hi = "", dir = ""] = args;
     if (!profile || !ys || !lo || !hi || !dir) return usage();
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMiniDir());
     if (!r.ok) throw new Error("data does not load");
     for (let seed = Number(lo); seed <= Number(hi); seed++) {
       const t = runSeed(r.value, profile, seed, Number(ys));

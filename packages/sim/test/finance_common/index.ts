@@ -1,7 +1,8 @@
 // Port of crates/sim/tests/finance_common/mod.rs: shared helpers of the finance tests: the data,
 // lookups by id, and the finance-start.csv golden fixture written by
 // docs/design/tools/mvp-data/export_finance_fixtures.py (an independent Python implementation of
-// 3.9, 5.11, 5.12 and 7.1 as decisions D220 to D234 read them).
+// 3.9, 5.11, 5.12 and 7.1 as decisions D220 to D234 read them). The script went with the 2020 world
+// (D1055), so the fixture is frozen: nothing regenerates it.
 //
 // Expects:
 //   "@tc20ff/sim-data"            row types Company, Industry, CountryEconomy, FinancialZone,

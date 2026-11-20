@@ -1,6 +1,7 @@
 // `headless parity <dir>` (D951, ts-migration-plan Step 4): compares a TS soak directory with a
 // reference soak. Since D1019 the default reference is the TS baseline, test/fixtures/ts-soak/ (the
-// 2020 world after Logan's D973, D974 and D989); `--reference test/fixtures/rust-reference` compares
+// 2020 world after Logan's D973, D974 and D989, now the frozen test world packages/sim/test/fixtures/
+// world-mini: D1053, D1055); `--reference test/fixtures/rust-reference` compares
 // with the frozen Rust soak instead. "Rust" below means the reference. The gate:
 //
 // - every spec 10 target `summary.csv` marks MET in the Rust reference is MET in the TS soak;
@@ -321,7 +322,10 @@ export function formatParity(r: ParityReport): string[] {
 /** Where the frozen Rust reference lives, relative to the repository root. */
 export const RUST_REFERENCE_DIR = "test/fixtures/rust-reference";
 
-/** The default reference since D1019: the TS baseline soak of the 2020 world. */
+/**
+ * The default reference since D1019: the TS baseline soak of the 2020 world, which is the frozen
+ * test world now (rerun it with `--data-dir packages/sim/test/fixtures/world-mini`; D1053, D1055).
+ */
 export const TS_REFERENCE_DIR = "test/fixtures/ts-soak";
 
 /** `headless parity <dir> [--reference DIR]`: reads the files, prints the report. Returns the exit code. */

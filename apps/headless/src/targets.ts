@@ -1,6 +1,8 @@
 // `headless check DIR` (build-plan M10.2, M10.3, 4.4): every spec 10 balance, startup,
 // character and listing target, per seed, from a soak's `years.csv` and `quarters.csv`.
-// Ported from crates/headless/src/targets.rs.
+// Ported from crates/headless/src/targets.rs. These are the targets of a world with no era: the
+// hand-built 2020 world, now the frozen test world packages/sim/test/fixtures/world-mini, which the
+// baseline soak test/fixtures/ts-soak was run on (D1053 decisions 5 and 6, D1055).
 //
 // Each target reads only the columns named in its `evaluate`; each bound is a named constant
 // citing its spec 10 line; choices where spec 10 is ambiguous are D320 to D334 (docs/build/

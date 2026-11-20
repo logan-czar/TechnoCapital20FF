@@ -1,6 +1,6 @@
 // Engine value at load (spec 7.1 Shares row, 5.13; batch 161): the 5.13 fair value of the
 // starting run rate, from which company-start.csv `open_price` and `shares` follow
-// (docs/design/tools/mvp-data/gen.py builds `engine_value_usd` the same way, D239, D240).
+// (tools/world-1995/company_start.py builds `engine_value_usd` the same way, D239, D240).
 // Ported from crates/sim/src/market/engine_value.rs.
 //
 // 7.1 reads it with a flat synthetic history (g 0, so G = clamp(1 − 2.5 × lt, 0.5, 2.5) with

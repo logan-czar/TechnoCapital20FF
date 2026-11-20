@@ -7,16 +7,15 @@ import {
   COUNTY_SPEC,
   GEO_FILES,
   loadTable,
-  MANIFEST_2020,
   parseManifest,
   parseWorld,
   WORLD_FILES,
   type WorldManifest,
   worldDataCounts,
 } from "@tc20ff/sim-data";
-import { defaultDataDir, worldDataDir } from "@tc20ff/sim-data/node";
+import { worldDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
-import { worldOnce } from "./helpers.ts";
+import { MINI_DIR, miniManifest, worldOnce } from "./helpers.ts";
 
 const COUNTIES = [
   "fips,state,name,pop_1990,lean_pts,spread,elasticity,turnout,centroid_x,centroid_y",
@@ -28,13 +27,13 @@ const ADJACENCY = ["fips,neighbour_fips", "01001,01003", "01003,01001", ""].join
 
 function worldFiles(): Record<string, string> {
   const files: Record<string, string> = {};
-  for (const f of WORLD_FILES) files[f] = readFileSync(join(defaultDataDir(), f), "utf8");
+  for (const f of WORLD_FILES) files[f] = readFileSync(join(MINI_DIR, f), "utf8");
   return files;
 }
 
 const withCounties: WorldManifest = {
-  ...MANIFEST_2020,
-  features: { ...MANIFEST_2020.features, counties: true },
+  ...miniManifest(),
+  features: { ...miniManifest().features, counties: true },
 };
 
 describe("county files", () => {

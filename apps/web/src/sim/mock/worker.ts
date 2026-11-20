@@ -1,10 +1,11 @@
-// The mock sim as a Web Worker: loads the starting CSVs (served by the Vite plugin) through
-// sim-data's pure parseWorld, then speaks the protocol. Swapping in the real worker is one import
-// (sim/spawn.ts).
+// The mock sim as a Web Worker: loads the default world's tables (served by the Vite plugin or the
+// Electron shell) through sim-data's pure parseWorld (D1053 decision 3, D1055), then speaks the
+// protocol. Swapping in the real worker is one import (sim/spawn.ts).
 
 import type { FromSim, ToSim } from "@tc20ff/sim";
 import { FRAME_MS } from "@tc20ff/sim";
-import { type Files, parseWorld, WORLD_FILES } from "@tc20ff/sim-data";
+import { DEFAULT_WORLD_ID } from "@tc20ff/sim-data";
+import { loadWorldTables } from "../worldFiles.ts";
 import { SimHost } from "./host.ts";
 import { MOCK_PIVOT } from "./mockSim.ts";
 import { buildMockWorld } from "./mockWorld.ts";
@@ -15,17 +16,6 @@ interface Scope {
 }
 const scope = self as unknown as Scope;
 
-async function loadFiles(): Promise<Files> {
-  const entries = await Promise.all(
-    WORLD_FILES.map(async (f): Promise<[string, string]> => {
-      const res = await fetch(`/data/design/${f}`);
-      if (!res.ok) throw new Error(`${f}: ${res.status}`);
-      return [f, await res.text()];
-    }),
-  );
-  return Object.fromEntries(entries);
-}
-
 async function main(): Promise<void> {
   const queued: ToSim[] = [];
   let host: SimHost | null = null;
@@ -33,10 +23,9 @@ async function main(): Promise<void> {
     for (const out of h.handle(msg)) scope.postMessage(out);
   };
   scope.onmessage = (e) => (host ? run(host, e.data) : queued.push(e.data));
-  const parsed = parseWorld(await loadFiles());
-  if (!parsed.ok) throw new Error(`starting data: ${JSON.stringify(parsed.error)}`);
+  const data = await loadWorldTables(DEFAULT_WORLD_ID);
   // The worker runs the pivot world (./pivot.ts); the dev server's is a debug sim, so Omniscient works (D1014).
-  const ready = new SimHost(buildMockWorld(parsed.value), { ...MOCK_PIVOT, debug: import.meta.env.DEV });
+  const ready = new SimHost(buildMockWorld(data), { ...MOCK_PIVOT, debug: import.meta.env.DEV });
   host = ready;
   scope.postMessage({ kind: "Ready" });
   for (const m of queued) run(ready, m);

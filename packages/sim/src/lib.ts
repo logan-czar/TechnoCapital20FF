@@ -22,7 +22,7 @@
 //   free functions `simWorld`, `simRegisterTestJob`, `simSoakStats` and `simSoakWorld`, exported
 //   from internal.ts, never from index.ts.
 
-import { MANIFEST_2020, type WorldData } from "@tc20ff/sim-data";
+import type { WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
@@ -844,12 +844,19 @@ export function simLoadBytes(sim: Sim, bytes: Uint8Array): Result<Notice[], SimE
   return loadBytesInner(inner(sim), bytes);
 }
 
+/**
+ * The world a save with no era belongs to: a world with no era writes no `world_id` (1995-rework
+ * 3.2), and the only such world left is the frozen test world, whose manifest keeps the hand-built
+ * 2020 world's id (D1053 decision 4, D1055).
+ */
+export const NO_ERA_WORLD_ID = "2020";
+
 function loadBytesInner(i: SimInner, bytes: Uint8Array): Result<Notice[], SimError> {
   const state = decode(bytes);
   if (!state.ok) return fail({ kind: "Save", error: state.error });
   // A save belongs to the world that wrote it: the loaded data is this one's (1995-rework 3.2).
   const here = i.cfg.data?.manifest.id;
-  const saved = state.value.world.era?.world_id ?? MANIFEST_2020.id;
+  const saved = state.value.world.era?.world_id ?? NO_ERA_WORLD_ID;
   if (here !== undefined && here !== saved) {
     return fail({ kind: "Save", error: { kind: "WrongWorld", save: saved, world: here } });
   }

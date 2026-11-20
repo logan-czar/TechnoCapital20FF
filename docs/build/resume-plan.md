@@ -9,15 +9,15 @@ Where to pick the work up, as of 2026-11-03 (main 5b03196, after PR #119). Read 
   `packages/sim`, `apps/web`, `apps/headless` and `apps/mapgen`. The Rust code is deleted (D1017);
   its last tree is main 334ee6d. TS Step 6 merged as #116 to #119.
 - **The default world is 1995** (`assets/worlds/1995/`): 25 years to a reveal on 1 January 2020,
-  under a picked or random scenario. The 2020 world is `?world=2020` in the web app and
-  `--world 2020` in headless.
+  under a picked or random scenario. The 2020 world was removed (D1055); its tables are the frozen
+  test world `packages/sim/test/fixtures/world-mini/`.
 - **The gate** is `scripts/check-ts.ps1` (or `.sh`): typecheck, Biome, the sim boundary scan,
-  Vitest and both worlds' data checks. On #119 it ran 186 test files and 1,057 tests in about
+  Vitest and the data checks. On #119 it ran 186 test files and 1,057 tests in about
   6 minutes. There is no CI.
 - **Parity** compares a 2020 soak with the TS baseline in `test/fixtures/ts-soak/` (D1019): your
   R&D rulings moved the 2020 world away from the Rust soak (D1018, mostly D974), and you accepted
   it. `--reference test/fixtures/rust-reference` still compares with Rust. A soak is
-  `corepack pnpm@10.20.0 headless soak --world 2020 --years 30 --seeds 1..50 --jobs 4 --out DIR --check`
+  `corepack pnpm@10.20.0 headless soak --data-dir packages/sim/test/fixtures/world-mini --years 30 --seeds 1..50 --jobs 4 --out DIR --check`
   (about 50 minutes, 4 workers at about 1.2 GB each), then `headless parity DIR`.
 - **The final review** of the port against the MVP sign-off list is
   [ts-port-review.md](ts-port-review.md); its section 7 is the TS checklist.

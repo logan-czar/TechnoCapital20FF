@@ -14,7 +14,7 @@ import {
 
 export const TOPOLOGY_URL = "/data/map/provinces.topo.json";
 export const CENTROIDS_URL = "/data/map/province-centroids.csv";
-/** The region files of docs/design/data, as `provinces-<slug>.csv`. */
+/** A world's region files, as `provinces-<slug>.csv`. */
 export const REGION_SLUGS = [
   "east-asia-oceania",
   "europe",

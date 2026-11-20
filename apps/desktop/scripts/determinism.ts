@@ -31,7 +31,6 @@ const years = Number(option("years", "1"));
 const seed = Number(option("seed", "1"));
 const world = option("world", "1995");
 const scenario = option("scenario", "stable");
-const historical = world !== "2020";
 
 if (!existsSync(join(distDir, "sim", "run-node.mjs"))) {
   console.error("no build: run `corepack pnpm@10.20.0 desktop:build` first");
@@ -45,7 +44,7 @@ function headless(): Hashes {
   const tsx = join(repoDir, "apps", "headless", "node_modules", "tsx", "dist", "cli.mjs");
   const args = [tsx, "src/main.ts", "run", "--years", `${years}`, "--seeds", `${seed}`, "--hash-monthly"];
   args.push("--world", world);
-  if (historical) args.push("--scenario", scenario);
+  args.push("--scenario", scenario);
   const r = run(process.execPath, args, join(repoDir, "apps", "headless"));
   writeFileSync(join(out, "headless.log"), r.stdout + r.stderr);
   if (r.code !== 0) throw new Error(`headless run exited ${r.code}: ${r.stderr.slice(-2000)}`);
@@ -87,11 +86,11 @@ function hashesOf(report: RunReport): Hashes {
 /** 2. The desktop's run loop, bundled, under plain Node. */
 function bundleInNode(): Hashes {
   const request = {
-    world: historical ? world : null,
-    worldDir: historical ? join(repoDir, "assets", "worlds", world) : join(repoDir, "docs", "design", "data"),
+    world,
+    worldDir: join(repoDir, "assets", "worlds", world),
     mapDir: null,
     seed,
-    scenario: historical ? scenario : null,
+    scenario,
     years,
   };
   const r = run(process.execPath, [join(distDir, "sim", "run-node.mjs"), JSON.stringify(request)]);
@@ -104,7 +103,7 @@ function bundleInNode(): Hashes {
 async function electron(): Promise<Hashes> {
   const file = join(out, "electron.json");
   const flags = [`--run=${file}`, `--years=${years}`, `--seed=${seed}`, `--world=${world}`];
-  if (historical) flags.push(`--scenario=${scenario}`);
+  flags.push(`--scenario=${scenario}`);
   flags.push(`--user-data-dir=${join(out, "ud")}`);
   const code = await runApp(flags);
   if (!existsSync(file)) throw new Error(`the app exited ${code} and wrote no report`);
@@ -114,9 +113,7 @@ async function electron(): Promise<Hashes> {
   return hashesOf(report);
 }
 
-console.log(
-  `determinism: world ${world}, seed ${seed}, ${years} year(s)${historical ? `, scenario ${scenario}` : ""}`,
-);
+console.log(`determinism: world ${world}, seed ${seed}, ${years} year(s), scenario ${scenario}`);
 const runs: [string, Hashes][] = [];
 runs.push(["headless (Node)", headless()]);
 runs.push(["desktop bundle (Node)", bundleInNode()]);
@@ -147,7 +144,7 @@ if (!same) {
 }
 writeFileSync(
   join(out, "report.json"),
-  `${JSON.stringify({ world, seed, years, scenario: historical ? scenario : null, same, runs: Object.fromEntries(runs) }, null, 2)}\n`,
+  `${JSON.stringify({ world, seed, years, scenario, same, runs: Object.fromEntries(runs) }, null, 2)}\n`,
 );
 console.log(same ? "determinism: every hash agrees" : "determinism: the hashes DIFFER");
 process.exit(same ? 0 : 1);

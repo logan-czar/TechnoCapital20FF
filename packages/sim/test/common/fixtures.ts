@@ -2,6 +2,8 @@
 // Reads the golden fixtures the Rust tests read through env!("CARGO_MANIFEST_DIR"): the CSVs in
 // packages/sim/test/fixtures (copied from crates/sim/tests/fixtures; the .tc20ffsave is not,
 // D953). Lives in test/pending/common until promoted to test/common; finds fixtures from either.
+// The Python scripts that wrote the golden CSVs (docs/design/tools/mvp-data/export_fixtures.py and
+// export_finance_fixtures.py) went with the 2020 world (D1055): the CSVs are frozen.
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 

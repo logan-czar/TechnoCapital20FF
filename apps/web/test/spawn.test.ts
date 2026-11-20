@@ -76,9 +76,9 @@ describe("spawnSim", () => {
     expect(FakeWorker.made).toHaveLength(1);
     expect(FakeWorker.made[0]?.url).toMatch(/sim\/real\/worker\.ts$/);
     expect(FakeWorker.made[0]?.name).toBe("1995");
-    page("?world=2020", null);
+    page("?world=1984", null);
     spawnSim();
-    expect(FakeWorker.made[0]?.name).toBe("");
+    expect(FakeWorker.made[0]?.name).toBe("1995");
   });
 
   it("boots the mock for the Electron app's --mock, with no sim process asked for", () => {

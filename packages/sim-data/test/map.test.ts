@@ -10,7 +10,7 @@
 //     check
 //     MapAssets { meta: {width,height,projection,tiny_px: number | null,coverage,sources:
 //       [string,string][]}, colors, centroids, adjacency } with Table-shaped members { rows, lines }
-//   "@tc20ff/sim-data/node": loadWorld, defaultDataDir (via ./helpers.ts)
+//   "@tc20ff/sim-data/node": loadWorld (via ./helpers.ts)
 //   ./map-fixture.ts (in this folder): mapFixtureFiles, port of sim_data::map::fixture::write.
 //
 // Changed from the Rust, by D954 (the vector map replaces the ID bitmaps): the PNG tests (png_size,

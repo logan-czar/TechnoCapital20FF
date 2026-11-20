@@ -166,7 +166,7 @@ A change that moves the state hash or a view must re-record these in the same co
 | `packages/sim/test/golden/job-order-2020.txt` | The slots each tick visits (`UPDATE_GOLDEN=1` rewrites it) |
 | `packages/sim/test/long_run.slow.test.ts` (`specOrder`) | The same order for ten years, written out by hand: a new slot is added there too |
 | `packages/sim/test/m1_contracts.test.ts` | The first draws of the eight pre-pivot RNG streams |
-| `test/fixtures/ts-soak/` | The 50-seed soak baseline; its `state_hash` column is from before M1 and is not compared by `headless parity` |
+| `test/fixtures/ts-soak/` | The 50-seed soak baseline, of the frozen test world since the 2020 world was removed (D1055); its `state_hash` column is from before M1 and is not compared by `headless parity` |
 
 Run a slow file by naming it: `scripts/check-fast.ps1 packages/sim/test/results_pinned.slow.test.ts`.
 Lanes G, C, E and P each move the state hash once they fill their tables; each re-records the pins in

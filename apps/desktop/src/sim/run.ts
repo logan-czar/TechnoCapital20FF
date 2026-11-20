@@ -9,7 +9,7 @@ import { loadWorldData } from "@tc20ff/sim-host/node";
 import type { RunReport, RunRequest } from "../shared.ts";
 
 export async function runYears(req: RunRequest): Promise<RunReport> {
-  const data = await loadWorldData(req.world, { world: req.worldDir, map: req.mapDir });
+  const data = await loadWorldData({ world: req.worldDir, map: req.mapDir });
   const start = performance.now();
   const made = simNew(data, req.seed, req.scenario === null ? {} : { scenario: req.scenario });
   if (!made.ok) throw new Error(`new game: ${JSON.stringify(made.error)}`);

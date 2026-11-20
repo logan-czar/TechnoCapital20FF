@@ -119,7 +119,14 @@ describe("the mock's player actions", () => {
       .views()
       .notifications.data.items.find((n) => n.kind === "Fill" && n.paused && n.refs[0]?.id === c.id);
     expect(fill?.fixed).toBe("OwnFill");
-    expect(notices).toContainEqual({ kind: "Paused", reason: { kind: "Notification", id: fill?.id } });
+    // Two pausing notifications on one tick pause the game once, as the first of them: on the 1995
+    // world a resting order of the script fills on the same tick as this one (D1055).
+    const paused = notices.find((n) => n.kind === "Paused");
+    const reason =
+      paused?.kind === "Paused" && paused.reason.kind === "Notification" ? paused.reason.id : null;
+    const first = g.views().notifications.data.items.find((n) => n.id === reason);
+    expect(first?.fixed).toBe("OwnFill");
+    expect(first?.time).toBe(fill?.time);
     checkPivotViews(g.views(), false);
   });
 

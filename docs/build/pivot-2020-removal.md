@@ -1,5 +1,7 @@
 # Removing the playable 2020 world
 
+**Done (2026-11-20, D1055).** The steps below were carried out as D1053 decided; D1055 records the choices they left open and the two places the doc missed (the desktop shell's `--world=2020` and `/data/design/`). The doc is kept for its reasoning.
+
 What is left to do after lane S2 (`build/m1-test-mini`), which moved the tests off the playable 2020 world without deleting anything. This is one serial change, made after the M1 lanes have merged, because it edits contract files and folders other lanes own.
 
 ## Where things stand
