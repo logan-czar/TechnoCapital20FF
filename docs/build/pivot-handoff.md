@@ -4,7 +4,7 @@ Written 2026-11-11 for whoever continues this (another model or Logan). Read thi
 [pivot-plan.md](pivot-plan.md) (the approved plan and the decisions from Logan's interview),
 [../design/pivot/spec.md](../design/pivot/spec.md) (the spec, cited in code as `pivot N.N`) and
 [pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1052 in
-[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1053**.
+[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1054**.
 
 ## One paragraph
 

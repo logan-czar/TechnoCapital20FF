@@ -8,7 +8,20 @@ What is left to do after lane S2 (`build/m1-test-mini`), which moved the tests o
 - `worldMini()` (`packages/sim/test/common/world_mini.ts`; `apps/web/test/world-mini.ts` re-exports it) returns the fixture's folder and manifest. Every test in `packages/sim` and `apps/web` that loaded the 2020 world now loads the fixture.
 - `--world 2020`, `?world=2020`, `MANIFEST_2020`, `docs/design/data/` and the gate's 2020 steps are untouched and still work.
 
-## Decisions needed first
+## Decided (Logan, 2026-11-19, D1053)
+
+The eight decisions below are settled; the removal follows these answers.
+
+1. **Generator source: (a).** The CSVs `tools/world-1995/gen.py` and `validate.py` read move to `tools/world-1995/source/`, and the parts of `mvp-data/gen.py` it calls move into `tools/world-1995/`. Then `docs/design/data` and `docs/design/tools/mvp-data` are deleted.
+2. **Map pipeline: frozen.** `tools/map-pipeline` is a finished tool that is not rerun (its README says so); it is deleted with the world province map in M3. `DATA_DIR` is not repointed.
+3. **Mock: the 1995 world.** The mock loads `/data/worlds/1995/` with its manifest; the `@visual` baselines are re-recorded and looked at.
+4. **No-era saves: a named constant.** `NO_ERA_WORLD_ID = "2020"` in `packages/sim` replaces `MANIFEST_2020.id` in `loadBytesInner`; the fixture's save tests keep working.
+5. **Soak baseline: (c).** `test/fixtures/ts-soak/` stays the frozen fixture's baseline now (README and `bands.json` `source` line only); a 1995 baseline is recorded with the close-out soaks and made the default once it settles.
+6. **The 2020 targets stay** (`apps/headless/src/targets.ts`, `targets.test.ts`) while `ts-soak` is the reference.
+7. **Research tools read the fixture.** `econ-report`, `debt-tournament`, `strategy-tournament` (and `scripts/drift-matrix.sh`) load `packages/sim/test/fixtures/world-mini`, so D1025's report stays comparable.
+8. **Scripted 2020 features stay** (`ai_boom`, `fixed_events`, `arrowhead`) while the fixture pins the inherited economy; removing them is a later, separate change.
+
+## The decisions as they were put (kept for their reasoning)
 
 1. **Where the 1995 generator reads its source rows.** `tools/world-1995/gen.py` and `validate.py` read `docs/design/data/` (`SRC`): countries, country-economy, the eight province files, industries, companies, characters, key-cities, financial-zones, the names files, politics-usa, politics-usa-offices and startup-events. `gen.py` also imports `docs/design/tools/mvp-data/gen.py` (`MVP_GEN`) for the valuation groups and `build_company_start`. Deleting either folder as it stands breaks `python -B gen.py`. Choose one:
    - (a) Move the CSVs the generator reads to `tools/world-1995/source/` and the parts of `mvp-data/gen.py` it calls to `tools/world-1995/`, then delete `docs/design/data` and `docs/design/tools/mvp-data`. The 2020 rows live on as generator input, not as a world.
