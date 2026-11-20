@@ -4,7 +4,7 @@ Written 2026-11-11 for whoever continues this (another model or Logan). Read thi
 [pivot-plan.md](pivot-plan.md) (the approved plan and the decisions from Logan's interview),
 [../design/pivot/spec.md](../design/pivot/spec.md) (the spec, cited in code as `pivot N.N`) and
 [pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1052 in
-[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1054**.
+[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1055**.
 
 ## One paragraph
 
@@ -45,39 +45,33 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 - Baked starts are not committed (`assets/starts/*.tcsave` is git-ignored): run
   `bash scripts/bake-starts.sh` (about 40 s for three seeds, about 11 MB each).
 
-## Verification of this tree (run 2026-11-11, final merged tree)
+## Verification of this tree (re-run 2026-11-19 on main 7012f9f plus D1054)
 
-**The full gate is not green.** Two slow tests still fail; do not describe this branch as gate-clean.
+**The full gate is green** after D1054 fixed the two seed-fragile slow tests (no sim change). The
+soaks have still not been run.
 
 | Check | Result |
 |---|---|
-| `scripts/check-fast.sh all` | Passed: 212 files, 1,551 tests, plus the 1995 data checks (90 s). Run before the test fixes below. |
-| `scripts/check-ts.sh` (full gate) | **Failed in the test step: 3 of 1,732 tests** (250 of 253 files passed, 356 s). The four data-check steps after it did not run inside the gate; the 1995 pair passed in the fast check, and the 2020 pair were last run by hand at the end of M1 (OK; the 2020 data has not changed since). |
-| `pnpm e2e` (49 tests) | 48 passed, 1 failed: the Social person-link tour test, a timing race in the test (Social redirects a person route to the handle page after its data loads; the test read the address too early). Fixed; the tour alone was re-run and passes (32 of 32). The whole `e2e` was not re-run after that fix. |
-| `... --filter @tc20ff/desktop determinism` | Passed: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`). |
+| `scripts/check-ts.sh` (full gate) | **Passed** 2026-11-19: 253 of 253 test files (371 s), then all four data checks (2020 and 1995). |
+| `pnpm e2e` (49 tests) | **Passed** 2026-11-19: 49 of 49, the whole suite (smoke, visual, real, tour; 1.3 min). |
+| `... --filter @tc20ff/desktop determinism` | Passed 2026-11-11: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`). Not re-run; D1054 changed only tests. |
 | Soaks (Coarse 25-year, Full 2-year, with sanity bands) | Not run. |
 
-The three gate failures and where they stand:
+The three gate failures of 2026-11-11 and how they closed:
 
-1. `m10_boom_pop.slow` "the start replica is start world": **fixed.** The test hand-copies the start
-   sequence and lacked the four lane starts (geo, persons, elections, player) that `START_DEPS` now
-   runs; it passes alone (3 of 3).
-2. `era_sectors.slow` "the exit rule removes firms over a run": **open.** Seed 3, scenario "unstable",
-   run to 2006: the history view's `failures` is 0 where the test expects more than 0. The USA-cut
-   lane (D1038) reported this file passing, so the integration pass (D1052) moved it, most likely
-   through who governs (and so the tax and fiscal levers) or the vote's economy-term clamp. Find out
-   whether the exit rule is still firing (bisect the merges from `cd70109` to HEAD) before changing
-   the test's seed or horizon; a seed-robust version would check several seeds.
-3. `m1_usa_only_run.slow` seed 2: **open.** The cut world's US startups are 80 against a bound of
-   78 (1.5 times the uncut world's 52). D1038 measured the mean ratio near 1.1 over five seeds, so this
-   looks like seed noise past a tight bound that was tuned on the earlier random state; widen the bound
-   or average over seeds, and log it.
+1. `m10_boom_pop.slow` "the start replica is start world": the test lacked the four lane starts that
+   `START_DEPS` now runs; fixed in 6ac1fc2.
+2. `era_sectors.slow` "the exit rule removes firms over a run": the exit rule still fires; seed 3's
+   only long loser became its industry's sole firm, which the rule spares. The test now sums exits over
+   seeds 1 to 3, and the "never an industry's last" check is a direct `settleJob` test (D1054).
+3. `m1_usa_only_run.slow` seed 2: seed noise. Seeds 1 to 5 give ratios 0.92 to 1.54 (mean 1.21); the
+   per-seed bound is now `CUT_TO_HOME_MAX` = 1.75 (D1054).
 
 ## Pending, in the order I would do it
 
 ### A. Before merging the M2 pull request
 
-1. Read the verification block above. Anything not shown as passing there is unverified. First job: the two open gate failures (`era_sectors.slow`, `m1_usa_only_run.slow`), then re-run `scripts/check-ts.sh` and `pnpm e2e` whole.
+1. Read the verification block above. Anything not shown as passing there is unverified. Done 2026-11-19: the two gate failures are fixed (D1054) and the gate and the whole `e2e` pass.
 2. The soaks with sanity bands that the plan puts in every milestone gate have **not been run**
    for the pivot: a Coarse 25-year run over several seeds and a Full 2-year run, checked for no NaN,
    prices and turnout in range, parties competitive. `test/fixtures/ts-soak/` (the parity baseline)

@@ -6,7 +6,8 @@ import { describe, expect, it } from "vitest";
 import { ERA_SHORTAGE_GAP_MAX, ERA_SHORTAGE_K, shortageGrowth, situationGrowth } from "../src/ai/growth.ts";
 import { fringeAfterMonth, stickyFringeAfterMonth } from "../src/economy/supply.ts";
 import { eraActivateSectorsJob } from "../src/era/jobs.ts";
-import { exitDue } from "../src/finance/distress.ts";
+import { EXIT_LOSS_QUARTERS, exitDue } from "../src/finance/distress.ts";
+import { settleJob } from "../src/finance/jobs.ts";
 import { simNew, simViews, simWorld } from "../src/lib.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import type { JobCtx } from "../src/time/scheduler.ts";
@@ -136,20 +137,44 @@ describe("the exit rule", () => {
     expect(exitDue(0, 1e5)).toBe(true);
   });
 
-  it("removes firms over a run, and never an industry's last", async () => {
-    const sim = new1995(3, "unstable");
-    await runTo(sim, 2006);
-    const w = simWorld(sim);
-    const h = simViews(sim).history.data;
-    expect(h.failures.at(-1)).toBeGreaterThan(0);
-    w.era?.sectors.forEach((s, i) => {
-      if (s.status === "Dormant" || w.companies.every((c) => c.industry !== i)) return;
-      const open = w.companies.filter(
-        (c) => c.industry === i && !["Bankrupt", "Removed"].includes(c.finance.distress.status),
+  // The spared last firm is the exit rule's alone (1995-rework 9): an ordinary bankruptcy (mvp-spec
+  // 5.12) may still close an industry's last firm, as seed 2's sole black_market firm does in 1997,
+  // so a whole run cannot check it. This sets a firm's losing streak in a real world and settles.
+  it("spares an industry's last open firm, and exits it when a peer is open", async () => {
+    const settled = async (peersClosed: boolean) => {
+      const sim = new1995(1);
+      await runTo(sim, 1996);
+      const w = simWorld(sim);
+      const ind = w.industries.findIndex(
+        (_, i) =>
+          w.companies.filter((c) => c.industry === i && c.finance.distress.status === "Active").length >= 2,
       );
-      expect(open.length, w.industries[i]?.key).toBeGreaterThan(0);
-    });
+      const firms = w.companies.filter((c) => c.industry === ind && c.finance.distress.status === "Active");
+      const [target, ...peers] = firms;
+      if (target === undefined) throw new Error("no firm");
+      if (peersClosed) for (const p of peers) p.finance.distress.status = "Removed";
+      target.loss_quarters = EXIT_LOSS_QUARTERS;
+      const ctx = { facts: { date: simDateYmd(1996, 1, 1) }, raiseAlert: () => {} } as unknown as JobCtx;
+      settleJob(w, ctx);
+      return target.finance.distress.status;
+    };
+    expect(await settled(true)).not.toBe("Bankrupt");
+    expect(await settled(false)).toBe("Bankrupt");
   }, 300_000);
+
+  // Over several seeds, not one: a single seed's exits by 2006 are a handful, and whether a long
+  // loser is its industry's last firm (and so spared) turns on which startups that seed drew. Seed 3
+  // alone had one exit before the M2 integration (D1052) moved its random path and none after; its
+  // only long loser is now the sole firm of its industry (D1054).
+  it("removes firms over a run", async () => {
+    let failures = 0;
+    for (const seed of [1, 2, 3]) {
+      const sim = new1995(seed, "unstable");
+      await runTo(sim, 2006);
+      failures += simViews(sim).history.data.failures.at(-1) ?? 0;
+    }
+    expect(failures).toBeGreaterThan(0);
+  }, 600_000);
 });
 
 describe("a firm under its hurdle", () => {
