@@ -4,7 +4,7 @@ Written 2026-11-11 for whoever continues this (another model or Logan). Read thi
 [pivot-plan.md](pivot-plan.md) (the approved plan and the decisions from Logan's interview),
 [../design/pivot/spec.md](../design/pivot/spec.md) (the spec, cited in code as `pivot N.N`) and
 [pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1052 in
-[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1056**.
+[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1057**.
 
 ## One paragraph
 
@@ -49,14 +49,15 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 ## Verification of this tree (re-run 2026-11-20 on main 7012f9f plus D1053 to D1055)
 
 **The full gate is green** after D1054 fixed the two seed-fragile slow tests (no sim change) and
-D1055 removed the 2020 world. The soaks have still not been run.
+D1055 removed the 2020 world. The soaks ran on 2026-11-20 (D1056): no crash or NaN, one band fails
+(lopsided chambers).
 
 | Check | Result |
 |---|---|
 | `scripts/check-ts.sh` (full gate) | **Passed** 2026-11-20: 253 of 253 test files, then the three data checks (the frozen test world, and 1995's two). |
 | `pnpm e2e` (49 tests) | **Passed** 2026-11-20: 49 of 49, the whole suite (smoke, visual, real, tour; 1.2 min). Three `@visual` baselines were re-recorded for the mock's 1995 names (D1055) and looked at. |
 | `... --filter @tc20ff/desktop determinism` | **Passed** 2026-11-20: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`, unchanged since 2026-11-11). |
-| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | Not run. |
+| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | **Ran** 2026-11-20 (D1056). Economy: `headless calibrate`, 3 scenarios × 50 seeds, no failure; `entries` and `failures` miss in nearly every seed (bands predate the USA cut). Politics: `pivot-soak.ts`, 40 seeds, 24 of 25 checks; the failure is a chamber above 75% in 7 Coarse and 2 played seeds. Baselines in `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`. |
 
 The three gate failures of 2026-11-11 and how they closed:
 
@@ -73,12 +74,13 @@ The three gate failures of 2026-11-11 and how they closed:
 ### A. Before merging the M2 pull request
 
 1. Read the verification block above. Anything not shown as passing there is unverified. Done 2026-11-19: the two gate failures are fixed (D1054) and the gate and the whole `e2e` pass.
-2. The soaks with sanity bands that the plan puts in every milestone gate have **not been run**
-   for the pivot: a Coarse 25-year run over several seeds and a Full 2-year run, checked for no NaN,
-   prices and turnout in range, parties competitive. `test/fixtures/ts-soak/` (the parity baseline)
+2. Done 2026-11-20 (D1056): the soaks ran (results in the verification table; READMEs in
+   `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`). Logan to accept the two new baselines
+   and the bands, and to rule on the lopsided chambers and the `entries` and `failures` bands. `test/fixtures/ts-soak/` (the parity baseline)
    was recorded on the old 2020 world and stays the frozen test world's baseline (rerun with
    `--data-dir packages/sim/test/fixtures/world-mini`); its `state_hash` column is not compared. A 1995
-   baseline is to be recorded with these soaks and made the default once it settles (D1053).
+   baseline is now recorded (`test/fixtures/soak-1995/`) and becomes the default once it settles and
+   parity can read an era folder (D1053, D1056).
 3. Logan has not reviewed D1026 to D1052. The ones most likely to need his eye: D1027 (defaults chosen
    without asking), D1028 (county `spread`), D1038 (3-year stock charts, startup scaling), D1042
    (player rules), D1052 (integration rules, including who keeps their district after a redraw).
