@@ -32,7 +32,7 @@ The browser path still works for development: `corepack pnpm@10.20.0 dev` runs t
 | Sim process | `src/sim/entry.ts` | Loads the world from disk and runs `packages/sim-host`'s host and loop on the port. |
 | Run loop | `src/sim/run.ts`, `run-node.ts` | The determinism check's plain run, in the utility process and under Node. |
 
-The page is served from a privileged custom scheme, `app://game/`. `/` is the built renderer. `/data/worlds/*`, `/data/design/*` and `/data/map/*` are the same folders the sim process reads: the repository's `assets/worlds`, `docs/design/data` and `assets/map` when the app is not packaged, and `resources/data/` when it is. A path that names no file is a 404.
+The page is served from a privileged custom scheme, `app://game/`. `/` is the built renderer. `/data/worlds/*` and `/data/map/*` are the same folders the sim process reads: the repository's `assets/worlds` and `assets/map` when the app is not packaged, and `resources/data/` when it is. A path that names no file is a 404.
 
 The page has no Node: `contextIsolation` on, `nodeIntegration` off, sandboxed. When it calls `tcHost.connectSim()`, main forks the sim process, makes a `MessageChannelMain`, and sends one port to each. From then on the page and the sim process speak the game's protocol (`packages/sim/src/types/protocol.ts`) through that port, as the page and the Web Worker did. A page reload gets a fresh sim process.
 
@@ -77,8 +77,6 @@ Every flag is `--name` or `--name=value`. A flag that cannot be read falls back 
 | `--seed=N`, `--scenario=<id>` | The new game of a smoke or determinism run. The defaults are 1 and `stable`. |
 | `--run=<out.json>`, `--years=N` | Opens no window. The sim process steps the seed for N years and its monthly and final state hashes go to the file. |
 | `--dev-server=<url>` | Loads the page from a Vite dev server. `desktop:dev` passes it. |
-
-`--world=2020 --save=...` is not supported: the UI starts a new game by itself in a world with no scenarios, over the loaded one.
 
 ## The smoke run
 
@@ -163,7 +161,7 @@ It is plain erasable TypeScript: Node 24 runs it as it is, and so does `tsx`.
 | `--size WxH` | The window's content size. The default is 1600x900. |
 | `--timeout <ms>` | The limit for the whole run. The default is 180000. One step may take 15 s. |
 | `--user-data-dir=<dir>` | Keeps the app's files (its saves, the desktop's layout) in this folder. Without it a fresh folder under `apps/desktop/.scratch/drive` is used and removed afterwards. |
-| any other `--flag` | Goes to the app: `--world=2020`, `--paused`. |
+| any other `--flag` | Goes to the app: `--world=1995`, `--paused`. |
 
 Anything but `--mock` launches the real sim: run it through the machine lock, `scripts/heavy.sh node apps/desktop/scripts/drive.ts ...`.
 

@@ -357,7 +357,7 @@ const USAGE = `usage: node apps/desktop/scripts/drive.ts --mock | --save=<file> 
   --size WxH             the window's content size (default 1600x900)
   --timeout <ms>         the whole run's limit (default ${DRIVE_TIMEOUT_MS})
   --user-data-dir=<dir>  keep the app's files here (default: a fresh folder, removed afterwards)
-  --<flag>[=value]       any other flag goes to the app (--world=2020, --paused, --hidden)
+  --<flag>[=value]       any other flag goes to the app (--world=1995, --paused, --hidden)
 steps: [{"click":"tb-step"}, {"dblclick":{"text":"Debug workspace"}}, {"type":{"css":"input","value":"7"}},
   {"press":"Space"}, {"wait":300}, {"wait":{"testId":"win-debug"}}, {"wait":{"expr":"sim.clock.paused"}},
   {"drag":{"from":{"testId":"win-debug-edge-se"},"to":[900,600]}}, {"screenshot":"shot.png"},

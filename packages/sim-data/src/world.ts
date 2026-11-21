@@ -4,7 +4,7 @@
 
 import { type DataError, ok, type Result } from "./error.ts";
 import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen, tableNew } from "./load.ts";
-import { MANIFEST_2020, type WorldManifest } from "./manifest.ts";
+import type { WorldManifest } from "./manifest.ts";
 import type { MapAssets } from "./map.ts";
 import {
   AI_BOOM_STAGE_SPEC,
@@ -196,10 +196,7 @@ function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<T
  * does not parse; the error names the file, line and field (spec 10 M0). Rust `load_world`, minus
  * the file reading. `manifest` says which world the files are.
  */
-export function parseWorld(
-  files: Files,
-  manifest: WorldManifest = MANIFEST_2020,
-): Result<WorldData, DataError> {
+export function parseWorld(files: Files, manifest: WorldManifest): Result<WorldData, DataError> {
   const countries = loadTable(files, "countries.csv", COUNTRY_SPEC);
   if (!countries.ok) return countries;
   const provinces = perRegion(files, "provinces-{}.csv", PROVINCE_SPEC);

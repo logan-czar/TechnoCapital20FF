@@ -90,6 +90,6 @@ describe("buildWorld", () => {
   });
 
   it("is reachable through parseWorld too", () => {
-    expect(parseWorld({}).ok).toBe(false);
+    expect(parseWorld({}, worldMini().manifest).ok).toBe(false);
   });
 });

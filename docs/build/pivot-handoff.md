@@ -4,7 +4,7 @@ Written 2026-11-11 for whoever continues this (another model or Logan). Read thi
 [pivot-plan.md](pivot-plan.md) (the approved plan and the decisions from Logan's interview),
 [../design/pivot/spec.md](../design/pivot/spec.md) (the spec, cited in code as `pivot N.N`) and
 [pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1052 in
-[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1053**.
+[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1057**.
 
 ## One paragraph
 
@@ -35,54 +35,52 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 
 ## Branch, PR and tree state
 
-- Branch `claude/stock-market-prediction-game-7c4f97`: M0 and M1 are in `main` via #127; M2 and this handoff are the open pull request. Save version 7.
-- The playable 2020 world (`docs/design/data`, `?world=2020`, `--world 2020`) still exists; tests run
-  on a frozen copy, `packages/sim/test/fixtures/world-mini/` (id "2020"). Removal steps are in
-  [pivot-2020-removal.md](pivot-2020-removal.md): the 1995 generator and the map pipeline read the 2020
-  data folder as source rows, so it is not a plain delete.
+- M0 and M1 are in `main` via #127, M2 via #128. Save version 7.
+- The playable 2020 world is removed (D1053, D1055; [pivot-2020-removal.md](pivot-2020-removal.md)):
+  1995 is the only world, and the mock plays it. Its tables live on twice: as the 1995 generator's
+  input in `tools/world-1995/source/`, and frozen for the tests, the research tools and the parity
+  soak in `packages/sim/test/fixtures/world-mini/` (id "2020", `NO_ERA_WORLD_ID`). The map pipeline
+  is frozen until M3 deletes it with the province map.
 - `features.usa_only` is on in the 1995 manifest: US companies only, foreign supply folded into
   `Industry.row_assets` (D1034, D1038). Stock charts keep 3 years of daily bars in era worlds.
 - Baked starts are not committed (`assets/starts/*.tcsave` is git-ignored): run
   `bash scripts/bake-starts.sh` (about 40 s for three seeds, about 11 MB each).
 
-## Verification of this tree (run 2026-11-11, final merged tree)
+## Verification of this tree (re-run 2026-11-20 on main 7012f9f plus D1053 to D1055)
 
-**The full gate is not green.** Two slow tests still fail; do not describe this branch as gate-clean.
+**The full gate is green** after D1054 fixed the two seed-fragile slow tests (no sim change) and
+D1055 removed the 2020 world. The soaks ran on 2026-11-20 (D1056): no crash or NaN, one band fails
+(lopsided chambers).
 
 | Check | Result |
 |---|---|
-| `scripts/check-fast.sh all` | Passed: 212 files, 1,551 tests, plus the 1995 data checks (90 s). Run before the test fixes below. |
-| `scripts/check-ts.sh` (full gate) | **Failed in the test step: 3 of 1,732 tests** (250 of 253 files passed, 356 s). The four data-check steps after it did not run inside the gate; the 1995 pair passed in the fast check, and the 2020 pair were last run by hand at the end of M1 (OK; the 2020 data has not changed since). |
-| `pnpm e2e` (49 tests) | 48 passed, 1 failed: the Social person-link tour test, a timing race in the test (Social redirects a person route to the handle page after its data loads; the test read the address too early). Fixed; the tour alone was re-run and passes (32 of 32). The whole `e2e` was not re-run after that fix. |
-| `... --filter @tc20ff/desktop determinism` | Passed: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`). |
-| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | Not run. |
+| `scripts/check-ts.sh` (full gate) | **Passed** 2026-11-20: 253 of 253 test files, then the three data checks (the frozen test world, and 1995's two). |
+| `pnpm e2e` (49 tests) | **Passed** 2026-11-20: 49 of 49, the whole suite (smoke, visual, real, tour; 1.2 min). Three `@visual` baselines were re-recorded for the mock's 1995 names (D1055) and looked at. |
+| `... --filter @tc20ff/desktop determinism` | **Passed** 2026-11-20: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`, unchanged since 2026-11-11). |
+| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | **Ran** 2026-11-20 (D1056). Economy: `headless calibrate`, 3 scenarios × 50 seeds, no failure; `entries` and `failures` miss in nearly every seed (bands predate the USA cut). Politics: `pivot-soak.ts`, 40 seeds, 24 of 25 checks; the failure is a chamber above 75% in 7 Coarse and 2 played seeds. Baselines in `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`. |
 
-The three gate failures and where they stand:
+The three gate failures of 2026-11-11 and how they closed:
 
-1. `m10_boom_pop.slow` "the start replica is start world": **fixed.** The test hand-copies the start
-   sequence and lacked the four lane starts (geo, persons, elections, player) that `START_DEPS` now
-   runs; it passes alone (3 of 3).
-2. `era_sectors.slow` "the exit rule removes firms over a run": **open.** Seed 3, scenario "unstable",
-   run to 2006: the history view's `failures` is 0 where the test expects more than 0. The USA-cut
-   lane (D1038) reported this file passing, so the integration pass (D1052) moved it, most likely
-   through who governs (and so the tax and fiscal levers) or the vote's economy-term clamp. Find out
-   whether the exit rule is still firing (bisect the merges from `cd70109` to HEAD) before changing
-   the test's seed or horizon; a seed-robust version would check several seeds.
-3. `m1_usa_only_run.slow` seed 2: **open.** The cut world's US startups are 80 against a bound of
-   78 (1.5 times the uncut world's 52). D1038 measured the mean ratio near 1.1 over five seeds, so this
-   looks like seed noise past a tight bound that was tuned on the earlier random state; widen the bound
-   or average over seeds, and log it.
+1. `m10_boom_pop.slow` "the start replica is start world": the test lacked the four lane starts that
+   `START_DEPS` now runs; fixed in 6ac1fc2.
+2. `era_sectors.slow` "the exit rule removes firms over a run": the exit rule still fires; seed 3's
+   only long loser became its industry's sole firm, which the rule spares. The test now sums exits over
+   seeds 1 to 3, and the "never an industry's last" check is a direct `settleJob` test (D1054).
+3. `m1_usa_only_run.slow` seed 2: seed noise. Seeds 1 to 5 give ratios 0.92 to 1.54 (mean 1.21); the
+   per-seed bound is now `CUT_TO_HOME_MAX` = 1.75 (D1054).
 
 ## Pending, in the order I would do it
 
 ### A. Before merging the M2 pull request
 
-1. Read the verification block above. Anything not shown as passing there is unverified. First job: the two open gate failures (`era_sectors.slow`, `m1_usa_only_run.slow`), then re-run `scripts/check-ts.sh` and `pnpm e2e` whole.
-2. The soaks with sanity bands that the plan puts in every milestone gate have **not been run**
-   for the pivot: a Coarse 25-year run over several seeds and a Full 2-year run, checked for no NaN,
-   prices and turnout in range, parties competitive. `test/fixtures/ts-soak/` (the parity baseline)
-   was recorded on the old 2020 world and is stale; its `state_hash` column is not compared. Decide
-   whether to re-baseline on the 1995 world.
+1. Read the verification block above. Anything not shown as passing there is unverified. Done 2026-11-19: the two gate failures are fixed (D1054) and the gate and the whole `e2e` pass.
+2. Done 2026-11-20 (D1056): the soaks ran (results in the verification table; READMEs in
+   `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`). Logan to accept the two new baselines
+   and the bands, and to rule on the lopsided chambers and the `entries` and `failures` bands. `test/fixtures/ts-soak/` (the parity baseline)
+   was recorded on the old 2020 world and stays the frozen test world's baseline (rerun with
+   `--data-dir packages/sim/test/fixtures/world-mini`); its `state_hash` column is not compared. A 1995
+   baseline is now recorded (`test/fixtures/soak-1995/`) and becomes the default once it settles and
+   parity can read an era folder (D1053, D1056).
 3. Logan has not reviewed D1026 to D1052. The ones most likely to need his eye: D1027 (defaults chosen
    without asking), D1028 (county `spread`), D1038 (3-year stock charts, startup scaling), D1042
    (player rules), D1052 (integration rules, including who keeps their district after a redraw).
@@ -155,7 +153,7 @@ Scope from the plan and spec (pivot 6.3 to 6.5, 7, 5.12, 5.13, 3.4):
 - **M6+ deep stock market:** the order book on the same engine, named NPC funds with real holdings
   replacing the anonymous cap table, limit and stop orders, shorting, margin and liquidation, options.
   Specify before building (pivot 13.2).
-- Then: delete the playable 2020 world, update CLAUDE.md for the finished layout, re-baseline soaks.
+- Then: update CLAUDE.md for the finished layout. (The playable 2020 world is already gone, D1055.)
 
 ## How this was run (and how to keep running it)
 

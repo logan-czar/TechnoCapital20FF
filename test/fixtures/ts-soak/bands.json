@@ -1,5 +1,5 @@
 {
- "source": "TS headless soak of the 2020 world, sim of main 334ee6d (2026-11-03), `headless soak --world 2020 --years 30 --seeds 1..50 --jobs 4 --check`",
+ "source": "TS headless soak of the 2020 world (now the frozen test world, D1055), sim of main 334ee6d (2026-11-03), `headless soak --data-dir packages/sim/test/fixtures/world-mini --years 30 --seeds 1..50 --jobs 4 --check`",
  "seeds": 50,
  "quantiles": [
   "p10",

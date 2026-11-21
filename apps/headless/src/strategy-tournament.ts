@@ -21,8 +21,9 @@ import {
   simSoakWorld,
   type World,
 } from "@tc20ff/sim/internal";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
 import { type CompanyOutcome, score } from "./debt-tournament.ts";
+import { worldMiniDir } from "./world-mini.ts";
 
 interface Outcome extends CompanyOutcome {
   cell: string;
@@ -194,7 +195,7 @@ function summarize(all: Result[]): string {
 function main(args: string[]): number {
   const [cmd = "", a1 = "", a2 = "", a3 = "", a4 = "", a5 = "", a6 = ""] = args;
   if (cmd === "run" && a6) {
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMiniDir());
     if (!r.ok) throw new Error("data does not load");
     mkdirSync(a6, { recursive: true });
     for (let seed = Number(a3); seed <= Number(a4); seed++) {

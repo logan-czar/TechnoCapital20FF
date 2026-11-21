@@ -1,6 +1,10 @@
-import { defaultDataDir, worldDataDir } from "@tc20ff/sim-data/node";
+import { worldDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { parseRecord, parseReplay, parseRun, parseSeeds, parseSoak, userPath } from "../src/args.ts";
+import { worldMiniDir } from "../src/world-mini.ts";
+
+/** The frozen test world (D1055): data other than 1995's. */
+const MINI = worldMiniDir();
 
 describe("argument parsing", () => {
   it("seeds are A..B inclusive or a single A", () => {
@@ -32,11 +36,11 @@ describe("argument parsing", () => {
     expect(parseRun(["--years", "1", "--seeds", "1"])?.dir).toBe(worldDataDir("1995"));
     expect(parseRecord(["--years", "1", "--seed", "1", "--out", "l"])?.[3]).toBe(worldDataDir("1995"));
     expect(parseReplay(["l"])?.[1]).toBe(worldDataDir("1995"));
-    expect(parseSoak(["--out", "d", "--world", "2020"])?.[1]).toBe(defaultDataDir());
+    expect(parseSoak(["--out", "d", "--data-dir", MINI])?.[1]).toBe(MINI);
   });
 
   it("soak defaults to seeds 1..50 and a full run, and needs --out", () => {
-    expect(parseSoak(["--out", "d", "--world", "2020"])?.[0].years).toBe(30);
+    expect(parseSoak(["--out", "d", "--data-dir", MINI])?.[0].years).toBe(30);
     expect(parseSoak(["--out", "d", "--years", "3"])?.[0].years).toBe(3);
     const [a] = parseSoak(["--out", "d"]) ?? [];
     expect(a).toMatchObject({

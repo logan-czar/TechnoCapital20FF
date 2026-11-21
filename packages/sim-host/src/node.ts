@@ -21,7 +21,6 @@ import {
   ERA_FILES,
   type Files,
   GEO_FILES,
-  MANIFEST_2020,
   MANIFEST_FILE,
   MAP_FILES,
   parseManifest,
@@ -70,20 +69,17 @@ export interface WorldDirs {
 
 /**
  * Loads a world as the browser worker does (apps/web/src/sim/real/worker.ts `loadData`), from
- * disk: the same file lists, the same parsers. `id` null is the 2020 world, which has no manifest
- * file; any other reads the folder's manifest, the era files and, when it has them, the county files.
+ * disk: the same file lists, the same parsers. It reads the folder's manifest, the era files and,
+ * when it has them, the county files.
  */
-export async function loadWorldData(id: string | null, dirs: WorldDirs): Promise<WorldData> {
-  let manifest: WorldManifest = MANIFEST_2020;
-  if (id !== null) {
-    const text = await readText(join(dirs.world, MANIFEST_FILE));
-    if (text === null) throw new Error(`${join(dirs.world, MANIFEST_FILE)}: not found`);
-    const parsed = parseManifest(text);
-    if (!parsed.ok) throw new Error(`starting data: ${dataErrorToString(parsed.error)}`);
-    manifest = parsed.value;
-  }
+export async function loadWorldData(dirs: WorldDirs): Promise<WorldData> {
+  const text = await readText(join(dirs.world, MANIFEST_FILE));
+  if (text === null) throw new Error(`${join(dirs.world, MANIFEST_FILE)}: not found`);
+  const parsed = parseManifest(text);
+  if (!parsed.ok) throw new Error(`starting data: ${dataErrorToString(parsed.error)}`);
+  const manifest: WorldManifest = parsed.value;
   const [baseFiles, mapFiles, geoFiles] = await Promise.all([
-    readFiles(dirs.world, id === null ? WORLD_FILES : [...WORLD_FILES, ...ERA_FILES], false),
+    readFiles(dirs.world, [...WORLD_FILES, ...ERA_FILES], false),
     // The map files are optional: no map-meta.toml means no map (parseMap gives null).
     dirs.map === null ? Promise.resolve({}) : readFiles(dirs.map, MAP_FILES, true),
     // The county files, for a world that has them (pivot 5.1).

@@ -4,7 +4,7 @@
 // - the Electron sim process, when the page runs in the Electron app (`window.tcHost`, put there by
 //   apps/desktop's preload script): the real sim in a Node process, reached through a MessagePort;
 // - else the real sim in a Web Worker, as the browser dev server has always run it.
-// `?world=2020` picks another starting world (world.ts); the real worker learns it from its name,
+// `?world=<id>` picks another starting world (world.ts); the real worker learns it from its name,
 // and the Electron sim process from the app's `--world` flag.
 
 import { TC_SIM_FAILED, TC_SIM_PORT, type TcHost, type TcWindowMessage } from "@tc20ff/sim-host/bridge";
@@ -55,7 +55,7 @@ export function spawnSim(): SimClient {
     transport = workerTransport(
       new Worker(new URL("./real/worker.ts", import.meta.url), {
         type: "module",
-        name: selectedWorld() ?? "",
+        name: selectedWorld(),
       }),
     );
   }

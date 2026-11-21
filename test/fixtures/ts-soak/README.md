@@ -1,11 +1,17 @@
 # TypeScript baseline soak (D1019)
 
+**The frozen test world's baseline now (D1053 decision 5, D1055).** The hand-built 2020 world this
+was run on is no longer playable: its tables are frozen as `packages/sim/test/fixtures/world-mini/`,
+the same files and manifest, so the soak below reruns on it with `--data-dir` in place of
+`--world 2020`. Parity here guards the inherited economy on a world nobody plays. A 1995 baseline
+is to be recorded with the pivot close-out soaks and made the default once it settles.
+
 The parity reference since D1019: `headless parity <dir>` compares a new soak with this one by
-default. A 50-seed soak of the 2020 world on the sim of main 334ee6d (2026-11-03), after Logan's
+default. A 50-seed soak of the 2020 world (now the frozen test world) on the sim of main 334ee6d (2026-11-03), after Logan's
 D973, D974 and D989, run on branch `build/ts6-delete-rust` on Logan's PC (Windows 11, Node via tsx):
 
 ```
-corepack pnpm@10.20.0 headless soak --world 2020 --years 30 --seeds 1..50 --jobs 4 --out soak-out --check
+corepack pnpm@10.20.0 headless soak --data-dir packages/sim/test/fixtures/world-mini --years 30 --seeds 1..50 --jobs 4 --out soak-out --check
 corepack pnpm@10.20.0 headless parity soak-out
 node scripts/ts/rust-reference-bands.ts soak-out --source "..."   # bands.json, when re-baselining
 ```

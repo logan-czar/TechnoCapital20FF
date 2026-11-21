@@ -1,5 +1,7 @@
 # Province map pipeline (track P)
 
+**Frozen (D1053, D1055).** This is a finished tool that is not rerun. It read the province CSVs of `docs/design/data/`, which were removed with the 2020 world; the same rows are kept as the 1995 generator's input in `tools/world-1995/source/`, but `DATA_DIR` still names the old folder. The tool and the province map it built are deleted in M3.
+
 Builds `assets/map/` (the format is [docs/build/m8-map-assets.md](../../docs/build/m8-map-assets.md)) from
 Natural Earth and geoBoundaries, region CSV by region CSV of `docs/design/data/` (all eight files are built:
 3,963 provinces). Python prepares the geodata; `mapgen` (`apps/mapgen`, TypeScript run by Node; D1017)

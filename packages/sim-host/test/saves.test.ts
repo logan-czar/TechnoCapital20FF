@@ -423,13 +423,11 @@ describe("the stores on disk", () => {
   });
 
   it("load a world from disk as the worker's lists name it", async () => {
-    const loaded = await loadWorldData("1995", { world: worldDataDir("1995"), map: null });
+    const loaded = await loadWorldData({ world: worldDataDir("1995"), map: null });
     expect(loaded.manifest.id).toBe("1995");
     expect(loaded.map).toBeNull();
     // The same tables as sim-data's own Node loader gives.
     expect(JSON.stringify({ ...loaded, map: null })).toBe(JSON.stringify({ ...data, map: null }));
-    await expect(loadWorldData("1995", { world: join(tmp, "nowhere"), map: null })).rejects.toThrow(
-      /not found/,
-    );
+    await expect(loadWorldData({ world: join(tmp, "nowhere"), map: null })).rejects.toThrow(/not found/);
   });
 });

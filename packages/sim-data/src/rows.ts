@@ -1,5 +1,5 @@
-// One row type per CSV file in `docs/design/data/` (build-plan 2.1, M0.2). Ported from
-// crates/sim-data/src/rows.rs. Field names are the exact CSV column names (data/README.md);
+// One row type per CSV file of a world folder, `assets/worlds/<id>/` (build-plan 2.1, M0.2). Ported
+// from crates/sim-data/src/rows.rs. Field names are the exact CSV column names;
 // unknown columns are rejected so the files and the types cannot drift apart unseen. Money and
 // rates are plain f64 (build-plan 6, decision A). Each row type has a `*_SPEC` (the serde derive
 // of the Rust struct): its columns in declaration order with their parsers.

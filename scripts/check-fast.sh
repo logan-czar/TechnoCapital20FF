@@ -46,7 +46,7 @@ if has '^apps/headless/'; then add headless; fi
 if has '^apps/web/'; then add web; fi
 if has '^apps/desktop/'; then add desktop; fi
 if has '^apps/mapgen/'; then add mapgen; fi
-if has '^(assets/|docs/design/data/|test/fixtures/)'; then add $ALL_PROJECTS; fi
+if has '^(assets/|test/fixtures/)'; then add $ALL_PROJECTS; fi
 if has '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts|tsconfig[^/]*\.json)$'; then
   add $ALL_PROJECTS
 fi
@@ -110,15 +110,10 @@ else
   skip "e2e smoke" "arguments given, or apps/desktop and apps/web/src/os unchanged"
 fi
 
-if has '^docs/design/(data|tools/mvp-data)/'; then
-  step validate
-  root="$(pwd)"
-  out="$(cd docs/design/tools/mvp-data && "$PY" -B validate.py "$root/docs/design/data")"
-  echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
-  echo "$out" | grep -qx "OK"
-  step check-data; pnpm --filter @tc20ff/headless start --check-data --world 2020
+if has '^packages/sim/test/fixtures/world-mini/'; then
+  step check-data-mini; pnpm --filter @tc20ff/headless start --check-data --data-dir "$(pwd)/packages/sim/test/fixtures/world-mini"
 else
-  skip validate "2020 world data unchanged"
+  skip check-data-mini "the frozen test world unchanged"
 fi
 if has '^(assets/worlds/|tools/world-1995/)'; then
   step validate-1995

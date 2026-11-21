@@ -2,9 +2,9 @@
 // field (spec 10 M0, build-plan M0.3).
 //
 // Expects:
-//   "@tc20ff/sim-data": parseWorld(files: Record<string, string>) -> Result<WorldData, DataError>;
+//   "@tc20ff/sim-data": parseWorld(files, manifest) -> Result<WorldData, DataError>;
 //   DataError { file, line: number | null, field: string | null, message }.
-//   "@tc20ff/sim-data/node": defaultDataDir.
+//   ./helpers.ts: MINI_DIR, the frozen test world (D1055).
 //
 // Changed from the Rust: load_table::<Country>(dir, file) is not part of the agreed pure API, so
 // each case feeds the fixture text to parseWorld as countries.csv (the first table load_world
@@ -16,9 +16,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { DataError } from "@tc20ff/sim-data";
 import { parseWorld } from "@tc20ff/sim-data";
-import { defaultDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
-import { errText } from "./helpers.ts";
+import { errText, MINI_DIR, miniManifest } from "./helpers.ts";
 
 // test/fixtures from test/pending, and from test/ once promoted.
 const FIXTURES =
@@ -28,7 +27,7 @@ const FIXTURES =
 
 /** Every CSV of the data directory (relative path with / separators to text). */
 function realFiles(): Record<string, string> {
-  const root = defaultDataDir();
+  const root = MINI_DIR;
   const out: Record<string, string> = {};
   const walk = (rel: string): void => {
     for (const e of readdirSync(join(root, rel), { withFileTypes: true })) {
@@ -48,7 +47,7 @@ function fixture(name: string): string {
 function loadErr(name: string): DataError {
   const files = realFiles();
   files["countries.csv"] = fixture(name);
-  const r = parseWorld(files);
+  const r = parseWorld(files, miniManifest());
   if (r.ok) throw new Error(`fixture should fail to load: ${name}`);
   return r.error;
 }
@@ -95,7 +94,7 @@ describe("load errors", () => {
   it("missing_file_is_named", () => {
     const files = realFiles();
     delete files["countries.csv"];
-    const r = parseWorld(files);
+    const r = parseWorld(files, miniManifest());
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.error.file).toBe("countries.csv");
@@ -103,7 +102,7 @@ describe("load errors", () => {
   });
 
   it("good_rows_load", () => {
-    const r = parseWorld(realFiles());
+    const r = parseWorld(realFiles(), miniManifest());
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.value.countries.lines[0]).toBe(2);

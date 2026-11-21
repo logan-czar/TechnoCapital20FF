@@ -2,13 +2,17 @@
 // USA as shipped, plays its 25 years, 1995 to 2020, for seeds 1 and 2 without an error, with every
 // number finite, every company American and every key its own. Its startups are the USA's share of
 // the uncut world's (D1038), so it ends with about as many American companies as the same seed
-// uncut; measured on seeds 1 to 5, within 10% on average, so the bound here is loose. Not a Rust
-// test.
+// uncut. A seed's 50 to 80 startups are noisy: after the M2 integration, seeds 1 to 5 gave ratios
+// of 1.39, 1.54, 1.09, 0.92 and 1.11 (mean 1.21; D1038 had about 1.1), so the per-seed bound is
+// loose (D1054) while still far below D1034's every-startup-in-the-USA 2.2. Not a Rust test.
 
 import { describe, expect, it } from "vitest";
 import { type Sim, simNew, simRunUntil, simViews, simWorld } from "../src/lib.ts";
 import { macrotask, unwrap } from "./common/index.ts";
 import { notFinite, usaOnly1995, whole1995 } from "./common/usa_only.ts";
+
+/** The cut world's American startups over the uncut world's, per seed, at most (D1054). */
+const CUT_TO_HOME_MAX = 1.75;
 
 /** American companies born by the end of a run. */
 function bornInUsa(sim: Sim): number {
@@ -44,7 +48,7 @@ describe("a 1995 world cut to the USA runs to 2020", () => {
       const home = bornInUsa(uncut);
       const cut = bornInUsa(sim);
       expect(cut).toBeGreaterThan(0.6 * home);
-      expect(cut).toBeLessThan(1.5 * home);
+      expect(cut).toBeLessThan(CUT_TO_HOME_MAX * home);
       expect(cut).toBeLessThan(0.5 * all);
     }, 600_000);
   }

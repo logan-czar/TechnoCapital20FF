@@ -6,8 +6,8 @@ import type { DateTime, SimDate, StateHash } from "@tc20ff/sim";
 
 /** Where the sim process finds its files. */
 export interface SimConfig {
-  /** The starting world, or null for the 2020 world (which has no manifest file). */
-  world: string | null;
+  /** The starting world's id (a folder of `assets/worlds`). */
+  world: string;
   /** The world's CSVs and the map CSVs. */
   worldDir: string;
   mapDir: string | null;
@@ -23,7 +23,7 @@ export interface SimConfig {
 
 /** A plain run for the determinism check (pivot 16.1): a seed stepped a number of years, as `headless run` does. */
 export interface RunRequest {
-  world: string | null;
+  world: string;
   worldDir: string;
   mapDir: string | null;
   seed: number;

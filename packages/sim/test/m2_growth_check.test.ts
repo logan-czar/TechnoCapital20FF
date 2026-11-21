@@ -3,6 +3,7 @@
 // export_fixtures.py recorded every draw validate.py made (the cycle g and length draws, each
 // industry growth shock) and its results (the phase path and each industry compound average
 // yearly growth); the engine runs the same draws through a scripted source and must match to 1e-9.
+// export_fixtures.py went with the 2020 world (D1055), so the fixture is frozen.
 //
 // The draws are scripted, so the new RNG (D951) is not involved and nothing here changes.
 //

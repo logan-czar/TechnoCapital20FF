@@ -13,7 +13,6 @@ import { extname, resolve, sep } from "node:path";
 export interface ServeDirs {
   renderer: string;
   worlds: string;
-  design: string;
   map: string;
 }
 
@@ -43,7 +42,7 @@ function inside(root: string, path: string): string | null {
 }
 
 /**
- * The file a page path names, or null. `/data/worlds/*`, `/data/design/*` and `/data/map/*` are
+ * The file a page path names, or null. `/data/worlds/*` and `/data/map/*` are
  * the data folders; everything else, and any data file not found there, is the built renderer
  * (whose build also holds a copy of the data). A path that names nothing is null, never the index
  * page: the page tells a missing optional file by its 404.
@@ -58,7 +57,6 @@ export function fileFor(pathname: string, dirs: ServeDirs): string | null {
   const candidates: (string | null)[] = [];
   for (const [prefix, dir] of [
     ["data/worlds/", dirs.worlds],
-    ["data/design/", dirs.design],
     ["data/map/", dirs.map],
   ] as const) {
     if (path.startsWith(prefix)) candidates.push(inside(dir, path.slice(prefix.length)));

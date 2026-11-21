@@ -482,11 +482,14 @@ describe("F4 Order ticket", () => {
 
   it("lists open orders on the page and cancels one", async () => {
     const { g } = await ticket();
-    const o = account(g).orders.find((x) => x.status === "Open") as OrderRow;
+    const open = account(g).orders.filter((x) => x.status === "Open");
+    const o = open[0] as OrderRow;
     expect(screen.getByTestId(`order-row-${o.id}`)).toBeTruthy();
     fireEvent.click(screen.getByTestId(`order-cancel-${o.id}`));
     await waitFor(() => expect(screen.queryByTestId(`order-row-${o.id}`)).toBeNull());
-    expect(screen.getByText("No open orders.")).toBeTruthy();
+    // The others stay listed (the mock's script leaves two open on the 1995 world, D1055).
+    if (open.length === 1) expect(screen.getByText("No open orders.")).toBeTruthy();
+    else expect(screen.getAllByTestId(/^order-row-\d+$/)).toHaveLength(open.length - 1);
   });
 
   it("follows the ticker typed into the field in the route", async () => {

@@ -38,7 +38,7 @@ describe("parseFlags", () => {
       "--save=D:\\saves\\a b.tcsave",
       "--window-size=1280x720",
       "--user-data-dir=D:/tmp/ud",
-      "--world=2020",
+      "--world=1995",
     ]);
     expect(f).toMatchObject({
       mock: true,
@@ -46,7 +46,7 @@ describe("parseFlags", () => {
       save: "D:\\saves\\a b.tcsave",
       windowSize: { width: 1280, height: 720 },
       userDataDir: "D:/tmp/ud",
-      world: "2020",
+      world: "1995",
     });
   });
 
@@ -90,14 +90,12 @@ describe("the app:// scheme", () => {
     dirs = {
       renderer: join(tmp, "renderer"),
       worlds: join(tmp, "worlds"),
-      design: join(tmp, "design"),
       map: join(tmp, "map"),
     };
     for (const d of [
       join(dirs.renderer, "assets"),
       join(dirs.renderer, "data", "map"),
       join(dirs.worlds, "1995"),
-      dirs.design,
       dirs.map,
     ]) {
       mkdirSync(d, { recursive: true });
@@ -106,7 +104,6 @@ describe("the app:// scheme", () => {
     writeFileSync(join(dirs.renderer, "assets", "index-abc.js"), "export {}");
     writeFileSync(join(dirs.renderer, "data", "map", "provinces.topo.json"), "{}");
     writeFileSync(join(dirs.worlds, "1995", "countries.csv"), "id\n");
-    writeFileSync(join(dirs.design, "countries.csv"), "id\n");
     writeFileSync(join(tmp, "secret.txt"), "no");
   });
   afterAll(() => {
@@ -117,7 +114,8 @@ describe("the app:// scheme", () => {
     expect(fileFor("/", dirs)).toBe(join(dirs.renderer, "index.html"));
     expect(fileFor("/assets/index-abc.js", dirs)).toBe(join(dirs.renderer, "assets", "index-abc.js"));
     expect(fileFor("/data/worlds/1995/countries.csv", dirs)).toBe(join(dirs.worlds, "1995", "countries.csv"));
-    expect(fileFor("/data/design/countries.csv", dirs)).toBe(join(dirs.design, "countries.csv"));
+    // The 2020 world's folder is gone (D1055): its old path is a 404.
+    expect(fileFor("/data/design/countries.csv", dirs)).toBeNull();
     // A data file only the build has (the folder has none) comes from the build.
     expect(fileFor("/data/map/provinces.topo.json", dirs)).toBe(
       join(dirs.renderer, "data", "map", "provinces.topo.json"),
@@ -139,7 +137,7 @@ describe("the app:// scheme", () => {
       "text/javascript",
     );
     expect(
-      serve("app://game/data/design/countries.csv?x=1", "game", dirs).headers.get("content-type"),
+      serve("app://game/data/worlds/1995/countries.csv?x=1", "game", dirs).headers.get("content-type"),
     ).toContain("text/csv");
   });
 
@@ -149,7 +147,7 @@ describe("the app:// scheme", () => {
       "/%2e%2e/secret.txt",
       "/data/worlds/../../secret.txt",
       "/data/worlds/..%2f..%2fsecret.txt",
-      "/data/design/..\\secret.txt",
+      "/data/worlds/..\\..\\secret.txt",
       "/%E0%A4%A",
     ]) {
       expect(fileFor(path, dirs)).toBeNull();

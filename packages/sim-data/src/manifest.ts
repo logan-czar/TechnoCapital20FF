@@ -1,17 +1,14 @@
 // A starting world's manifest (1995-rework 3.2): what differs between the worlds beyond their CSVs.
-// The 2020 world has no file; its manifest is `MANIFEST_2020`, so docs/design/data does not change.
-// A later world keeps its CSVs and a `manifest.json` in `assets/worlds/<id>/`.
+// Every world keeps its CSVs and a `manifest.json` in `assets/worlds/<id>/` (the hand-built 2020
+// world, which had its manifest in code, was removed: D1053, D1055).
 
 import { type DataError, dataErrorFile, err, ok, type Result } from "./error.ts";
 
 /** The manifest's file name in a world's folder. */
 export const MANIFEST_FILE = "manifest.json";
 
-/** The worlds in this repository other than the 2020 world, each a folder of `assets/worlds`. */
+/** The worlds in this repository, each a folder of `assets/worlds`. */
 export const WORLD_IDS: readonly string[] = ["1995"];
-
-/** The 2020 world's id: it has no folder of `assets/worlds`, and stays until it is retired. */
-export const WORLD_2020_ID = "2020";
 
 /** The world played when none is named (1995-rework 10). */
 export const DEFAULT_WORLD_ID = "1995";
@@ -23,7 +20,10 @@ export interface ManifestDate {
   day: number;
 }
 
-/** Which of the 2020 world's scripted parts a world plays. */
+/**
+ * Which scripted parts a world plays. `ai_boom`, `fixed_events` and `arrowhead` were the hand-built
+ * 2020 world's; only the frozen test world (packages/sim/test/fixtures/world-mini) sets them now.
+ */
 export interface WorldFeatures {
   /** Plays a scenario and keeps a long history (1995-rework 3.3). */
   era: boolean;
@@ -63,43 +63,6 @@ export interface WorldManifest {
   cabinet_seats: number;
   features: WorldFeatures;
 }
-
-/** Expected row counts of the 2020 world (spec 10 M0, build-plan M0.2). */
-export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
-  ["countries", 211],
-  ["provinces", 3963],
-  ["companies", 651],
-  ["characters", 296],
-  ["industries", 42],
-  ["country-economy", 211],
-  ["financial-zones", 26],
-  ["ai-boom", 15],
-  ["key-cities", 88],
-  ["company-start", 651],
-  ["startup-events", 9],
-  ["politics-usa", 51],
-  ["politics-usa-offices", 31],
-];
-
-/** The 2020 world (D983: 15 departments). */
-export const MANIFEST_2020: WorldManifest = {
-  id: WORLD_2020_ID,
-  start_date: { year: 2020, month: 1, day: 1 },
-  reveal_date: null,
-  expected_counts: EXPECTED_COUNTS,
-  base_rate: 0.03,
-  neutral_rate: 0.03,
-  y10_term: 0.005,
-  cabinet_seats: 15,
-  features: {
-    era: false,
-    ai_boom: true,
-    fixed_events: true,
-    arrowhead: true,
-    counties: false,
-    usa_only: false,
-  },
-};
 
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 

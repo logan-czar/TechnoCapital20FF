@@ -1,5 +1,6 @@
 // Load-time checks on the starting world: the id, range and balance checks of
-// `tools/mvp-data/validate.py`, ported one for one (build-plan M0.4), plus row counts (M0.2).
+// the 2020 world's `tools/mvp-data/validate.py` (removed with that world, D1055), ported one for one
+// (build-plan M0.4), plus row counts (M0.2).
 // Ported from crates/sim-data/src/checks.rs.
 //
 // Python economy runs (growth and boom runs, profit tables) are not ported here: they become

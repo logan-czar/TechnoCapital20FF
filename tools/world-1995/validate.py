@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / 'docs' / 'design' / 'data'
+SRC = Path(__file__).resolve().parent / 'source'   # the generator's input rows (D1055)
 OUT = ROOT / 'assets' / 'worlds' / '1995'
 
 GDP_TARGET_USD_BN = 31338.0   # 1995-rework 2.2: the World Bank's 1995 world

@@ -8,7 +8,7 @@ assets/map/*.toml text eol=lf
 *.tc20ffsave binary
 # The TypeScript workspace (D950): Biome formats with LF, so keep these LF on Windows checkouts too.
 # This covers the golden fixtures in packages/sim/test/fixtures, written with LF by
-# docs/design/tools/mvp-data/export_fixtures.py, so a regenerated fixture does not show as changed.
+# docs/design/tools/mvp-data/export_fixtures.py (removed with the 2020 world, D1055; now frozen).
 packages/** text=auto eol=lf
 apps/** text=auto eol=lf
 scripts/ts/** text eol=lf
@@ -21,3 +21,5 @@ test/fixtures/** text eol=lf
 assets/worlds/**/*.csv text eol=lf
 assets/worlds/**/*.json text eol=lf
 docs/build/decisions.md merge=union
+# The 1995 generator copies some of its source rows as they are (D1055): keep them LF too.
+tools/world-1995/source/** text eol=lf

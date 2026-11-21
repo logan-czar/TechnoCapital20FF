@@ -188,7 +188,7 @@ export function writeOutputs(dir: string, outputs: readonly SeedOutput[], years:
   writeFileSync(join(dir, "shares_out.csv"), sharesOutCsv(outputs));
 }
 
-/** A historical world's `era.csv` and `run.json` (1995-rework 4.3); nothing in the 2020 world. */
+/** A historical world's `era.csv` and `run.json` (1995-rework 4.3); nothing in a world with no era (the frozen test world). */
 function writeEraOutputs(dir: string, outputs: readonly SeedOutput[], scenario: string | undefined): void {
   const rows = outputs.map((o) => o.era ?? "").join("");
   if (rows === "") return;

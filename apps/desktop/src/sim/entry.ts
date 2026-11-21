@@ -18,7 +18,7 @@ const toMain = (m: FromSimProc): void => parent.postMessage(m);
 let host: RealHost | null = null;
 
 async function buildHost(config: SimConfig): Promise<RealHost> {
-  const data = await loadWorldData(config.world, { world: config.worldDir, map: config.mapDir });
+  const data = await loadWorldData({ world: config.worldDir, map: config.mapDir });
   const built = new RealHost(data, {
     waitForFrameDone: true,
     debug: config.debug,

@@ -28,7 +28,8 @@ import {
   simSoakWorld,
   type World,
 } from "@tc20ff/sim/internal";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { loadWorld } from "@tc20ff/sim-data/node";
+import { worldMiniDir } from "./world-mini.ts";
 
 /** What one company was and became. */
 export interface CompanyOutcome {
@@ -311,7 +312,7 @@ function main(args: string[]): number {
   if (cmd === "run") {
     const [, profile = "", ys = "", lo = "", hi = "", lv = "", dir = ""] = args;
     if (!profile || !ys || !lo || !hi || !lv || !dir) return usage();
-    const r = loadWorld(defaultDataDir());
+    const r = loadWorld(worldMiniDir());
     if (!r.ok) throw new Error("data does not load");
     const levels = lv.split(",").map(Number);
     mkdirSync(dir, { recursive: true });

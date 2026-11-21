@@ -11,7 +11,6 @@ Same input, same output: no random state, no clock.
     python tools/world-1995/gen.py [--stage proto]
 """
 import csv
-import importlib.util
 import json
 import math
 import shutil
@@ -19,10 +18,14 @@ import statistics
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import company_start  # noqa: E402
+import engine_model  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / 'docs' / 'design' / 'data'
+# The rows this world is cut from: the hand-built 2020 world's tables, kept here as input (D1055).
+SRC = Path(__file__).resolve().parent / 'source'
 OUT = ROOT / 'assets' / 'worlds' / '1995'
-MVP_GEN = ROOT / 'docs' / 'design' / 'tools' / 'mvp-data' / 'gen.py'
 
 START_DATE = '1995-01-01'
 # What the 2020 data's companies and industries scale to, until P9b replaces them (1995-rework 2.2).
@@ -102,7 +105,7 @@ NEW_NAME_PREFIXES = ('Ironbark', 'Redwater', 'Bluestem', 'Halyard', 'Meridian', 
                      'Calder', 'Wexford', 'Larkspur', 'Tidewater', 'Sable', 'Briar', 'Kestrel', 'Ashgrove')   # (T)
 
 # 1995-rework 9: earnings multiples for the new rows, and the young markets investors pay up for (T).
-# The other rows take the design's valuation groups (mvp-data/gen.py PE), which the MVP left unused.
+# The other rows take the design's valuation groups (company_start.py PE), which the MVP left unused.
 EARNINGS_MULTIPLES = {
     'computer_hardware': 22, 'media_publishing': 16, 'consumer_staples': 20, 'conglomerates': 17,
     'capital_goods': 17, 'rail': 12, 'paper_forest': 11, 'apparel': 20, 'appliances': 17, 'travel_leisure': 20,
@@ -292,14 +295,13 @@ def build_industries(scale):
                    mature_rate=str(mature), fade_half_life_years=str(half), boom_uplift='0', crash_drop='0',
                    asset_label=label, notes='1995-rework 2.4 (T)')
         rows.append(row)
-    mvp = load_mvp()
     for r in rows:
         if r['id'] in DORMANT:
             r['earnings_multiple'] = str(YOUNG_MULTIPLE)
         elif r['id'] in EARNINGS_MULTIPLES:
             r['earnings_multiple'] = str(EARNINGS_MULTIPLES[r['id']])
         else:
-            r['earnings_multiple'] = str(mvp.PE[mvp.VGROUP[r['name']]])
+            r['earnings_multiple'] = str(company_start.PE[company_start.VGROUP[r['name']]])
         if r['id'] in DORMANT:
             *_, trend, mature, half = DORMANT[r['id']]
             r.update(world_size_2020_usd_bn='0', trend_growth=str(trend), mature_rate=str(mature),
@@ -754,19 +756,6 @@ def extend_us_names():
     write(path, fields, rows)
 
 
-def load_mvp():
-    """The 2020 generator as a module; its path comes from argv at import."""
-    argv = sys.argv
-    sys.argv = [argv[0], str(ROOT / 'docs' / 'design')]
-    try:
-        spec = importlib.util.spec_from_file_location('mvp_gen', MVP_GEN)
-        mvp = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mvp)
-    finally:
-        sys.argv = argv
-    return mvp
-
-
 def net_debt_years(ind):
     """An industry's net debt in years of EBITDA (1995-rework 2.5, 9): the start's, and the run's target."""
     return INDUSTRY_NET_DEBT.get(ind['id'], SECTOR_NET_DEBT[ind['sector']])
@@ -776,8 +765,7 @@ def seed_debt():
     """1995-rework 2.5: lower each firm's book value until it starts with its sector's net debt, which the
     2020 rule (7.1, D15) draws as a line and caps at the 5.12 limit. A firm with more debt keeps its own."""
     import zlib
-    sys.path.insert(0, str(MVP_GEN.parent))
-    import validate
+    validate = engine_model
     fields, cos = read(OUT / 'companies.csv')
     inds = {r['name']: r for r in read(OUT / 'industries.csv')[1]}
     traits = {c['id']: c['traits'].split(';') for c in read(OUT / 'characters.csv')[1]}
@@ -786,7 +774,7 @@ def seed_debt():
         if r_usd < 1e5:   # the barebones loadout (7.1)
             continue
         ind = inds[c['industry']]
-        # gross business assets as mvp-data/gen.py build_company_start sizes them (7.1 loadout)
+        # gross business assets as company_start.build_company_start sizes them (7.1 loadout)
         cap, lv = float(ind['capital_per_dollar']), float(ind['labor_value_usd'])
         b = validate.pc_bonus(r_usd * cap, lv)
         b = validate.pc_bonus(r_usd * cap * 100 / (100 + b), lv)
@@ -805,10 +793,9 @@ def seed_debt():
 
 def build_company_start(economy, zones):
     """company-start.csv by the 2020 generator's own rule, reading the files just written."""
-    mvp = load_mvp()
-    mvp.DATA = str(OUT)
-    mvp.FV_Y10_BASE = BASE_RATE + Y10_TERM   # 6.2: starting prices at this world's rates
-    rows = mvp.build_company_start(economy, zones)
+    company_start.DATA = str(OUT)
+    company_start.FV_Y10_BASE = BASE_RATE + Y10_TERM   # 6.2: starting prices at this world's rates
+    rows = company_start.build_company_start(economy, zones)
     write(OUT / 'company-start.csv', list(rows[0].keys()), rows)
     return rows
 

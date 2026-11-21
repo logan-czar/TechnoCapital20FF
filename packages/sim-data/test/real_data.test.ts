@@ -1,19 +1,21 @@
-// Port of crates/sim-data/tests/real_data.rs: today data in docs/design/data loads with the
-// expected counts and passes every check (build-plan M0.2, M0.4).
+// Port of crates/sim-data/tests/real_data.rs: the frozen test world (the 2020 world's tables; D1055)
+// loads with its manifest's expected counts and passes every check (build-plan M0.2, M0.4).
 //
 // Expects:
-//   "@tc20ff/sim-data": check, EXPECTED_COUNTS (array of [name, count] pairs), worldDataCounts
+//   "@tc20ff/sim-data": check, worldDataCounts
 //   (WorldData::counts, returns [name, count][]), type WorldData.
-//   "@tc20ff/sim-data/node": loadWorld, defaultDataDir (via ./helpers.ts)
+//   "@tc20ff/sim-data/node": loadWorld (via ./helpers.ts)
 // EventTrigger::AfterBust is the string "AfterBust" (unit enums are string unions, D952).
-import { check, EXPECTED_COUNTS, worldDataCounts } from "@tc20ff/sim-data";
+import { check, worldDataCounts } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
-import { errText, worldOnce } from "./helpers.ts";
+import { errText, miniManifest, worldOnce } from "./helpers.ts";
 
 describe("real data", () => {
   it("loads_with_expected_counts", () => {
     const counts = worldDataCounts(worldOnce());
-    for (const [name, expected] of EXPECTED_COUNTS) {
+    const expectedCounts = miniManifest().expected_counts;
+    expect(expectedCounts.length).toBeGreaterThan(0);
+    for (const [name, expected] of expectedCounts) {
       const hit = counts.find(([k]) => k === name);
       expect(hit, name).toBeDefined();
       expect(hit?.[1], name).toBe(expected);

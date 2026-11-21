@@ -20,7 +20,7 @@ target/release/headless check soak-out
 | `--out DIR` | Output directory (created) | required |
 | `--check` | Run `check DIR` after the soak | off |
 | `--detail` | Also write the read-only detail tables (below, D900) | off |
-| `--data-dir DIR` | Data tables | `docs/design/data` |
+| `--data-dir DIR` | Data tables (a folder with a `manifest.json`; `--world ID` is `assets/worlds/ID`) | `assets/worlds/1995` |
 
 Each seed is its own single-threaded, deterministic `Sim` in its own child process (`headless soak-seed --seed S --years N`, an internal command); the parent runs `--jobs` children at a time and writes their rows in seed order (D333). The sim itself never runs threads.
 

@@ -1,7 +1,7 @@
 // The app's command-line flags (apps/desktop/README.md), parsed from argv with no Electron in
 // reach so a test can check them. They exist for tests and agents: a player starts the app bare.
 
-import { WORLD_2020_ID, WORLD_IDS } from "@tc20ff/sim-data";
+import { WORLD_IDS } from "@tc20ff/sim-data";
 
 /** Frames the smoke run waits for when `--smoke-frames` does not say. */
 export const SMOKE_FRAMES = 30;
@@ -82,7 +82,7 @@ export function parseFlags(argv: readonly string[]): Flags {
     paused: given.has("paused"),
     windowSize: size(given.get("window-size")),
     userDataDir: text("user-data-dir"),
-    world: world !== null && (WORLD_IDS.includes(world) || world === WORLD_2020_ID) ? world : null,
+    world: world !== null && WORLD_IDS.includes(world) ? world : null,
     smoke,
     smokeFrames: count(given.get("smoke-frames"), SMOKE_FRAMES),
     smokeSaveSlot: text("smoke-save-slot"),

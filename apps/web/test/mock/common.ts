@@ -1,7 +1,8 @@
 // Shared by the mock pivot tests: the mock world, a pivot host, and a way to run the clock.
 
 import type { DateTime, FromSim, Notice, PlayerAction, Reply, SimViews, UiControl } from "@tc20ff/sim";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { DEFAULT_WORLD_ID } from "@tc20ff/sim-data";
+import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { SimHost } from "../../src/sim/mock/host.ts";
 import { MOCK_PIVOT, type MockOptions, type MockSim } from "../../src/sim/mock/mockSim.ts";
 import { buildMockWorld, type MockWorld } from "../../src/sim/mock/mockWorld.ts";
@@ -10,7 +11,8 @@ let cached: MockWorld | null = null;
 
 export function mockWorld(): MockWorld {
   if (cached === null) {
-    const data = loadWorld(defaultDataDir());
+    // The default world, as the mock worker loads it (D1053 decision 3, D1055).
+    const data = loadWorld(worldDataDir(DEFAULT_WORLD_ID));
     if (!data.ok) throw new Error(JSON.stringify(data.error));
     cached = buildMockWorld(data.value);
   }

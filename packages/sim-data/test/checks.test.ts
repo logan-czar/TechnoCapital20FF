@@ -5,7 +5,7 @@
 //   "@tc20ff/sim-data": check, RATING_LABELS, ratingFactorOfLabel (rating_factor_of_label,
 //   returns number | null), type WorldData whose tables keep the Rust snake_case names
 //   ({ file, rows, lines }); provinces: Table[] (one per superregion file); row fields snake_case.
-//   "@tc20ff/sim-data/node": loadWorld, defaultDataDir (via ./helpers.ts)
+//   "@tc20ff/sim-data/node": loadWorld (via ./helpers.ts)
 import { RATING_LABELS, ratingFactorOfLabel } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
 import { expectError, world } from "./helpers.ts";

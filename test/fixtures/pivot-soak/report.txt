@@ -1,0 +1,64 @@
+pivot soak: 40 seeds (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40), 1280 samples
+per seed wall: median 19.6 s
+
+checks: 24 of 25 pass
+  PASS  no NaN or infinite number: all 1280 samples
+  PASS  stock prices positive: all 1280 samples
+  FAIL  no chamber above 0.75 of its seats: s2 coarse 2009: House 96-339, Senate 20-80; s2 coarse 2010: House 96-339, Senate 20-80; s2 coarse 2011: House 174-261, Senate 22-78; s2 coarse 2012: House 174-261, Senate 22-78; s4 coarse 2005: House 125-310, Senate 23-77; s4 coarse 2006: House 125-310, Senate 23-77; s8 play 2021: House 151-284, Senate 24-76; s8 play 2022: House 151-284, Senate 24-76; s14 coarse 2009: House 135-300, Senate 22-78; s14 coarse 2010: House 135-300, Senate 22-78; s15 coarse 2009: House 98-337, Senate 25-75; s15 coarse 2010: House 98-337, Senate 25-75
+  PASS  House turnout in 0.15 to 0.6 of residents: all 600 general years
+  PASS  presidency changes party in the Coarse run: 40 of 40 seeds have both parties in office after 1997 (24 distinct paths)
+  PASS  US index 2020 over 1996 in 0.5 to 20: all 40 seeds (median 1.884)
+  PASS  the 2020 and 2022 generals are counted in play: all 120 play samples
+  PASS  Full 2019 House D share distributed as Coarse (KS p >= 0.05): D 0.075, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 Senate D share distributed as Coarse (KS p >= 0.05): D 0.075, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 median margin distributed as Coarse (KS p >= 0.05): D 0.150, p 0.72, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 competitive share distributed as Coarse (KS p >= 0.05): D 0.075, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 uncontested distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 turnout distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 corp_tax distributed as Coarse (KS p >= 0.05): D 0.025, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 fiscal distributed as Coarse (KS p >= 0.05): D 0.025, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 rate_bias distributed as Coarse (KS p >= 0.05): D 0.025, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 regulation distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 subsidy distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2019 tariff distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 corp_tax distributed as Coarse (KS p >= 0.05): D 0.050, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 fiscal distributed as Coarse (KS p >= 0.05): D 0.050, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 rate_bias distributed as Coarse (KS p >= 0.05): D 0.050, p 1.00, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 regulation distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 subsidy distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+  PASS  Full 2020 tariff distributed as Coarse (KS p >= 0.05): D 0, p 1, 40 Full against 40 Coarse seeds
+
+Full 2018 to 2020 against the Coarse run of the same years (pivot 3.3):
+  2019 House D share      Coarse p10/p50/p90 0.416/0.480/0.547; Full 0.414/0.471/0.543; KS D 0.075 p 1.00; same seed differs by median 0.007, max 0.030
+  2019 Senate D share     Coarse p10/p50/p90 0.380/0.460/0.530; Full 0.360/0.470/0.540; KS D 0.075 p 1.00; same seed differs by median 0.010, max 0.060
+  2019 median margin      Coarse p10/p50/p90 19.478/20.703/23.148; Full 18.873/20.569/22.849; KS D 0.150 p 0.72; same seed differs by median 0.504, max 1.446
+  2019 competitive share  Coarse p10/p50/p90 0.186/0.237/0.274; Full 0.189/0.237/0.274; KS D 0.075 p 1.00; same seed differs by median 0.011, max 0.032
+  2019 uncontested        Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2019 turnout            Coarse p10/p50/p90 0.308/0.309/0.310; Full 0.308/0.309/0.310; KS D 0 p 1; same seed differs by median 0, max 0
+  2019 corp_tax           Coarse p10/p50/p90 0.211/0.247/0.320; Full 0.211/0.247/0.320; KS D 0.025 p 1; same seed differs by median 0, max 0.007
+  2019 fiscal             Coarse p10/p50/p90 0.000/0.005/0.016; Full 0.000/0.005/0.016; KS D 0.025 p 1; same seed differs by median 0, max 0.001
+  2019 rate_bias          Coarse p10/p50/p90 -0.001/0.001/0.002; Full -0.001/0.001/0.002; KS D 0.025 p 1; same seed differs by median 0, max 0.000
+  2019 regulation         Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2019 subsidy            Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2019 tariff             Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2020 corp_tax           Coarse p10/p50/p90 0.211/0.236/0.324; Full 0.211/0.236/0.324; KS D 0.050 p 1.00; same seed differs by median 0, max 0.024
+  2020 fiscal             Coarse p10/p50/p90 0.000/0.004/0.016; Full 0.000/0.004/0.016; KS D 0.050 p 1.00; same seed differs by median 0, max 0.003
+  2020 rate_bias          Coarse p10/p50/p90 -0.002/0.002/0.002; Full -0.002/0.002/0.002; KS D 0.050 p 1.00; same seed differs by median 0, max 0.001
+  2020 regulation         Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2020 subsidy            Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+  2020 tariff             Coarse p10/p50/p90 0/0/0; Full 0/0/0; KS D 0 p 1; same seed differs by median 0, max 0
+
+Coarse distribution after each general, p10/p50/p90 across seeds:
+  1997: House D 169/208/228, Senate D 43/48/51, margin 19.213/20.590/21.427, competitive 0.218/0.241/0.260, turnout 0.414/0.415/0.415, index 600.716/649.136/726.891
+  1999: House D 148/205/245, Senate D 36/46/53, margin 17.280/18.827/21.425, competitive 0.230/0.269/0.315, turnout 0.310/0.311/0.311, index 604.247/689.776/847.550
+  2001: House D 150/201/248, Senate D 34/45/51, margin 17.914/19.924/21.204, competitive 0.223/0.253/0.290, turnout 0.413/0.414/0.415, index 427.761/666.188/878.531
+  2003: House D 157/199/230, Senate D 33/42/51, margin 15.385/16.739/18.674, competitive 0.264/0.301/0.333, turnout 0.310/0.310/0.311, index 417.283/719.387/834.836
+  2005: House D 143/185/241, Senate D 33/43/54, margin 18.011/19.978/22.314, competitive 0.209/0.248/0.287, turnout 0.413/0.414/0.415, index 532.208/733.514/898.296
+  2007: House D 162/210/268, Senate D 32/44/55, margin 17.279/19.597/21.528, competitive 0.218/0.257/0.310, turnout 0.309/0.310/0.311, index 543.402/811.665/1053.951
+  2009: House D 131/199/282, Senate D 29/45/60, margin 18.801/20.931/24.867, competitive 0.186/0.232/0.278, turnout 0.412/0.413/0.415, index 460.800/813.243/994.768
+  2011: House D 164/196/240, Senate D 32/44/58, margin 18.370/19.662/22.336, competitive 0.200/0.251/0.280, turnout 0.309/0.310/0.311, index 520.202/871.903/1000.738
+  2013: House D 129/207/266, Senate D 33/46/58, margin 16.222/17.869/22.800, competitive 0.225/0.285/0.324, turnout 0.411/0.413/0.414, index 643.124/974.602/1263.733
+  2015: House D 153/199/246, Senate D 34/46/53, margin 17.965/19.945/22.337, competitive 0.214/0.255/0.290, turnout 0.308/0.309/0.311, index 671.579/1015.879/1256.314
+  2017: House D 157/207/257, Senate D 35/46/53, margin 19.409/21.002/23.719, competitive 0.193/0.228/0.269, turnout 0.411/0.413/0.414, index 631.324/1048.410/1329.452
+  2019: House D 181/209/238, Senate D 38/46/53, margin 19.478/20.703/23.148, competitive 0.186/0.237/0.274, turnout 0.308/0.309/0.310, index 869.495/1177.685/1487.082
+wall 208 s
