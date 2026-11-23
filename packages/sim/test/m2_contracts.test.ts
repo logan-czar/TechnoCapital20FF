@@ -53,8 +53,8 @@ import { data1995, unwrap } from "./common/index.ts";
 import { testSim } from "./test_sim.ts";
 
 describe("M2 contracts: state", () => {
-  it("the save version is M2's", () => {
-    expect(SAVE_VERSION).toBe(7);
+  it("the save version is the M2 close-out's (D1059: `Ledger.special_charge`)", () => {
+    expect(SAVE_VERSION).toBe(8);
   });
 
   it("a world loads with empty elections, no player, and empty geo tables (persons: lane C, D1041)", () => {

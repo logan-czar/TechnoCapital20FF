@@ -26,7 +26,8 @@ export function companyRowsView(w: MockWorld, stocks: MockStock[]): CompanyRow[]
       price: s ? s.price : 0,
       change: s && s.prevClose > 0 ? (s.price - s.prevClose) / s.prevClose : 0,
       value: shown(s ? s.price * s.shares : c.valueUsd * 0.7, !c.public, `${c.key}v`),
-      archetype: "Incumbent",
+      // The AI's character: hidden outside Omniscient, as in the real views (D1060).
+      archetype: null,
       origin: { kind: "Start" },
       listing: s ? { kind: "BeforeStart", exchange: s.exchange } : { kind: "Private" },
       controller: { kind: "None" },

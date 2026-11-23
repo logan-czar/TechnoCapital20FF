@@ -24,6 +24,7 @@ export function zeroLedger(over: Partial<Ledger> = {}): Ledger {
     line_drawn_or_repaid: 0,
     shares_issued_net: 0,
     dividends: 0,
+    special_charge: 0,
     ...over,
   };
 }

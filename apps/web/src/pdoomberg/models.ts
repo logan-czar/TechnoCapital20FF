@@ -528,7 +528,8 @@ export function screenerTable(v: ViewsData, index: NameIndex, f: Filter): TableD
       z === null ? dash : linkCell(index, { kind: "zone", id: z }),
       r.exchange === null ? dash : { k: "text", v: exchangeCode(v, r.exchange) },
       { k: "text", v: r.public ? "listed" : "private" },
-      { k: "text", v: ARCHETYPE_NAMES[r.archetype] },
+      // Hidden outside Omniscient (pivot 5.11, D1060).
+      r.archetype === null ? { k: "unknown" } : { k: "text", v: ARCHETYPE_NAMES[r.archetype] },
       { k: "text", v: r.origin.kind === "Start" ? "start" : `born ${date(r.origin.date)}` },
       r.listing.kind === "InPlay"
         ? { k: "date", v: r.listing.date }

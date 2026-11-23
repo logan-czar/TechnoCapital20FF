@@ -34,11 +34,12 @@ import {
   type Seat,
   type SeatCard,
   type SeatPerson,
+  type ShownStatement,
   type SimDate,
   type Skills,
+  STATEMENT_LINE_DISPLAY,
   STATEMENT_LINE_LABELS,
   STATEMENT_LINE_VALUES,
-  type Statement,
   type StatementLine,
   simDateDaysSinceEpoch,
   simDateWeekday,
@@ -56,7 +57,7 @@ import {
   seatName,
   startYear,
 } from "../../links/names.ts";
-import { type Cell, date, figureCell, fixed, number, price } from "../../widgets/cells.ts";
+import { type Cell, date, figureCell, fixed, number, numberCell, price } from "../../widgets/cells.ts";
 import {
   type Block,
   bps,
@@ -292,7 +293,8 @@ function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, ind
     field.new("HQ", placeSpans(v, d.hq_province) ?? [t({ kind: "country", id: d.hq_country })]),
     field.new("Industry", [t({ kind: "industry", id: d.industry })]),
     field.new("Controller", [controller]),
-    field.text("Archetype", ARCHETYPE_NAME[d.archetype]),
+    // Hidden stats are null outside Omniscient (pivot 5.11, D1060): a null field is not shown.
+    ...(d.archetype === null ? [] : [field.text("Archetype", ARCHETYPE_NAME[d.archetype])]),
     field.text("Company id", d.key === "" ? "born in play" : d.key),
   ];
   const blocks: Block[] = [{ k: "fields", fields: f }];
@@ -362,10 +364,15 @@ function overview(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData): 
     f.push(field.new("Price", [span.muted(d.exchange !== null ? "delisted" : "not listed")]));
   }
   const zone = byId(v.countries?.countries, d.hq_country)?.zone;
-  const conf: Span[] = [span.cell({ k: "ratio", v: d.confidence_factor }), span.muted("factor")];
-  if (zone !== undefined) conf.push(span.muted("| zone"), span.live({ k: "ZoneConfidence", zone }));
-  f.push(field.new("Confidence", conf));
-  f.push(field.text("Management score", `${fixed(d.management_score, 1)} / 100`));
+  const conf: Span[] =
+    d.confidence_factor === null
+      ? []
+      : [span.cell({ k: "ratio", v: d.confidence_factor }), span.muted("factor")];
+  if (zone !== undefined)
+    conf.push(span.muted(conf.length > 0 ? "| zone" : "zone"), span.live({ k: "ZoneConfidence", zone }));
+  if (conf.length > 0) f.push(field.new("Confidence", conf));
+  if (d.management_score !== null)
+    f.push(field.text("Management score", `${fixed(d.management_score, 1)} / 100`));
   f.push(field.figure("Cash", d.cash_usd, "money"));
   f.push(
     field.new("Credit line", [
@@ -406,11 +413,15 @@ function chart(id: CompanyId, d: CompanyDetail, v: ViewsData): Block[] {
 }
 
 function personFields(p: SeatPerson): Field[] {
-  return [
-    field.text("Age", String(p.age)),
-    field.text("Skills", skillsText(p.skills)),
-    field.text("Traits", traitsText(p.traits)),
-  ];
+  const out = [field.text("Age", String(p.age))];
+  if (p.skills !== null) out.push(field.text("Skills", skillsText(p.skills)));
+  if (p.traits !== null) out.push(field.text("Traits", traitsText(p.traits)));
+  return out;
+}
+
+/** The skill a seat uses, when the view shows it (Omniscient, D1060). */
+function skillUsed(s: SeatCard): Field[] {
+  return s.skill_used === null ? [] : [field.text("Skill used", fixed(s.skill_used, 1))];
 }
 
 /** A seat's holder: a partial character, marked and not linked (spec 8). */
@@ -425,10 +436,7 @@ function seatCard(s: SeatCard): CardDoc {
     head.push(span.muted("closed"));
     return {
       head,
-      fields: [
-        field.text("Seat", `opens with labor unit ${unit}`),
-        field.text("Skill used", fixed(s.skill_used, 1)),
-      ],
+      fields: [field.text("Seat", `opens with labor unit ${unit}`), ...skillUsed(s)],
       bar: null,
       dim: true,
     };
@@ -437,7 +445,7 @@ function seatCard(s: SeatCard): CardDoc {
     s.holder ? field.new("Holder", holderSpans(s.holder)) : field.new("Holder", [span.muted("vacant")]),
   ];
   if (s.holder) fields.push(...personFields(s.holder));
-  fields.push(field.text("Skill used", fixed(s.skill_used, 1)));
+  fields.push(...skillUsed(s));
   return { head, fields, bar: null, dim: false };
 }
 
@@ -473,7 +481,7 @@ export function board(d: CompanyDetail): Block[] {
       fields: d.directors.map((p, i) =>
         field.new(voterLabel({ kind: "Director", position: i }), [
           ...holderSpans(p),
-          span.muted(`age ${p.age}, ${skillsText(p.skills)}`),
+          span.muted(p.skills === null ? `age ${p.age}` : `age ${p.age}, ${skillsText(p.skills)}`),
         ]),
       ),
     });
@@ -642,8 +650,8 @@ function units(id: CompanyId, v: ViewsData, index: NameIndex): Block[] {
         figureCell(u.assets_eff, "money"),
         figureCell(u.productivity, "number"),
         figureCell(u.p_pre, "number"),
-        { k: "percent", v: u.growth_plan },
-        { k: "percent", v: u.rd_plan },
+        numberCell("percent", u.growth_plan),
+        numberCell("percent", u.rd_plan),
         figureCell(u.revenue_m, "money"),
         figureCell(expenses, "money"),
         figureCell(u.variable_m, "money"),
@@ -700,7 +708,7 @@ function periodLabel(p: Period, synthetic: boolean): string {
 
 const exact = (value: number): Figure => ({ kind: "Exact", value });
 
-function exactCol(s: Statement): StatementCol {
+function exactCol(s: ShownStatement): StatementCol {
   const k = s.key;
   return {
     label: periodLabel(s.period, s.synthetic),
@@ -740,16 +748,21 @@ const OP_ROWS: readonly (readonly [string, (o: OperatingFigures) => Cell])[] = [
   ["Labor units", (o) => ({ k: "int", v: o.labor_units })],
   ["Held TB", (o) => figureCell(o.held_tb, "number")],
   ["Free R&D", (o) => ({ k: "percent", v: o.free_rd_pct / 100 })],
-  ["Management score", (o) => ({ k: "number", v: o.management_score })],
+  ["Management score", (o) => numberCell("number", o.management_score)],
   ["Rating", (o) => ({ k: "rating", v: o.rating })],
 ];
 
 function statementsTable(id: string, cols: readonly StatementCol[]): TableDoc {
-  const rows: Cell[][] = STATEMENT_LINE_VALUES.map((l, i) => [
+  const rows: Cell[][] = STATEMENT_LINE_DISPLAY.map((l) => [
     { k: "text", v: STATEMENT_LINE_LABELS[l] },
-    ...cols.map((c) => figureCell(c.lines[i] as Figure, "money")),
+    ...cols.map((c) => figureCell(c.lines[lineIndex(l)] as Figure, "money")),
   ]);
-  for (const [label, f] of OP_ROWS) rows.push([{ k: "text", v: label }, ...cols.map((c) => f(c.op))]);
+  // A row the view hides in every column (Omniscient only, D1060) is not drawn.
+  for (const [label, f] of OP_ROWS) {
+    const cells = cols.map((c) => f(c.op));
+    if (cells.length > 0 && cells.every((c) => c.k === "unknown")) continue;
+    rows.push([{ k: "text", v: label }, ...cells]);
+  }
   return {
     id,
     columns: [{ title: "Line", width: 170 }, ...cols.map((c) => ({ title: c.label, width: 124 }))],

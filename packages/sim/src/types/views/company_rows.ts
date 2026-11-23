@@ -56,8 +56,8 @@ export interface CompanyRow {
    * value as a band (D420); 0 once Bankrupt.
    */
   value: Figure;
-  /** Spec 6.1 (spec 9.2 `list_companies` archetype filter). */
-  archetype: Archetype;
+  /** Spec 6.1 (spec 9.2 `list_companies` archetype filter): the AI's character, only in Omniscient (pivot 5.11, D1060). */
+  archetype: Archetype | null;
   /** Start or Born (spec 3.5; F10 Screener origin filter). */
   origin: Origin;
   /** Private, listed before 2020, or listed in play with its date (F10 listing-date filter). */

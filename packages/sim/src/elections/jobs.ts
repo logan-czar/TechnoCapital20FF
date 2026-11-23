@@ -6,10 +6,10 @@
 
 import { isElectionDay } from "../politics/calendar.ts";
 import { careersHandover } from "../politics/careers.ts";
-import { eraTide } from "../politics/jobs.ts";
+import { eraFatigue, eraTide } from "../politics/jobs.ts";
 import { personGet } from "../politics/people.ts";
 import { CANDIDATE_PERSUASION_BASE, type Contender, type VoteClimate } from "../politics/vote.ts";
-import { dateTimeDate, simDateAddDays } from "../time/calendar.ts";
+import { dateTimeDate, simDateAddDays, simDateWeekday } from "../time/calendar.ts";
 import type { JobCtx } from "../time/scheduler.ts";
 import { jobCtxRaiseAlert } from "../time/scheduler.ts";
 import type { SimDate } from "../types/calendar.ts";
@@ -152,6 +152,8 @@ export function countDay(
   const party = presidentParty(world);
   const climate: VoteClimate = { incumbent_party: party, growth: usGrowth(world), swing: 0 };
   const swings = drawSwings(world, draws, eraTide(world, party, general));
+  // The fatigue moves the presidency's national swing only (1995-rework 7.3, D1057).
+  const presidentSwings = { ...swings, national: swings.national + eraFatigue(world, party, general) };
   const byState = countiesByState(world);
   const presidential = isElectionYear(general.year) && isPresidentYear(general.year);
   const scale = presidential ? 1 : MIDTERM_TURNOUT_RATIO;
@@ -174,7 +176,7 @@ export function countDay(
       units,
       contenders,
       climate,
-      swings,
+      race.office === "President" ? presidentSwings : swings,
       raceNoise(draws, noiseSd(race)),
       scale,
     );
@@ -314,9 +316,17 @@ export function electionsDailyJob(world: World, ctx: JobCtx): void {
   // Lane C fills what a seating opened (a new president's administration, a seat its winner left)
   // the same day (D1052); the POC's table mirrors the offices (mirror.ts).
   if (seated) careersHandover(world, draws, date);
-  mirrorSync(world, date, house);
-  scheduleSpecials(world, draws, date);
+  // A shortcut (D1062): the POC's mirror and the specials follow the offices on a seating day and
+  // once a week, not every day. A special is voted 60 to 90 days or more after its seat opens, so a
+  // week's wait to schedule it moves no date that matters.
+  if (seated || house || simDateWeekday(date) === OFFICES_SYNC_WEEKDAY) {
+    mirrorSync(world, date, house);
+    scheduleSpecials(world, draws, date);
+  }
 }
+
+/** The weekday the mirror and the specials catch up with the offices (D1062, T). */
+export const OFFICES_SYNC_WEEKDAY = "Mon";
 
 /** The weekly Coarse campaign (pivot 6.6), first in `WeeklyJobs`, tagged Coarse. */
 export function electionsWeeklyJob(world: World, ctx: JobCtx): void {

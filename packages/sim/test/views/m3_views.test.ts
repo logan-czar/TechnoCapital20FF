@@ -77,7 +77,7 @@ describe("m3 views", () => {
     let weighted = 0.0;
     for (const card of c.board) {
       const weights: Record<Seat, number> = { Ceo: 0.3, Coo: 0.2, Cfo: 0.2, Cio: 0.1, Cmo: 0.1, Chair: 0.1 };
-      weighted += weights[card.seat] * card.skill_used;
+      weighted += weights[card.seat] * (card.skill_used as number);
       if (card.seat === "Chair") {
         expect(!card.open && card.holder === null && card.skill_used === 3.0).toBe(true);
       } else {
@@ -87,8 +87,10 @@ describe("m3 views", () => {
       }
     }
     // Spec 5.7: sum weight x skill / 20 x 100; confidence factor 0.8 + score / 250.
-    expect(Math.abs(c.management_score - (weighted / 20.0) * 100.0) < 1e-9).toBe(true);
-    expect(Math.abs(c.confidence_factor - (0.8 + c.management_score / 250.0)) < 1e-12).toBe(true);
+    // Omniscient is on: the hidden stats and what is read from them show (D1060).
+    const score = c.management_score as number;
+    expect(Math.abs(score - (weighted / 20.0) * 100.0) < 1e-9).toBe(true);
+    expect(Math.abs((c.confidence_factor as number) - (0.8 + score / 250.0)) < 1e-12).toBe(true);
   });
 
   it("m3_views_rebuild_monthly_and_copy_by_version", () => {

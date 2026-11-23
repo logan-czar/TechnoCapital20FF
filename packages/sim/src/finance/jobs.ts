@@ -22,6 +22,7 @@ import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
 import { seatEffectNow } from "../events/effects.ts";
 import { corpTaxRate } from "../governing/levers.ts";
+import { newsWireQueue, specialCharge } from "../news.ts";
 import { dataBookFreeRdFraction } from "../ops/data.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import {
@@ -54,6 +55,7 @@ import type { Trait } from "../types/state/people.ts";
 import { LABOR_SEAT_COUNT } from "../types/state/people.ts";
 import type { Company, World } from "../types/world.ts";
 import { businessUnitAssetsEff, companyDataIn } from "../world/entities.ts";
+import { worldPublishes } from "../world/index.ts";
 import { type Books, balanceErrorToString, balanceSheet, checkMonth } from "./balance.ts";
 import {
   creditLineDefault,
@@ -78,6 +80,7 @@ import {
   settlementLineChange,
 } from "./distress.ts";
 import { impliedRating, notchesBetween, reviewMove, startingRating } from "./rating.ts";
+import { SHOCK_CAUSES, shockDraw } from "./shock.ts";
 import {
   companyFinanceInGame,
   companyFinancePushQuarter,
@@ -384,8 +387,38 @@ export function interestJob(world: World, _ctx: JobCtx): void {
  */
 function mustExit(world: World, c: Company, s: Settlement): boolean {
   if (companyStatusIsFrozen(s.state.status) || !exitDue(c.loss_quarters, s.gross_assets)) return false;
+  return hasOpenPeer(world, c);
+}
+
+/** Whether another company of `c`'s industry is still open: the last one keeps it named (1995-rework 9). */
+function hasOpenPeer(world: World, c: Company): boolean {
   return world.companies.some(
     (o) => o !== c && o.industry === c.industry && !companyStatusIsFrozen(companyFinanceStatus(o.finance)),
+  );
+}
+
+/**
+ * A historical world's company shock (1995-rework 9, D1059; finance/shock.ts): the month's chance
+ * for an open company that is not its industry's last, booked as `special_charge` before the month
+ * settles, and put on the wire.
+ */
+function shockMonth(world: World, ctx: JobCtx, id: CompanyId): void {
+  const c = world.companies[id] as Company;
+  if (companyStatusIsFrozen(companyFinanceStatus(c.finance)) || !hasOpenPeer(world, c)) return;
+  const contraction = world.cycle.phase === "Contraction";
+  const hit = shockDraw(ctx.draws, contraction, c.loss_quarters > 0, trailingRevenue(c));
+  if (hit === null || hit.charge <= 0.0) return;
+  c.finance.month.special_charge += hit.charge;
+  newsWireQueue(
+    world.news,
+    specialCharge(
+      ctx.facts.date,
+      c.industry,
+      id,
+      c.name,
+      SHOCK_CAUSES[hit.cause] as string,
+      worldPublishes(world, id) ? hit.charge : null,
+    ),
   );
 }
 
@@ -406,6 +439,7 @@ export function settleJob(world: World, ctx: JobCtx): void {
   for (let id = 0; id < world.companies.length; id++) {
     const c = world.companies[id] as Company;
     if (!c.finance.month_active) continue;
+    if (world.era !== undefined) shockMonth(world, ctx, id as CompanyId);
     const m = c.finance.month;
     const cash = c.cash_usd + ledgerOperatingCash(m) - m.asset_purchases + m.asset_sale_proceeds;
     const label = (world.industries[c.industry] as World["industries"][number]).phase_label;

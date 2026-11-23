@@ -190,10 +190,17 @@ export function unitCell(unit: Unit, v: number): Cell {
  * The cell of a view's figure (D461): an exact figure as its unit's plain cell, a band as a band
  * cell (its range only: the estimate inside it is not printed).
  */
-export function figureCell(f: Figure, unit: Unit): Cell {
+export function figureCell(f: Figure | null, unit: Unit): Cell {
+  // A hidden figure (null outside Omniscient, pivot 5.11, D1060) is unknown.
+  if (f === null) return { k: "unknown" };
   return f.kind === "Exact"
     ? unitCell(unit, f.value)
     : { k: "band", unit, low: f.band.low, high: f.band.high };
+}
+
+/** A plain number cell of `k`, unknown when the view hides it (null, D1060). */
+export function numberCell(k: "int" | "number" | "percent" | "ratio", v: number | null): Cell {
+  return v === null ? { k: "unknown" } : { k, v };
 }
 
 /** The display string. */

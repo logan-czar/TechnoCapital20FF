@@ -1,8 +1,11 @@
-# 1995 baseline soak (D1053 decision 5, D1056)
+# 1995 baseline soak (D1053 decision 5, D1056; re-recorded for D1057 to D1062)
 
 The first baseline of the 1995 world as it now plays: Coarse fidelity, cut to the USA (D1034, D1038),
-with the M2 politics. Recorded with the Electron close-out soaks on 2026-11-20, on branch
-`claude/electron-transfer-political-sim-6b8104` at 1c05d7b, on Logan's PC (Windows 11, Node 24 via tsx):
+with the M2 politics. First recorded with the Electron close-out soaks on 2026-11-20 (D1056) and
+accepted by Logan; re-recorded 2026-11-23 on branch `claude/game-political-system-status-8db7c5`
+(44c96c6 with D1057 to D1062: the fatigue on the presidency only, company shocks and the entries
+bands scaled to the cut, hidden data at the source, the greedy district drawer and D1062's
+shortcuts, among them the run-rate consensus), on Logan's PC (Windows 11, Node 24 via tsx):
 
 ```
 corepack pnpm@10.20.0 headless calibrate --world 1995 --seeds 1..50 --jobs 4 --out DIR
@@ -20,15 +23,16 @@ era folder (`era-targets.csv`, `bands.json`).
 
 ## The 1995 targets (`headless check DIR`, 1995-rework 4.3)
 
-| Scenario | Met | Missed in most seeds | Missed in a few |
+| Scenario | Met | Missed (seeds of 50) | First baseline (D1056) |
 |---|---|---|---|
-| stable | 592 of 700 | `entries` 50 of 50 (42 to 91, median 61; band at least 150), `failures` 50 of 50 (0 to 5, median 3; at least 8) | `house_changes` 5, `gdp_2020_usd`, `tech_share`, `top10_born` 1 each |
-| unstable | 597 of 700 | `entries` 50 of 50 (37 to 85, median 57; at least 100), `failures` 45 of 50 (1 to 15, median 5; at least 12) | `end_rate` 4, `gdp_2020_usd` 2, `max_drawdown` 2 |
-| stagnation | 647 of 700 | `failures` 50 of 50 (0 to 5, median 2; at least 8) | `house_changes` 3 |
+| stable | 678 of 700 | `entries` 11 (32 to 92, median 52; at least 46), `failures` 5 (5 to 20, median 13; at least 8), `house_changes` 4, `gdp_2020_usd`, `tech_share` 1 each | 592 |
+| unstable | 686 of 700 | `end_rate` 4, `failures` 4 (10 to 35, median 20; at least 12), `gdp_2020_usd` 2, `max_drawdown` 2, `entries` 1 (24 to 76, median 46; at least 26), `house_changes` 1 | 597 |
+| stagnation | 693 of 700 | `house_changes` 5, `failures` 2 (6 to 19, median 13; at least 8). `entries` -1 to 24, at most 36, all met | 647 |
 
-`entries` and `failures` were set for the whole world. The cut world simulates only American
-companies and scales its startups to the USA's share (D1038), so both fall short in nearly every
-seed. That is the USA cut's economy tuning (pivot-handoff.md, B), not a defect of this run.
+In the first baseline `entries` and `failures` missed in nearly every seed: both were set for the
+whole world, and the cut simulates only American companies (D1038). D1059 scales `entries` (a net
+count) to the cut, and gives American firms a way to fail, company shocks (`finance/shock.ts`):
+without them 161 of 181 American firms in a stable run never posted a losing quarter.
 
 | File | What |
 |---|---|

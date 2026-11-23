@@ -95,7 +95,8 @@ export function buildCompanyRows(input: ViewInput): CompanyRowsView {
       price: s.price,
       change: s.price - s.prev_close,
       value,
-      archetype: c.archetype,
+      // The AI's character: Omniscient only (pivot 5.11, D1060).
+      archetype: est.omniscient ? c.archetype : null,
       origin: { ...c.origin },
       listing,
       controller: controllerView(controller),

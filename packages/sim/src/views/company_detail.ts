@@ -34,42 +34,40 @@ export function companyDetailViewGet(v: CompanyDetailView, id: CompanyId): Compa
   return v.companies[id];
 }
 
-function simplePerson(s: SimpleSeat): SeatPerson {
+/** A seat person; the hidden stats only in Omniscient (pivot 5.11, D1060). */
+function simplePerson(s: SimpleSeat, omniscient: boolean): SeatPerson {
   return {
     name: s.character.name,
     age: s.character.age,
-    skills: { ...s.character.skills },
-    traits: s.character.traits.slice(),
+    skills: omniscient ? { ...s.character.skills } : null,
+    traits: omniscient ? s.character.traits.slice() : null,
     partial: true,
     partial_id: s.id,
   };
 }
 
-function person(holder: SeatHolder): SeatPerson {
-  return simplePerson(holder.seat);
-}
-
 /** A director as a seat person (5.19.4 step 4). */
-function director(d: Director): SeatPerson {
-  return simplePerson(d.seat);
+function director(d: Director, omniscient: boolean): SeatPerson {
+  return simplePerson(d.seat, omniscient);
 }
 
 /** Rust `ViewData::build`. */
 export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
   const w = input.world;
   const est = viewInputEstimator(input);
+  const omni = input.controls.omniscient;
   const companies = w.companies.map((c, i): CompanyDetail => {
     const id = i as CompanyId;
     const board: SeatCard[] = SEAT_LABOR.map((seat, k): SeatCard => {
-      const h = c.board[k] ?? null;
-      const holder = h === null ? null : person(h);
-      const skill_used =
-        holder === null
+      const h: SeatHolder | null = c.board[k] ?? null;
+      const holder = h === null ? null : simplePerson(h.seat, omni);
+      const truth =
+        h === null
           ? EMPTY_SEAT_SKILL
-          : memberSkill({ skills: holder.skills, traits: holder.traits }, seat);
-      return { seat, open: k < c.labor_units, skill_used, holder };
+          : memberSkill({ skills: h.seat.character.skills, traits: h.seat.character.traits }, seat);
+      return { seat, open: k < c.labor_units, skill_used: omni ? truth : null, holder };
     });
-    board.push({ seat: "Chair", open: false, skill_used: EMPTY_SEAT_SKILL, holder: null });
+    board.push({ seat: "Chair", open: false, skill_used: omni ? EMPTY_SEAT_SKILL : null, holder: null });
     const s = w.market.stocks[id]!;
     const banded = estimatorBanded(est, w, id);
     // A private company's value a share is its total band over the shares (D430).
@@ -87,8 +85,8 @@ export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
       hq_country: c.hq_country,
       hq_province: c.hq_province,
       controller_name: controllerName(w, controllerOf(c)),
-      management_score: c.management_score,
-      confidence_factor: confidenceFactor(c.management_score),
+      management_score: omni ? c.management_score : null,
+      confidence_factor: omni ? confidenceFactor(c.management_score) : null,
       cash_usd: estimatorCompanyNow(est, banded, id, { kind: "Line", line: "Cash" }, c.cash_usd),
       line_drawn_usd: estimatorCompanyNow(
         est,
@@ -100,9 +98,9 @@ export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
       line_limit_usd: estimatorCompanyNow(est, banded, id, { kind: "LineLimit" }, c.finance.line.limit),
       rating: c.finance.rating,
       status: companyFinanceStatus(c.finance),
-      archetype: c.archetype,
+      archetype: omni ? c.archetype : null,
       origin: { ...c.origin },
-      directors: c.directors.map((d) => director(d)),
+      directors: c.directors.map((d) => director(d, omni)),
       ipo_last_vote: c.ipo_last_vote === null ? null : { ...c.ipo_last_vote },
       ipo_next_vote: c.ipo_next_vote,
       shares_out: c.shares_out,

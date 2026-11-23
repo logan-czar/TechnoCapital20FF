@@ -40,6 +40,16 @@ the M1 list in [pivot-contract-requests.md](pivot-contract-requests.md)).
 
 ## Public-facing leaks to close at the source (required, not optional)
 
+**Closed in the M2 close-out (D1060).** The views carry hidden stats, what is read from them and
+the AI's private intent only in Omniscient; the Browser's label lists are gone. Per item: the
+company page's management score, archetype, board skills and traits and locked plans are null in
+the views; `v_politics` and `v_characters` carry no skills, traits or integrity; the industry
+figures are published (banded where the industry is, D432); the recap's projection, expected
+surprise and reaction and the confidence factor are Omniscient only (the projection is the sim's
+own forecast); the scenario stays hidden in play (no reveal headline, the history holds it back);
+the EFV band is the published estimate. The company id and the operating figures are published
+(D1060 corrects D1047 (5)). The list as it stood:
+
 The Browser app strips hidden company data by matching field labels, which breaks silently if a
 label is renamed. Fix at the view or page-builder level so hidden fields are null or absent unless
 Omniscient (pivot 5.11):

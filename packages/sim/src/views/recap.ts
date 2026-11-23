@@ -132,11 +132,27 @@ function page(est: Estimator, w: World, width: number, p: CompanyRecap): RecapPa
       ? rangeOf(expected.consensus, width)
       : [figureExactOf(p.range[0]), figureExactOf(p.range[1])],
     expected,
-    expected_reaction: banded ? jumpedPrice(1.0, expected.expected_surprise) - 1.0 : p.expected_reaction,
+    expected_reaction: banded
+      ? jumpedPrice(1.0, expected.expected_surprise ?? 0.0) - 1.0
+      : p.expected_reaction,
     confidence_factor: p.confidence_factor,
     exchange_confidence: p.exchange_confidence,
     outlook: structuredClone(p.outlook),
     estimated: banded,
+  };
+}
+
+/**
+ * A page as the observer reads it (pivot 5.11, D1060): the projection is the sim's own forecast
+ * from the locked plan, so it, the surprise and reaction it implies, and the confidence factor (the
+ * management score's) show only in Omniscient.
+ */
+function observed(p: RecapPage): RecapPage {
+  return {
+    ...p,
+    expected: { ...p.expected, projection: null, expected_surprise: null },
+    expected_reaction: null,
+    confidence_factor: null,
   };
 }
 
@@ -152,10 +168,13 @@ function recapQuarter(est: Estimator, w: World, recap: Recap): RecapQuarter {
       phase: r.phase,
       g_t: r.g_t,
       industries_by_label: r.industries_by_label.map(([l, ids]) => [l, ids.slice()]),
-      expected_beats: rows(r.expected_beats),
-      expected_misses: rows(r.expected_misses),
+      expected_beats: est.omniscient ? rows(r.expected_beats) : [],
+      expected_misses: est.omniscient ? rows(r.expected_misses) : [],
     },
-    companies: recap.companies.map((p) => cachedPage(est, w, width, p)),
+    companies: recap.companies.map((p) => {
+      const shown = cachedPage(est, w, width, p);
+      return est.omniscient ? shown : observed(shown);
+    }),
   };
 }
 

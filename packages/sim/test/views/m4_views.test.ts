@@ -109,7 +109,8 @@ describe("m4 views", () => {
       if (o === undefined) throw new Error(`no detail row ${c.key}`);
       assertFigure(o.cash_usd, c.cash_usd, banded, "cash");
       expect(o.status).toBe(c.finance.distress.status);
-      expect(o.archetype).toEqual(c.archetype);
+      // The archetype and management score are Omniscient only (pivot 5.11, D1060).
+      expect([o.archetype, o.management_score, o.confidence_factor]).toEqual([null, null, null]);
     });
     // list_companies (monthly): at load, revenue and NI over the trailing published quarters,
     // the synthetic Q1 to Q3 2019 annualized (D228): the run rate.

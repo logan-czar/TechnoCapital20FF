@@ -627,13 +627,19 @@ describe("m9 estimate bands", () => {
             const b = isBanded(p.company);
             assertFigure(p.range[0], t.range[0], b, "recap range low");
             assertFigure(p.range[1], t.range[1], b, "recap range high");
-            assertFigure(p.expected.projection, t.expected.projection, b, "recap projection");
+            // The projection, its surprise and reaction and the confidence factor are Omniscient
+            // only (D1060).
+            expect([p.expected.projection, p.expected.expected_surprise, p.expected_reaction]).toEqual([
+              null,
+              null,
+              null,
+            ]);
+            expect(p.confidence_factor).toBeNull();
             assertFigure(p.expected.consensus, t.expected.consensus, b, "recap consensus");
             if (b) assertNoTruth(p, truthsOf(p.company), "v_recap");
           });
-          for (const e of [...rq.world.expected_beats, ...rq.world.expected_misses]) {
-            if (isBanded(e.company)) expect(figIsBand(e.projection) && figIsBand(e.consensus)).toBe(true);
-          }
+          // The expected beats and misses are by the sim's own forecast: none for the observer.
+          expect([rq.world.expected_beats, rq.world.expected_misses]).toEqual([[], []]);
         });
       }
       if (v.births.dirty) {

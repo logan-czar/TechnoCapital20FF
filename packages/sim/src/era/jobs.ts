@@ -331,8 +331,10 @@ export function eraYearCloseJob(world: World, ctx: JobCtx): void {
 }
 
 /**
- * 1 January, after the year's close (1995-rework 8.3): at the reveal date the run ends. The game
- * pauses, the scenario shows, and it may carry on, untuned.
+ * 1 January, after the year's close (1995-rework 8.3): at the reveal date the run ends and the game
+ * pauses. A hidden pick is not announced: a pre-simulation's run ends here and play goes on in the
+ * same scenario, so naming it would tell the player the economy's future (pivot 5.11, D1060). The
+ * history shows it at a Coarse run's end and in Omniscient.
  */
 export function eraRevealJob(world: World, ctx: JobCtx): void {
   const era = world.era;
@@ -340,6 +342,8 @@ export function eraRevealJob(world: World, ctx: JobCtx): void {
   const date = ctx.facts.date;
   if (cmpDate(date, era.reveal_date) < 0) return;
   era.ended = true;
-  newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
+  if (!era.scenario_hidden) {
+    newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
+  }
   ctx.endRun();
 }

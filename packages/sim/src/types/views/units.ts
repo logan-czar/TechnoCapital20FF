@@ -31,9 +31,9 @@ export interface UnitRow {
    * the published bonuses (D430).
    */
   p_pre: Figure;
-  /** The locked plan's annual growth rate and R&D share of revenue (spec 3.6). */
-  growth_plan: number;
-  rd_plan: number;
+  /** The locked plan's annual growth rate and R&D share of revenue (spec 3.6): only in Omniscient (pivot 5.11, D1060). */
+  growth_plan: number | null;
+  rd_plan: number | null;
   revenue_m: Figure;
   variable_m: Figure;
   fixed_m: Figure;

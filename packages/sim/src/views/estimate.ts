@@ -238,14 +238,18 @@ export function statementLineLabel(l: StatementLine): string {
 
 /**
  * A flow of the period (income and cash flow lines): a year's is the sum of its quarters'. The
- * balance sheet and guidance lines are the period end's.
+ * balance sheet and guidance lines are the period end's. `SpecialCharge` is a flow though it
+ * comes after them (D1059).
  */
 export function statementLineIsFlow(l: StatementLine): boolean {
-  return statementLineIndex(l) < STATEMENT_LINE_INDEX.Cash;
+  return l === "SpecialCharge" || statementLineIndex(l) < STATEMENT_LINE_INDEX.Cash;
 }
 
 /** The line's exact value in a statement (spec 3.9). */
-export function statementLineOf(line: StatementLine, s: Statement): number {
+export function statementLineOf(
+  line: StatementLine,
+  s: Pick<Statement, "lines" | "balance"> & { key: Pick<Statement["key"], "guidance"> },
+): number {
   const l = s.lines;
   const b = s.balance;
   switch (line) {
@@ -273,6 +277,8 @@ export function statementLineOf(line: StatementLine, s: Statement): number {
       return l.interest_income;
     case "AssetSaleGain":
       return l.asset_sale_gain;
+    case "SpecialCharge":
+      return l.special_charge;
     case "PreTaxIncome":
       return ledgerPreTaxIncome(l);
     case "Tax":

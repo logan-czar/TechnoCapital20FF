@@ -42,12 +42,27 @@ export interface EraBands {
   house_changes: readonly [number | null, number | null];
 }
 
+/**
+ * The USA cut's share of the 1995 world's companies at load, 103 American of 300 (pivot 4.1, D1038,
+ * D1059). The entries bands were set for the whole world; the cut simulates only American companies.
+ */
+export const USA_CUT_COMPANY_SHARE = 103 / 300;
+
+/**
+ * A whole-world entries bound scaled to the USA cut (D1059). Entries are net (births less
+ * failures), and the failures bands are not scaled: so the births the whole-world bound implies,
+ * `whole + failures`, are scaled to the cut's share, and the unscaled failures floor taken off.
+ */
+function cutEntries(whole: number, failures: number): number {
+  return Math.round((whole + failures) * USA_CUT_COMPANY_SHARE - failures);
+}
+
 export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
   stable: {
     gdp_2020_usd: [70e12, 100e12],
     max_drawdown: [null, 0.06],
     end_rate: [0.01, 0.06],
-    entries: [150, null],
+    entries: [cutEntries(150, 8), null],
     recessions: [1, 5],
     top_zone_gain: [0.02, null],
     failures: [8, null],
@@ -62,7 +77,7 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     gdp_2020_usd: [50e12, 110e12],
     max_drawdown: [0.08, null],
     end_rate: [null, 0.09],
-    entries: [100, null],
+    entries: [cutEntries(100, 12), null],
     recessions: [3, null],
     top_zone_gain: [0.02, null],
     failures: [12, null],
@@ -77,7 +92,7 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     gdp_2020_usd: [45e12, 60e12],
     max_drawdown: [null, null],
     end_rate: [null, 0.03],
-    entries: [null, 120],
+    entries: [null, cutEntries(120, 8)],
     recessions: [1, null],
     top_zone_gain: [null, null],
     failures: [8, null],

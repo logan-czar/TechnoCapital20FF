@@ -36,14 +36,15 @@ export function charactersViewList(v: CharactersView): CharacterRow[] {
   return [...v.partial];
 }
 
-function partialRow(s: SimpleSeat, role: Role): CharacterRow {
+/** A character row; the hidden stats only in Omniscient (pivot 5.11, D1060). */
+function partialRow(s: SimpleSeat, role: Role, omniscient: boolean): CharacterRow {
   const ch = s.character;
   return {
     id: { kind: "Partial", id: s.id },
     name: ch.name,
     age: ch.age,
-    skills: { ...ch.skills },
-    traits: ch.traits.slice(),
+    skills: omniscient ? { ...ch.skills } : null,
+    traits: omniscient ? ch.traits.slice() : null,
     roles: [role],
   };
 }
@@ -58,11 +59,11 @@ export function buildCharacters(input: ViewInput): CharactersView {
     c.board.forEach((holder, i) => {
       const role: Role = { kind: "Seat", company, seat: SEAT_LABOR[i]! };
       if (holder === null) return;
-      partial.push(partialRow(holder.seat, role));
+      partial.push(partialRow(holder.seat, role, input.controls.omniscient));
     });
     for (const d of c.directors) {
       const role: Role = { kind: "Director", company };
-      partial.push(partialRow(d.seat, role));
+      partial.push(partialRow(d.seat, role, input.controls.omniscient));
     }
   });
   // Rust `sort_by_key(|r| r.id)`: a stable sort.

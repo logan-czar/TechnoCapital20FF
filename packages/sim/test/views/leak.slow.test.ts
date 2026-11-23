@@ -99,7 +99,7 @@ import {
 } from "../../src/types/views/estimate.ts";
 import { type SimViews, VIEW_NAMES, type ViewName } from "../../src/types/views/index.ts";
 import { TOP_COMPANIES } from "../../src/types/views/industry_rows.ts";
-import type { EstimatedStatement } from "../../src/types/views/statements.ts";
+import type { EstimatedStatement, ShownStatement } from "../../src/types/views/statements.ts";
 import type { Company, World } from "../../src/types/world.ts";
 import {
   figureShown,
@@ -271,7 +271,7 @@ function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truth
   observer.statements.data.companies.forEach((c, i) => {
     if (!c.estimated) return;
     const t = omniscient.statements.data.companies[i]!;
-    const against = (shown: readonly EstimatedStatement[], all: readonly Statement[], what: string) => {
+    const against = (shown: readonly EstimatedStatement[], all: readonly ShownStatement[], what: string) => {
       for (const e of shown) {
         const s = all.find((x) => periodEq(x.period, e.period as Period));
         const where = `statements ${c.key} ${what} ${JSON.stringify(e.period)}`;
@@ -725,8 +725,9 @@ describe("leak", () => {
     ).toBeGreaterThan(0);
 
     // Derived leaks only the perturbation sees (4).
-    // The true expected surprise, rounded to 0.1%: equals no truth, but follows the true books.
-    // The recap's pages are worked out from the shown estimates (`derivedOf`), so it fails.
+    // The true expected surprise, rounded to 0.1%: equals no truth, but follows the true books. The
+    // observer's surprise is null since D1060 (the projection is Omniscient only), so the scan
+    // sees any value planted there too.
     const trueSurprise = overrideView("recap", (v, input) => {
       v.recaps.forEach((q, k) => {
         q.companies.forEach((p, i) => {
@@ -737,7 +738,7 @@ describe("leak", () => {
     });
     const ps = perturbation(sim, trueSurprise);
     expect(ps.changed.length, "the true surprise rounded").toBeGreaterThan(0);
-    expect(ps.scan.leaks, "the true surprise rounded: the scan alone misses it").toEqual([]);
+    expect(ps.scan.leaks.length, "the true surprise rounded: a value where none is shown").toBeGreaterThan(0);
     // A private company's cash in a publishing company's row: a publishing company's figures are
     // public, so the scan drops that truth (two companies can share books by the data,
     // company-start.csv), but the published row now follows a private book.

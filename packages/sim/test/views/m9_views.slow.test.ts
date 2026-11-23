@@ -199,7 +199,9 @@ describe("m9 views", () => {
     };
     const a = row("CO-0001");
     expect(a.origin).toEqual({ kind: "Start" });
-    expect(a.archetype).toEqual(w.companies[a.id]?.archetype);
+    // The AI's character: Omniscient only (pivot 5.11, D1060).
+    expect(w.companies[a.id]?.archetype).not.toBeNull();
+    expect(a.archetype).toBeNull();
     expect(a.listing.kind, "listed before 2020").toBe("BeforeStart");
     // Listing::date() is None before the start; Listing::exchange() is the row's exchange.
     expect(a.listing.kind === "BeforeStart" ? a.listing.exchange : null).toBe(a.exchange);

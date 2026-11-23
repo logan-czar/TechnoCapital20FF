@@ -35,6 +35,11 @@ export interface SoakStats {
   median_productivity: number;
   /** Data held plus unstructured over all companies, TB (spec 5.9). */
   data_tb: number;
+  /**
+   * The mean management score over every company (spec 5.7), in id order: read here because the
+   * views show it only in Omniscient (D1060).
+   */
+  mean_management_score: number;
   /** In industry id order. */
   industries: SoakIndustry[];
 }
@@ -89,6 +94,9 @@ export function soakStats(w: World): SoakStats {
     }
     data_tb += held;
   }
+  let management = 0.0;
+  for (const c of companies) management += c.management_score;
+  const mean_management_score = management / Math.max(companies.length, 1);
   const ranked = companiesByRevenue(w);
   const industries = w.industries.map((ind, id) => {
     let named = 0.0;
@@ -106,6 +114,7 @@ export function soakStats(w: World): SoakStats {
     mean_productivity,
     median_productivity: median(prod),
     data_tb,
+    mean_management_score,
     industries,
   };
 }

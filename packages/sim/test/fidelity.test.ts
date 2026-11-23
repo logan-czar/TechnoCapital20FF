@@ -115,7 +115,7 @@ describe("the pre-simulation", () => {
 });
 
 describe("hydration", () => {
-  it("switches a Coarse world to Full, ends its run and shows the scenario", () => {
+  it("switches a Coarse world to Full and ends its run, and a hidden scenario stays hidden (D1060)", () => {
     const sim = presimTo(2, [720]);
     const world = simWorld(sim);
     expect(world.fidelity).toBe("Coarse");
@@ -131,12 +131,15 @@ describe("hydration", () => {
     expect(report).toMatchObject({ date: UNTIL, ended_here: true, scenario: world.era?.scenario.label });
     expect(world.era?.ended).toBe(true);
     expect(world.era?.reveal_date).toEqual(UNTIL);
-    expect(JSON.stringify(world.news)).not.toBe(queued);
-    expect(JSON.stringify(world.news)).toContain(`The run ends. This world was ${report.scenario}`);
+    // The pick was hidden (Random): the scenario still drives the economy in play, so no headline
+    // names it and the history keeps it back (pivot 5.11, D1060).
+    expect(world.era?.scenario_hidden).toBe(true);
+    expect(JSON.stringify(world.news)).toBe(queued);
+    expect(JSON.stringify(world.news)).not.toContain("The run ends");
     expect(simStateHash(sim)).not.toBe(before);
-    // The views were rebuilt: the history shows the scenario and the run as ended.
+    // The views were rebuilt: the run is ended, the scenario still held back.
     const h = simViews(sim).history.data;
-    expect(h.scenario).toBe(report.scenario);
+    expect(h.scenario).toBeNull();
     expect(h.run?.ended).toBe(true);
     // Still paused, with nothing posted.
     expect(simControls(sim).paused).toBe(true);
