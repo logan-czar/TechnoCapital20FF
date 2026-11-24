@@ -27,10 +27,10 @@ export const SAVE_MAGIC: Uint8Array = new TextEncoder().encode("TC20FFJS");
  * milestone, in that milestone's contracts change (D1029): 6 is M1 (13 RNG streams where 5 had 8,
  * `World.fidelity`, `World.levers`, `World.geo`, `Industry.row_assets`); 7 is M2 (D1037:
  * `World.persons`, `World.elections`, `World.player`, the geo tables' history, censuses, seats and
- * challenges, `Controls.fixed_pauses`). An older save is refused by its version, before its RNG
+ * challenges, `Controls.fixed_pauses`); 8 is the M2 close-out's `Ledger.special_charge` (D1059). An older save is refused by its version, before its RNG
  * state is looked at.
  */
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 /**
  * The gzip level saves are written at (fflate's 0 to 9; D1035). Level 1 writes a 2020 save's 250 MB

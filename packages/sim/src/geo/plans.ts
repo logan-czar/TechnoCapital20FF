@@ -123,7 +123,7 @@ export function drawStatePlan(
 
 /** A fresh counters record. */
 export function drawStatsNew(): DrawStats {
-  return { sweeps: 0, backtracks: 0, forced: 0, kept_weaker: 0 };
+  return { sweeps: 0, forced: 0 };
 }
 
 /** The `UsStateId` of a place in a by-state table. */

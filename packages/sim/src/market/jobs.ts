@@ -628,6 +628,33 @@ function projectionClone(world: World): World {
   return clone;
 }
 
+/**
+ * A historical world's projection of each company's quarter (spec 5.16; D1062, a shortcut): the
+ * last posted quarter's net income grown by the company's locked plan for a quarter, `NI × (1 +
+ * growth ÷ 4)`, the growth being its units' plans weighted by gross assets. No copy of the world
+ * runs the quarter forward, which was an eighth of a pre-simulation's time. 0 for a company frozen
+ * or with no quarter posted yet; in company id order.
+ */
+export function runRateProjection(world: World): number[] {
+  return world.companies.map((c) => {
+    if (companyIsFrozen(c)) return 0.0;
+    const last = companyFinanceQuarters(c.finance).at(-1);
+    if (last === undefined) return 0.0;
+    let assets = 0.0;
+    let weighted = 0.0;
+    for (const id of c.units) {
+      const u = world.units[id] as World["units"][number];
+      assets += u.gross_assets;
+      weighted += u.gross_assets * u.growth_plan;
+    }
+    const growth = assets > 0.0 ? weighted / assets : 0.0;
+    return ledgerNetIncome(last.lines) * (1.0 + growth / QUARTERS_IN_YEAR);
+  });
+}
+
+/** Quarters in a year, for the run-rate projection's quarter of the yearly plan. */
+const QUARTERS_IN_YEAR = 4.0;
+
 /** The archive left in a company's place while the projection copy is made (never read). */
 const EMPTY_ARCHIVE: World["companies"][number]["finance"]["archive"] = { quarters: [], years: [] };
 
@@ -689,7 +716,10 @@ function jobCtxDetachedLocal(now: DateTime, notices: Notice[]): JobCtx {
  * `projection × (1 + e)` with e from one prices-stream uniform, in company id order (D252, D141).
  */
 export function consensusJob(world: World, ctx: JobCtx): void {
-  const projection = projectQuarterNetIncome(world, ctx.facts.now);
+  // A historical world takes the run-rate shortcut (D1062); the 2020 test world keeps spec 5.16's
+  // projection, which the parity baseline was recorded with.
+  const projection =
+    world.era !== undefined ? runRateProjection(world) : projectQuarterNetIncome(world, ctx.facts.now);
   for (let i = 0; i < world.companies.length; i++) {
     if (companyIsFrozen(world.companies[i] as Company)) continue;
     const s = world.market.stocks[i] as Stock;

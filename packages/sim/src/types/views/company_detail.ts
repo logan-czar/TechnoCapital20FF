@@ -21,8 +21,9 @@ export interface SeatPerson {
   name: string;
   /** u8. */
   age: number;
-  skills: Skills;
-  traits: Trait[];
+  /** Hidden stats: only in Omniscient (pivot 5.11, D1060). */
+  skills: Skills | null;
+  traits: Trait[] | null;
   /** A simple (partial) character (spec 8 Board tab: "partial characters are marked"). */
   partial: boolean;
   /** The partial character's 3.7.1 id (u32), for a partial one (v_characters' `partial`). */
@@ -39,9 +40,9 @@ export interface SeatCard {
   open: boolean;
   /**
    * The skill the management score reads for the seat (spec 5.7): the seat skill plus trait
-   * shifts, or 3 when empty.
+   * shifts, or 3 when empty. Read from hidden stats: only in Omniscient (pivot 5.11, D1060).
    */
-  skill_used: number;
+  skill_used: number | null;
   holder: SeatPerson | null;
 }
 
@@ -58,9 +59,12 @@ export interface CompanyDetail {
   hq_province: ProvinceId;
   /** The named controller's, a state's or a parent's name; null when widely held. */
   controller_name: string | null;
-  /** 0 to 100 (spec 5.7) and the investor confidence factor `0.8 + score ÷ 250`. */
-  management_score: number;
-  confidence_factor: number;
+  /**
+   * 0 to 100 (spec 5.7) and the investor confidence factor `0.8 + score ÷ 250`: read from the
+   * board's hidden stats, so only in Omniscient (pivot 5.11, D1060).
+   */
+  management_score: number | null;
+  confidence_factor: number | null;
   /** Bands for a private company or a new listing (D420). */
   cash_usd: Figure;
   line_drawn_usd: Figure;
@@ -70,8 +74,8 @@ export interface CompanyDetail {
   rating: Rating;
   /** Active, Distressed, Bankrupt or Removed (spec 3.5, 5.12). */
   status: CompanyStatus;
-  /** Spec 6.1. */
-  archetype: Archetype;
+  /** Spec 6.1: the AI's character, only in Omniscient (pivot 5.11, D1060). */
+  archetype: Archetype | null;
   /**
    * Start or Born (spec 8 header "Founded [date] ([event])"), its directors, and
    * the last IPO vote with the next vote's quarter (spec 8 Board tab, 5.20.1).

@@ -55,7 +55,12 @@ export type HeadlineKind =
   /** A historical world's recession or new industry (1995-rework 4.2, 5.3). */
   | { kind: "World" }
   /** A big company's board-seat event, a critical roll (spec v1.5 5.21, D1024). */
-  | { kind: "SeatEvent"; seat: Seat; success: boolean };
+  | { kind: "SeatEvent"; seat: Seat; success: boolean }
+  /**
+   * A historical world's company shock (1995-rework 9, D1059): the charge, USD; null for a company
+   * that does not publish (D420).
+   */
+  | { kind: "SpecialCharge"; charge_usd: number | null };
 
 /**
  * One Pdoomberg Wire headline (spec 5.18; 8 News feed: date and industry tag). The byline is

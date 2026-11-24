@@ -229,6 +229,7 @@ class StubSim {
       mean_productivity: 100,
       median_productivity: 100,
       data_tb: 1,
+      mean_management_score: 50,
       industries: [{ named_revenue_m: 1, fringe_revenue_m: 1, supply_ratio: 1, market_factor: 1 }],
     };
   }

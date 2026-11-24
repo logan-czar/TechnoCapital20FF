@@ -54,7 +54,9 @@ describe("a baked start", () => {
     expect(report.date).toEqual(PLAY_START);
     expect(world.fidelity).toBe("Full");
     expect(world.era?.ended).toBe(true);
-    expect(simViews(sim).history.data.scenario).toBe(world.era?.scenario.label);
+    // A hidden pick stays hidden in play: no headline names it, the history holds it back (D1060).
+    expect(simViews(sim).history.data.scenario).toBeNull();
+    expect(JSON.stringify(world.news)).not.toContain("The run ends");
     expect(simViews(sim).history.data.years.at(-1)).toBe(2019);
     expect(sim.controls().paused).toBe(true);
     // Only the last years of daily bars are left. A historical world's stocks keep as many as the

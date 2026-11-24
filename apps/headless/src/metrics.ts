@@ -934,12 +934,11 @@ function booksColumns(sim: SoakSimApi, year: number, distressedInYear: number): 
 /** The M3 operations columns, read from the views at the December close. */
 function operationsColumns(sim: SoakSimApi): string {
   const v = sim.views();
-  const companies = v.company_detail.data.companies;
-  const n = Math.max(companies.length, 1);
-  const meanManagement = companies.reduce((a, c) => a + c.management_score, 0) / n;
+  const n = Math.max(v.company_detail.data.companies.length, 1);
   // From the soak totals: a private company's EBIT, TB and productivity are bands (D420,
-  // D427, D431, D436).
+  // D427, D431, D436), and the management score shows only in Omniscient (D1060).
   const totals = sim.soakStats();
+  const meanManagement = totals.mean_management_score;
   return `${fx(totals.mean_productivity, 3)},${fx(meanManagement, 3)},${fx(totals.data_tb, 1)},${fx(totals.profitable_companies / n, 4)}`;
 }
 

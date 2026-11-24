@@ -70,8 +70,11 @@ export function hydrateFull(world: World, barYears: number = HYDRATE_BAR_YEARS):
   if (endedHere) {
     era.ended = true;
     era.reveal_date = date;
-    // era/jobs.ts `eraRevealJob`'s headline, word for word.
-    newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
+    // era/jobs.ts `eraRevealJob`'s headline, word for word; a hidden pick stays hidden in play,
+    // where the scenario still drives the economy (pivot 5.11, D1060).
+    if (!era.scenario_hidden) {
+      newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
+    }
   }
 
   // pivot 3.4 "era-only state is trimmed": the bars older than the chart needs on day one.

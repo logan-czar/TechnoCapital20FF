@@ -40,6 +40,7 @@ import type {
   CompanyStatements,
   EstimatedStatement,
   OperatingFigures,
+  ShownStatement,
   StatementPeriod,
   StatementsView,
 } from "../types/views/statements.ts";
@@ -133,9 +134,15 @@ function operating(est: Estimator, banded: boolean, id: CompanyId, s: Statement)
       ESTIMATE_FLOOR_TB,
     ),
     free_rd_pct: k.free_rd_pct,
-    management_score: k.management_score,
+    // Read from the board's hidden stats: Omniscient only (pivot 5.11, D1060).
+    management_score: est.omniscient ? k.management_score : null,
     rating: k.rating,
   };
+}
+
+/** A published statement as the observer reads it: the management score only in Omniscient (D1060). */
+export function shownStatement(s: Statement, omniscient: boolean): ShownStatement {
+  return omniscient ? s : { ...s, key: { ...s.key, management_score: null } };
 }
 
 /** The estimated statement of quarter statement `s` for company `id` (D420). */
@@ -261,7 +268,7 @@ export function statementsViewStatements(
   id: CompanyId,
   period: StatementPeriod,
   count: number,
-): readonly Statement[] {
+): readonly ShownStatement[] {
   const c = statementsViewGet(v, id);
   if (c === undefined || period === "Month") return [];
   const all = period === "Quarter" ? c.quarters : c.years;
@@ -356,8 +363,8 @@ function buildWith(input: ViewInput, prev: readonly CompanyStatements[]): Statem
       key: c.key,
       status: companyFinanceStatus(c.finance),
       estimated: banded,
-      quarters: banded ? [] : allQuarters.slice(0, quarters),
-      years: banded ? [] : allYears.slice(0, years),
+      quarters: banded ? [] : allQuarters.slice(0, quarters).map((s) => shownStatement(s, omniscient)),
+      years: banded ? [] : allYears.slice(0, years).map((s) => shownStatement(s, omniscient)),
       estimated_quarters,
       estimated_years,
       months: omniscient ? c.finance.months.slice() : [],

@@ -340,7 +340,8 @@ describe("the pages of the pages/ framework, inside the app", () => {
     expect(screen.getByTestId("framework-page")).toBeTruthy();
     expect(text()).toContain(company?.name ?? "");
     expect(text()).toContain("Ticker");
-    for (const w of ["Management score", "Skills", "Traits", "Archetype", "Data quests", "Seats"]) {
+    // The views carry no hidden stat outside Omniscient (D1060); the board and tech are public.
+    for (const w of ["Management score", "Skills", "Traits", "Archetype", "Skill used"]) {
       expect(text(), w).not.toContain(w);
     }
     expect(calls.titles.at(-1)).toBe(`${company?.name} - Almanac`);

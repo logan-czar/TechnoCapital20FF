@@ -125,6 +125,7 @@ export type StatementLine =
   | "InterestExpense"
   | "InterestIncome"
   | "AssetSaleGain"
+  | "SpecialCharge"
   | "PreTaxIncome"
   | "Tax"
   | "NetIncome"
@@ -147,7 +148,7 @@ export type StatementLine =
   | "GuidanceHigh";
 
 /**
- * Every line, in display order (Rust `StatementLine::ALL`, 32 lines): a line's index here is
+ * Every line, in display order (Rust `StatementLine::ALL`'s 32 lines and `SpecialCharge`, D1059): a line's index here is
  * its `as usize` discriminant, the index into `EstimatedStatement.lines`.
  */
 export const STATEMENT_LINE_VALUES = [
@@ -183,7 +184,18 @@ export const STATEMENT_LINE_VALUES = [
   "Equity",
   "GuidanceLow",
   "GuidanceHigh",
+  "SpecialCharge",
 ] as const;
+
+/**
+ * The lines in the order a statement shows them: `STATEMENT_LINE_VALUES` with `SpecialCharge`
+ * under the gain on sales, where the income statement takes it (D1059). It joined last in
+ * `STATEMENT_LINE_VALUES` so every older line keeps its discriminant, and with it its estimate
+ * noise (D429).
+ */
+export const STATEMENT_LINE_DISPLAY: readonly StatementLine[] = STATEMENT_LINE_VALUES.flatMap((l) =>
+  l === "SpecialCharge" ? [] : l === "AssetSaleGain" ? [l, "SpecialCharge" as const] : [l],
+);
 
 /** The line's label (spec 3.9; Rust `StatementLine::label`). */
 export const STATEMENT_LINE_LABELS: Readonly<Record<StatementLine, string>> = {
@@ -199,6 +211,7 @@ export const STATEMENT_LINE_LABELS: Readonly<Record<StatementLine, string>> = {
   InterestExpense: "Interest expense",
   InterestIncome: "Interest income",
   AssetSaleGain: "Gain on asset sales",
+  SpecialCharge: "Special charges",
   PreTaxIncome: "Pre-tax income",
   Tax: "Tax",
   NetIncome: "Net income",

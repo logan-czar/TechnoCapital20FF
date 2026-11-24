@@ -32,7 +32,12 @@ export function buildHistory(input: ViewInput): HistoryView {
   return {
     world_id: era.world_id,
     start_year: era.start_year,
-    scenario: era.scenario_hidden && !era.ended ? null : era.scenario.label,
+    // A hidden pick shows at a Coarse run's end, never in play, where the scenario still drives
+    // the economy (1995-rework 8.4; pivot 5.11, D1060); always in Omniscient.
+    scenario:
+      era.scenario_hidden && !input.controls.omniscient && !(era.ended && input.world.fidelity === "Coarse")
+        ? null
+        : era.scenario.label,
     years: [...era.history.years],
     gdp_usd: [...era.history.gdp_usd],
     companies: [...era.history.companies],

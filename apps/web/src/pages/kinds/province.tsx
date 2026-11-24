@@ -8,7 +8,7 @@
 
 import type { ProvinceCard, ProvinceId } from "@tc20ff/sim";
 import type { NameIndex } from "../../links/names.ts";
-import { type Cell, figureCell } from "../../widgets/cells.ts";
+import { type Cell, figureCell, numberCell } from "../../widgets/cells.ts";
 import {
   emptyDoc,
   type Field,
@@ -89,8 +89,8 @@ export function unitsTable(c: ProvinceCard, v: ViewsData, index: NameIndex): Tab
         figureCell(u.asset_book, "money"),
         figureCell(u.revenue_m, "money"),
         figureCell(u.productivity, "number"),
-        { k: "percent", v: u.growth_plan },
-        { k: "percent", v: u.rd_plan },
+        numberCell("percent", u.growth_plan),
+        numberCell("percent", u.rd_plan),
       ],
     ];
   });

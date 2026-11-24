@@ -186,6 +186,28 @@ export function bankruptcy(date: SimDate, industry: IndustryId, company: Company
   );
 }
 
+/**
+ * A historical world's company shock (1995-rework 9, D1059), "[name] takes a $X.YM charge after
+ * [cause]"; `charge_usd` is null for a company that does not publish (D420), so no amount.
+ */
+export function specialCharge(
+  date: SimDate,
+  industry: IndustryId,
+  company: CompanyId,
+  name: string,
+  cause: string,
+  charge_usd: number | null,
+): Headline {
+  const amount = charge_usd === null ? "a charge" : `a $${fmtFixed(charge_usd / USD_PER_MILLION, 1)}M charge`;
+  return headline(
+    date,
+    industry,
+    company,
+    { kind: "SpecialCharge", charge_usd },
+    `${name} takes ${amount} after ${cause}`,
+  );
+}
+
 /** Spec 5.18: a removal (5.12 step 3). */
 export function removal(date: SimDate, industry: IndustryId, company: CompanyId, name: string): Headline {
   return headline(

@@ -366,6 +366,7 @@ function presidentialRace(
   names: PersonPool,
   senateClass: number,
   climate: VoteClimate,
+  fatigue: number,
 ): { winner: Nominee; loser: Nominee; shares: [number, number] } {
   const [first, second] = PARTY_VALUES;
   const a = presidentialNominee(p, g, names, first, senateClass);
@@ -377,7 +378,7 @@ function presidentialRace(
   });
   const national: VoteClimate = {
     ...climate,
-    swing: climate.swing + g.normal("Politics") * PRESIDENT_SWING_SD,
+    swing: climate.swing + g.normal("Politics") * PRESIDENT_SWING_SD + fatigue,
   };
   let dem = 0;
   let total = 0;
@@ -403,16 +404,26 @@ export function partyTermsHeld(presidents: readonly { year: number; party: Party
 }
 
 /**
- * A historical world's swing from the tides of a November, toward Democrats (1995-rework 7.3): the
- * president's party loses ground at a midterm, and a party long in the White House at a presidential
- * vote. The 2020 world has neither, so its draws and results are as they were.
+ * A historical world's tide on every race of a November, toward Democrats (1995-rework 7.3): the
+ * president's party loses ground at a midterm. The 2020 world has none, so its draws and results are
+ * as they were.
  */
 export function eraTide(world: World, party: Party, date: SimDate): number {
+  if (world.era === undefined || isPresidentYear(date.year)) return 0;
+  return party === "Democrats" ? -MIDTERM_PENALTY : MIDTERM_PENALTY;
+}
+
+/**
+ * A historical world's fatigue at a presidential vote, toward Democrats (1995-rework 7.3, D1057): a
+ * party seeking a further term after its first two loses `FATIGUE_PER_TERM` for each such term. It
+ * moves the presidential race only: on every race it stacked a third to fifth term's tide onto
+ * Congress, whose six-year Senate terms then held chambers above 75% one party.
+ */
+export function eraFatigue(world: World, party: Party, date: SimDate): number {
   const era = world.era;
-  if (era === undefined) return 0;
-  const presidential = isPresidentYear(date.year);
+  if (era === undefined || !isPresidentYear(date.year)) return 0;
   const terms = partyTermsHeld(era.history.presidents, date.year);
-  const against = presidential ? FATIGUE_PER_TERM * Math.max(0, terms - 1) : MIDTERM_PENALTY;
+  const against = FATIGUE_PER_TERM * Math.max(0, terms - 1);
   return party === "Democrats" ? -against : against;
 }
 
@@ -448,7 +459,9 @@ function electionDayJob(world: World, ctx: JobCtx, p: PoliticsState, g: DrawSour
     }
   }
   // The nominees are picked first, so a nominating senator's seat is not one being contested.
-  const presidency = isPresidentYear(date.year) ? presidentialRace(p, g, names, senateClass, climate) : null;
+  const presidency = isPresidentYear(date.year)
+    ? presidentialRace(p, g, names, senateClass, climate, eraFatigue(world, president.party, date))
+    : null;
   const legislators: Politician[] = [];
   const house: { party: Party }[] = [];
   // Senators not up carry over.

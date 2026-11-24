@@ -162,21 +162,25 @@ describe("the Company page", () => {
       expect(all).toContain("Founded");
       expect(all.includes("Listed") || all.includes("Private: not listed"), r.name).toBe(true);
       // Overview.
-      for (const want of [
-        "Value",
-        "Price",
-        "Confidence",
-        "Management score",
-        "Cash",
-        "Credit line",
-        "Rating",
-        "Next release",
-      ])
+      for (const want of ["Value", "Price", "Confidence", "Cash", "Credit line", "Rating", "Next release"])
         expect(l.has(want), `${r.name}: overview ${want}`).toBe(true);
-      // Board: five seat cards with the skill used, founders, directors, the IPO vote.
+      // The management score, archetype and seats' skills are read from hidden stats: Omniscient
+      // only (pivot 5.11, D1060). Its twin shows them.
+      for (const hidden of ["Management score", "Archetype"]) {
+        expect(l.has(hidden), `${r.name}: ${hidden} hidden`).toBe(false);
+        expect(
+          labels(companyDoc(r.id, truth, buildNameIndex(truth))).has(hidden),
+          `${r.name}: ${hidden} in Omniscient`,
+        ).toBe(true);
+      }
+      // Board: five seat cards, founders, directors, the IPO vote; no skill used outside Omniscient.
       const cards = section(doc, "board").blocks.flatMap((b) => (b.k === "cards" ? [b.cards] : []));
       expect(cards[0]?.length, "five seat cards").toBe(5);
-      expect(cards[0]?.every((c) => c.fields.some((f) => f.label === "Skill used"))).toBe(true);
+      expect(cards[0]?.some((c) => c.fields.some((f) => f.label === "Skill used"))).toBe(false);
+      const truthCards = section(companyDoc(r.id, truth, buildNameIndex(truth)), "board").blocks.flatMap(
+        (b) => (b.k === "cards" ? [b.cards] : []),
+      );
+      expect(truthCards[0]?.every((c) => c.fields.some((f) => f.label === "Skill used"))).toBe(true);
       const bt = sectionText(doc, "board", v);
       for (const want of ["Seats", "Directors", "IPO vote"]) expect(bt, `${r.name}: ${want}`).toContain(want);
       // Cap table: the holders, summing to the shares out.

@@ -57,7 +57,7 @@ describe("districting measurements (pivot 5.4, 5.5)", () => {
       national.push(total);
       rows.push(
         `${label}: A seats ${total.toFixed(1)}; ${ms.toFixed(0)} ms (slowest ${slowestName} ${slowest.toFixed(0)} ms); ` +
-          `sweeps ${stats.sweeps}, backtracks ${stats.backtracks}, forced ${stats.forced}, kept weaker ${stats.kept_weaker}`,
+          `sweeps ${stats.sweeps}, forced ${stats.forced}`,
       );
     }
     for (const name of SHOWN)

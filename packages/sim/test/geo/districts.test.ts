@@ -3,8 +3,16 @@
 // the partisan drawer moves expected seats its way; a big county can give districts leaning both
 // ways; drift keeps each state's mean lean; a census moves seats; a court can strike a map.
 
+import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import { type DrawStats, drawPlan, expectedSeatsA, regionContiguous } from "../../src/geo/district.ts";
+import {
+  type DrawStats,
+  drawPlan,
+  expectedSeatsA,
+  regionContiguous,
+  regionPeopleOf,
+  type StateGraph,
+} from "../../src/geo/district.ts";
 import { driftCountiesYear } from "../../src/geo/drift.ts";
 import { geoDistrict, geoJob, geoPlanOf, geoStart, takeCensus } from "../../src/geo/index.ts";
 import {
@@ -133,7 +141,7 @@ describe("the partisan drawer (pivot 5.5)", () => {
   const seatsOf = (name: string): number => w.geo.seats[stateIndex(w, name)] as number;
 
   for (const name of ["Pennsylvania", "Wisconsin", "Maryland"]) {
-    it(`moves ${name}'s expected seats the drawer's way, weakly with strength`, () => {
+    it(`moves ${name}'s expected seats the drawer's way, never below neutral (D1062)`, () => {
       const g = stateGraph(w.geo, byState[stateIndex(w, name)] as number[]);
       const stats: DrawStats = drawStatsNew();
       const exp = (s: number, sign: number): number =>
@@ -142,14 +150,40 @@ describe("the partisan drawer (pivot 5.5)", () => {
       const a = [exp(0.5, 1), exp(1, 1)];
       const b = [exp(0.5, -1), exp(1, -1)];
       const slack = 0.05;
-      expect(a[0]).toBeGreaterThanOrEqual(neutral - slack);
-      expect(a[1]).toBeGreaterThanOrEqual((a[0] as number) - slack);
-      expect(b[0]).toBeLessThanOrEqual(neutral + slack);
-      expect(b[1]).toBeLessThanOrEqual((b[0] as number) + slack);
+      // Greedy at its strength (D1062): never worse for the drawer than neutral, though a stronger
+      // drawer is not promised more than a weaker one.
+      for (const x of a) expect(x).toBeGreaterThanOrEqual(neutral - slack);
+      for (const x of b) expect(x).toBeLessThanOrEqual(neutral + slack);
       expect((a[1] as number) - (b[1] as number)).toBeGreaterThan(0.2);
       expect(stats.forced).toBe(0);
     });
   }
+
+  it("draws seed 15's 2011 California, which ran away under the old search, in fixed work (D1058, D1061)", () => {
+    // 53 seats over 58 counties, as the 1995 world had drifted them: a Republican drawer at 0.83
+    // took the backtracking search past 200,000 backtracks and 2 GB. One cut per split cannot.
+    const g = JSON.parse(
+      readFileSync(new URL("./fixtures/california-2011-seed15.json", import.meta.url), "utf8"),
+    ) as StateGraph;
+    for (const [s, sign] of [
+      [0.83, -1],
+      [0.83, 1],
+      [1, -1],
+      [0, -1],
+    ] as const) {
+      const stats: DrawStats = drawStatsNew();
+      const t0 = performance.now();
+      const plan = drawPlan(g, 53, s, sign, 0.31937076908159023, stats);
+      expect(performance.now() - t0, `s ${s} sign ${sign}`).toBeLessThan(5000);
+      expect(plan.length).toBe(53);
+      const ideal = g.pop.reduce((a, b) => a + b, 0) / 53;
+      for (const d of plan) {
+        expect(Math.abs(regionPeopleOf(g, d) / ideal - 1)).toBeLessThan(DISTRICT_POP_TOLERANCE);
+        expect(regionContiguous(g, d)).toBe(true);
+      }
+      expect(stats.forced).toBe(0);
+    }
+  });
 
   it("rises with intrigue and falls with integrity", () => {
     expect(gerrymanderStrength(30, 50, [])).toBeGreaterThan(gerrymanderStrength(15, 50, []));

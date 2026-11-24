@@ -42,6 +42,8 @@ export interface IncomeStatement {
   interest_expense: number;
   interest_income: number;
   asset_sale_gain: number;
+  /** A historical world's company shock (1995-rework 9, D1059). */
+  special_charge: number;
   pre_tax_income: number;
   tax: number;
   net_income: number;
@@ -71,6 +73,7 @@ export function ledgerDefault(): Ledger {
     line_fee: 0,
     interest_income: 0,
     asset_sale_gain: 0,
+    special_charge: 0,
     tax: 0,
     tax_paid: 0,
     asset_purchases: 0,
@@ -101,9 +104,12 @@ export function ledgerInterestExpense(l: Ledger): number {
   return l.line_interest + l.line_fee;
 }
 
-/** Pre-tax income: EBIT − interest expense + interest income + gain on sales (3.9, 5.10). */
+/**
+ * Pre-tax income: EBIT − interest expense + interest income + gain on sales (3.9, 5.10) − a
+ * special charge (1995-rework 9, D1059).
+ */
 export function ledgerPreTaxIncome(l: Ledger): number {
-  return ledgerEbit(l) - ledgerInterestExpense(l) + l.interest_income + l.asset_sale_gain;
+  return ledgerEbit(l) - ledgerInterestExpense(l) + l.interest_income + l.asset_sale_gain - l.special_charge;
 }
 
 /** Net income: pre-tax income less tax (3.9). */
@@ -118,8 +124,8 @@ export function ledgerBookSold(l: Ledger): number {
 
 /**
  * Operating cash (3.9): the cash lines of income (revenue less cash costs, interest paid and
- * received) less tax paid. Equals net income + depreciation − gain on sales + tax accrued − tax
- * paid.
+ * received, a special charge, D1059) less tax paid. Equals net income + depreciation − gain on
+ * sales + tax accrued − tax paid.
  */
 export function ledgerOperatingCash(l: Ledger): number {
   return (
@@ -129,6 +135,7 @@ export function ledgerOperatingCash(l: Ledger): number {
     l.shared -
     ledgerInterestExpense(l) +
     l.interest_income -
+    l.special_charge -
     l.tax_paid
   );
 }
@@ -163,6 +170,7 @@ export function ledgerPlus(a: Ledger, o: Ledger): Ledger {
     line_fee: a.line_fee + o.line_fee,
     interest_income: a.interest_income + o.interest_income,
     asset_sale_gain: a.asset_sale_gain + o.asset_sale_gain,
+    special_charge: a.special_charge + o.special_charge,
     tax: a.tax + o.tax,
     tax_paid: a.tax_paid + o.tax_paid,
     asset_purchases: a.asset_purchases + o.asset_purchases,
@@ -186,6 +194,7 @@ export function ledgerScaled(l: Ledger, k: number): Ledger {
     line_fee: l.line_fee * k,
     interest_income: l.interest_income * k,
     asset_sale_gain: l.asset_sale_gain * k,
+    special_charge: l.special_charge * k,
     tax: l.tax * k,
     tax_paid: l.tax_paid * k,
     asset_purchases: l.asset_purchases * k,
@@ -217,6 +226,7 @@ export function ledgerIncome(l: Ledger): IncomeStatement {
     interest_expense: ledgerInterestExpense(l),
     interest_income: l.interest_income,
     asset_sale_gain: l.asset_sale_gain,
+    special_charge: l.special_charge,
     pre_tax_income: ledgerPreTaxIncome(l),
     tax: l.tax,
     net_income: ledgerNetIncome(l),

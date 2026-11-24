@@ -34,7 +34,7 @@ import {
   simDateQuarter,
 } from "@tc20ff/sim";
 import { firstQuarter, type NameIndex } from "../../links/names.ts";
-import { type Cell, date, figureCell, gain } from "../../widgets/cells.ts";
+import { type Cell, date, figureCell, gain, numberCell } from "../../widgets/cells.ts";
 import { type Block, emptyDoc, type PageDoc, type Span, span, type TableDoc } from "../doc.ts";
 import { kindName, type PageRef } from "../ref.ts";
 import type { SectionSpec } from "../sections.ts";
@@ -76,8 +76,8 @@ export function expectedTable(r: RecapQuarter, index: NameIndex): TableDoc {
     linkCell(index, { kind: "company", id: e.company }),
     figureCell(e.projection, "money"),
     figureCell(e.consensus, "money"),
-    { k: "gain", v: e.expected_surprise, unit: "percent" },
-    { k: "text", v: e.projection.kind === "Band" || e.consensus.kind === "Band" ? "estimates" : "-" },
+    e.expected_surprise === null ? { k: "unknown" } : { k: "gain", v: e.expected_surprise, unit: "percent" },
+    { k: "text", v: e.projection?.kind === "Band" || e.consensus.kind === "Band" ? "estimates" : "-" },
   ];
   const w = r.world;
   return {
@@ -110,9 +110,14 @@ export function companyPagesTable(
         figureCell(p.range[0], "money"),
         figureCell(p.range[1], "money"),
         figureCell(p.expected.consensus, "money"),
-        { k: "gain", v: p.expected.expected_surprise, unit: "percent" },
-        { k: "gain", v: p.expected_reaction, unit: "percent" },
-        { k: "ratio", v: p.confidence_factor },
+        // The forecast's surprise and reaction and the confidence factor: Omniscient only (D1060).
+        p.expected.expected_surprise === null
+          ? { k: "unknown" }
+          : { k: "gain", v: p.expected.expected_surprise, unit: "percent" },
+        p.expected_reaction === null
+          ? { k: "unknown" }
+          : { k: "gain", v: p.expected_reaction, unit: "percent" },
+        numberCell("ratio", p.confidence_factor),
         p.exchange_confidence === null
           ? { k: "text", v: "-" }
           : { k: "int", v: roundHalfAway(p.exchange_confidence) },

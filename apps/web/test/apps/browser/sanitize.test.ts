@@ -10,10 +10,8 @@ import { frameworkDoc, viewsOfPage } from "../../../src/apps/browser/FrameworkPa
 import { FRAMEWORK_KINDS, routeOfPage } from "../../../src/apps/browser/route.ts";
 import {
   coverageOf,
-  HIDDEN_FIELD_LABELS,
-  HIDDEN_SECTIONS,
-  HIDDEN_STATEMENT_ROWS,
   isOutside,
+  OUTSIDE_SECTIONS,
   sanitizeDoc,
   visibleSections,
 } from "../../../src/apps/browser/sanitize.ts";
@@ -94,48 +92,35 @@ describe("the coverage", () => {
 describe("a company's page", () => {
   const page = { kind: "company", id: (usCompany as NonNullable<typeof usCompany>).id } as PageRef;
 
-  it("has the hidden fields before the wrapper (so the wrapper is needed) and none after", () => {
-    const raw = docFields(rawDoc(page)).map((f) => f.label);
-    expect(raw).toContain("Management score");
-    const clean = docFields(cleanDoc(page)).map((f) => f.label);
-    for (const label of HIDDEN_FIELD_LABELS) expect(clean, label).not.toContain(label);
-    expect(clean).toContain("Ticker");
-    expect(clean).toContain("Industry");
+  // The views carry no hidden stat outside Omniscient (pivot 5.11, D1060), so the page itself,
+  // before any wrapper, has none: no label list is needed to take them out.
+  it("has no hidden stat in the page itself, before the wrapper, and keeps the public fields", () => {
+    for (const doc of [rawDoc(page), cleanDoc(page)]) {
+      const labels = docFields(doc).map((f) => f.label);
+      for (const label of ["Management score", "Skills", "Traits", "Skill used", "Archetype"])
+        expect(labels, label).not.toContain(label);
+      expect(labels).toContain("Ticker");
+      expect(labels).toContain("Industry");
+    }
   });
 
-  it("drops the board, units and tech sections and keeps the public ones", () => {
-    const doc = cleanDoc(page);
-    const ids = doc.sections.map((s) => s.id);
-    for (const hidden of HIDDEN_SECTIONS.company ?? []) expect(ids).not.toContain(hidden);
-    expect(ids).toEqual(expect.arrayContaining(["overview", "chart", "cap_table", "financials"]));
+  it("keeps every section of a company: the board without its stats, the units without their plans", () => {
+    const ids = cleanDoc(page).sections.map((s) => s.id);
+    expect(ids).toEqual(
+      expect.arrayContaining(["overview", "chart", "cap_table", "financials", "board", "units"]),
+    );
     const spec = pageSpecOf("company");
-    expect(visibleSections("company", spec?.sections ?? []).map((s) => s.id)).toEqual([
-      "overview",
-      "chart",
-      "cap_table",
-      "financials",
-    ]);
+    expect(visibleSections("company", spec?.sections ?? []).map((s) => s.id)).toEqual(
+      (spec?.sections ?? []).map((s) => s.id),
+    );
+    expect(OUTSIDE_SECTIONS.company).toBeUndefined();
   });
 
-  it("shows no skill, trait, management score, archetype or operating internals in any text", () => {
+  it("shows no skill, trait, management score or archetype in any text", () => {
     const texts = docTexts(cleanDoc(page), views).join("\n");
-    for (const word of [
-      "Management score",
-      "Skills",
-      "Traits",
-      "Skill used",
-      "Archetype",
-      "Productivity",
-      "PC bonus",
-      "Labor units",
-      "Held TB",
-      "Free R&D",
-      "Tech",
-      "Data quests",
-    ]) {
+    for (const word of ["Management score", "Skills", "Traits", "Skill used", "Archetype"]) {
       expect(texts, word).not.toContain(word);
     }
-    for (const row of HIDDEN_STATEMENT_ROWS) expect(texts.split("\n"), row).not.toContain(row);
   });
 
   it("links only to pages the browser draws, and to no foreign company or exchange", () => {

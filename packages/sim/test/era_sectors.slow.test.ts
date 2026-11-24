@@ -154,7 +154,13 @@ describe("the exit rule", () => {
       if (target === undefined) throw new Error("no firm");
       if (peersClosed) for (const p of peers) p.finance.distress.status = "Removed";
       target.loss_quarters = EXIT_LOSS_QUARTERS;
-      const ctx = { facts: { date: simDateYmd(1996, 1, 1) }, raiseAlert: () => {} } as unknown as JobCtx;
+      // Draws that never roll a company shock (D1059), so only the exit rule acts.
+      const draws = { chance: () => false };
+      const ctx = {
+        facts: { date: simDateYmd(1996, 1, 1) },
+        draws,
+        raiseAlert: () => {},
+      } as unknown as JobCtx;
       settleJob(w, ctx);
       return target.finance.distress.status;
     };

@@ -98,7 +98,9 @@ describe("m6 news", () => {
           } else {
             expect(figureExact(p.range[0])).toBe(tr.range[0]);
             expect(figureExact(p.range[1])).toBe(tr.range[1]);
-            expect(figureExact(p.expected.projection)).toBe(tr.expected.projection);
+            // The projection is the sim's own forecast: hidden from the observer (D1060).
+            expect(p.expected.projection).toBeNull();
+            expect(tr.expected.projection).not.toBeNull();
           }
         });
       }

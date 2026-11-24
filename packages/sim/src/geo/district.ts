@@ -21,12 +21,6 @@ export const CUT_KAPPA = 1.0;
 export const TIE_COMPACT = 0.01;
 /** Relative float slack on people when cutting (spike `EPS`). */
 const PEOPLE_EPS = 1e-9;
-/** Cuts finished greedily before one is kept, partisan maps only (pivot 5.5, T; spike `ROLLOUTS`). */
-export const ROLLOUTS = 4;
-/** Cuts a region tries before it reports it cannot be finished contiguously (pivot 5.4, T; spike `BACKTRACK_TRIES`). */
-export const BACKTRACK_TRIES = 6;
-/** Expected seats one unit of a whole plan's sprawl is worth at s = 0.5 (pivot 5.5, T; spike `PLAN_KAPPA`). */
-export const PLAN_KAPPA = 1.0;
 /**
  * The slices a county interval with a spread is cut into when the drawer's optimistic bound sorts
  * people by lean (pivot 5.4, T): the interval's lean runs in a line, so a few slices stand for it.
@@ -61,9 +55,8 @@ export type Region = Piece[];
 /** Work counters, for the measurements (README "Measured results"). */
 export interface DrawStats {
   sweeps: number;
-  backtracks: number;
+  /** Splits where no candidate cut left both sides contiguous, so the best cut was taken anyway. */
   forced: number;
-  kept_weaker: number;
 }
 
 /** Φ, the standard normal distribution (Abramowitz and Stegun 7.1.26 for erf, error below 1.5e-7). */
@@ -120,12 +113,6 @@ export function inertia(g: StateGraph, r: Region): number {
     sq += a * (x * x + y * y);
   }
   return w > 0.0 ? maxF(sq - (sx * sx + sy * sy) / w, 0.0) : 0.0;
-}
-
-function signature(r: Region, k: number): string {
-  let s = `${k}|`;
-  for (const p of r) s += `${p.i}:${p.from}:${p.to},`;
-  return s;
 }
 
 /**
@@ -323,22 +310,12 @@ function sweep(
 /** Which end of a split county's interval the first side of a cut takes (pivot 5.4, D1028). */
 type End = "A" | "B";
 
-/** A cut as found, before a strength scores it: the same for every strength above 0. */
-interface RawCut {
+/** A candidate cut, scored at the drawer's strength. */
+interface Cut {
   a: Region;
   b: Region;
   k1: number;
   ok: boolean;
-  /** The share of the region's spread left inside the sides (lower is more compact). */
-  cost: number;
-  /** The drawer's optimistic seats from both sides (0 for the neutral map). */
-  value: number;
-}
-
-/** Cuts found per region and seat count, shared by the maps of one drawer at strengths above 0. */
-export type CutMemo = Map<string, RawCut[]>;
-
-interface Cut extends RawCut {
   score: number;
 }
 
@@ -534,10 +511,22 @@ function sideValue(
 export type Plan = Region[];
 
 /**
- * A state's districts (pivot 5.4, 5.5; spike `draw`): `seats` regions of equal people, contiguous
- * when the search finds a way (it always has on the real counties; `stats.forced` counts the cases
- * it did not). `s` is the strength 0..1, `sign` the drawer (+1 party A, −1 party B; ignored at 0),
- * `theta0` the angle the sweep fan starts at (one Governing draw per map).
+ * A state's districts (pivot 5.4, 5.5; D1061): `seats` regions of equal people by recursive
+ * bisection, in fixed work.
+ *
+ * - Each split ranks its candidate cuts (every sweep, size and end) by score, `−(1 − s) × compactness
+ *   cost + s × the drawer's optimistic seats`, ties to the sweep order, and takes the first that
+ *   leaves both sides contiguous and each side still cuttable into two contiguous parts (a one-step
+ *   look ahead). The neutral map halves; when no halving is contiguous, or always for a partisan
+ *   drawer, one or two seats may also come off either end. With no such cut, the first contiguous
+ *   one; with none of those, the first cut (`stats.forced`).
+ * - A partisan map is drawn once, greedily, at its strength (D1062), and kept unless the neutral map
+ *   has fewer forced splits or gives its drawer more expected seats: a stronger drawer is not
+ *   promised more than a weaker one, only never less than neutral. `stats.forced` counts the kept
+ *   map's.
+ *
+ * `s` is the strength 0..1, `sign` the drawer (+1 party A, −1 party B; ignored at 0), `theta0` the
+ * angle the sweep fan starts at (one Governing draw per map).
  */
 export function drawPlan(
   g: StateGraph,
@@ -546,8 +535,39 @@ export function drawPlan(
   sign: number,
   theta0: number,
   stats: DrawStats,
-  guard = true,
-  memo: CutMemo = new Map(),
+): Plan {
+  const start: Region = g.pop.map((_, i) => ({ i, from: 0.0, to: 1.0 }));
+  if (seats <= 1) return [start];
+  let best: { plan: Plan; forced: number; won: number } | null = null;
+  const strengths = s > 0.0 ? [s, 0.0] : [0.0];
+  for (const t of strengths) {
+    const local: DrawStats = { sweeps: 0, forced: 0 };
+    const plan = drawAt(g, start, seats, t, sign, theta0, local);
+    stats.sweeps += local.sweeps;
+    let won = 0.0;
+    for (const d of plan) won += phi((sign * regionLean(g, d)) / SEAT_SIGMA_PTS);
+    if (
+      best === null ||
+      local.forced < best.forced ||
+      (local.forced === best.forced && won > best.won + 1e-12)
+    ) {
+      best = { plan, forced: local.forced, won };
+    }
+  }
+  const kept = best as { plan: Plan; forced: number };
+  stats.forced += kept.forced;
+  return kept.plan;
+}
+
+/** One map at strength `s`: recursive bisection, one cut per split (see `drawPlan`). */
+function drawAt(
+  g: StateGraph,
+  start: Region,
+  seats: number,
+  s: number,
+  sign: number,
+  theta0: number,
+  stats: DrawStats,
 ): Plan {
   const n = g.pop.length;
   const geoKeys: number[][] = [];
@@ -559,8 +579,8 @@ export function drawPlan(
     geoKeys.push(proj);
     geoKeys.push(proj.map((p) => -p));
   }
-  const keysFor = (r: Region): number[][] => {
-    if (s <= 0.0) return geoKeys;
+  const keysFor = (r: Region, partisan: boolean): number[][] => {
+    if (!partisan) return geoKeys;
     // pivot 5.5: the partisan sweeps, hostile first, friendly first, and rings round the hostile centre.
     const lean = new Array<number>(n).fill(0.0);
     let w = 0.0;
@@ -585,22 +605,21 @@ export function drawPlan(
   };
 
   const sc = scratchNew(n);
-  const cache = new Map<string, Cut[]>();
-  const done = new Map<string, Plan | null>();
   const wCompact = maxF(1.0 - s, TIE_COMPACT);
 
-  /** Every distinct cut of a region (spike `candidates`), unscored; memoised in `memo`. */
-  const rawCuts = (r: Region, k: number, sig: string): RawCut[] => {
-    const hit = memo.get(sig);
-    if (hit !== undefined) return hit;
+  /**
+   * A region's candidate cuts, best first: by score, ties to the sweep order. `partisan` false is
+   * the neutral halving, which the look ahead uses whatever the strength.
+   */
+  const cuts = (r: Region, k: number, partisan: boolean, allSizes = partisan): Cut[] => {
     const half = Math.floor(k / 2);
-    let sizes: number[];
-    if (s <= 0.0) sizes = [half];
-    else {
-      sizes = [...new Set([1, 2, half, k - half, k - 2, k - 1])]
-        .filter((x) => x >= 1 && x < k)
-        .sort((a, b) => a - b);
-    }
+    // The neutral map halves; the partisan drawer, or a region no halving keeps contiguous, may
+    // also carve one or two seats off either end.
+    const sizes = !allSizes
+      ? [half]
+      : [...new Set([1, 2, half, k - half, k - 2, k - 1])]
+          .filter((x) => x >= 1 && x < k)
+          .sort((a, b) => a - b);
     const amt = new Float64Array(n);
     const pieceAt: (Piece | undefined)[] = new Array(n);
     let total = 0.0;
@@ -610,49 +629,34 @@ export function drawPlan(
       total += amt[p.i] as number;
     }
     const whole = inertia(g, r);
-    const slices = s > 0.0 ? regionSlices(g, r, sign) : null;
-    const found: RawCut[] = [];
-    const seen = new Set<string>();
-    for (const key of keysFor(r)) {
+    const slices = partisan ? regionSlices(g, r, sign) : null;
+    const found: Cut[] = [];
+    for (const key of keysFor(r, partisan)) {
       const sw = sweep(g, r, amt, key, stats, sc);
       for (const k1 of sizes) {
         for (const end of ["A", "B"] as const) {
           const c = cutAt(g, r, pieceAt, amt, total, sw, k1, k, end, sc);
-          const sa = signature(c.a, k1);
-          if (!seen.has(sa)) {
-            seen.add(sa);
-            const cost = whole > 0.0 ? (inertia(g, c.a) + inertia(g, c.b)) / whole : 0.0;
-            const value =
-              slices === null
-                ? 0.0
-                : sideValue(g, slices, c.a, c.split, k1, sign, sc) +
-                  sideValue(g, slices, c.b, c.split, k - k1, sign, sc);
-            found.push({ a: c.a, b: c.b, k1, ok: c.ok, cost, value });
+          const cost = whole > 0.0 ? (inertia(g, c.a) + inertia(g, c.b)) / whole : 0.0;
+          let score = -wCompact * CUT_KAPPA * cost;
+          if (slices !== null) {
+            score +=
+              s *
+              (sideValue(g, slices, c.a, c.split, k1, sign, sc) +
+                sideValue(g, slices, c.b, c.split, k - k1, sign, sc));
           }
+          found.push({ a: c.a, b: c.b, k1, ok: c.ok, score });
           // pivot 5.4: the other end of a split county is a different map only for the partisan drawer.
-          if (s <= 0.0 || !c.splitSpread) break;
+          if (!partisan || !c.splitSpread) break;
         }
       }
     }
-    memo.set(sig, found);
-    return found;
+    // A stable sort: ties keep the sweep order.
+    return found.sort((p, q) => q.score - p.score);
   };
 
-  /** A region's cuts scored at this strength, best first (spike `candidates`). */
-  const candidates = (r: Region, k: number): Cut[] => {
-    const sig = signature(r, k);
-    const hit = cache.get(sig);
-    if (hit !== undefined) return hit;
-    const found: Cut[] = rawCuts(r, k, sig).map((c) => {
-      let score = -wCompact * CUT_KAPPA * c.cost;
-      if (s > 0.0) score += s * c.value;
-      return { ...c, score };
-    });
-    // Contiguous cuts first, then by score; a stable sort keeps sweep order on ties.
-    found.sort((p, q) => Number(!p.ok) - Number(!q.ok) || q.score - p.score);
-    cache.set(sig, found);
-    return found;
-  };
+  /** Whether `r` can still be cut into two contiguous parts (or needs no cut). */
+  const halvable = (r: Region, k: number): boolean =>
+    k === 1 || r.length === 1 || cuts(r, k, false, true).some((c) => c.ok);
 
   const equalShares = (r: Region, k: number): Plan => {
     const p = r[0] as Piece;
@@ -664,88 +668,20 @@ export function drawPlan(
     return out;
   };
 
-  const greedy = (r: Region, k: number, force = false): Plan | null => {
-    if (k === 1) return [r];
-    if (r.length === 1) return equalShares(r, k);
-    const sig = signature(r, k);
-    if (!done.has(sig)) {
-      let got: Plan | null = null;
-      for (const c of candidates(r, k).slice(0, BACKTRACK_TRIES)) {
-        if (!c.ok) break;
-        const pa = greedy(c.a, c.k1);
-        if (pa === null) {
-          stats.backtracks++;
-          continue;
-        }
-        const pb = greedy(c.b, k - c.k1);
-        if (pb === null) {
-          stats.backtracks++;
-          continue;
-        }
-        got = pa.concat(pb);
-        break;
-      }
-      done.set(sig, got);
-    }
-    const got = done.get(sig) as Plan | null;
-    if (got === null && force) {
-      stats.forced++;
-      const c = candidates(r, k)[0] as Cut;
-      return (greedy(c.a, c.k1, true) as Plan).concat(greedy(c.b, k - c.k1, true) as Plan);
-    }
-    return got;
-  };
-
-  const objective = (plan: Plan, whole: number): number => {
-    let won = 0.0;
-    let spread = 0.0;
-    for (const d of plan) {
-      won += phi((sign * regionLean(g, d)) / SEAT_SIGMA_PTS);
-      spread += inertia(g, d);
-    }
-    const cost = whole > 0.0 ? (plan.length * spread) / whole : 0.0;
-    return s * won - wCompact * PLAN_KAPPA * cost;
-  };
-
   const split = (r: Region, k: number): Plan => {
     if (k === 1) return [r];
-    if (r.length === 1 || s <= 0.0 || ROLLOUTS <= 1) return greedy(r, k) as Plan;
-    const cands = candidates(r, k).filter((c) => c.ok);
-    let tight = cands[0] as Cut;
-    for (const c of cands) if (c.cost < tight.cost) tight = c;
-    const whole = inertia(g, r);
-    let best: { got: number; c: Cut } | null = null;
-    let looked = 0;
-    for (const c of cands) {
-      if (looked >= ROLLOUTS && c !== tight) continue;
-      const pa = greedy(c.a, c.k1);
-      const pb = pa !== null ? greedy(c.b, k - c.k1) : null;
-      if (pa === null || pb === null) continue;
-      looked++;
-      const got = objective(pa.concat(pb), whole);
-      if (best === null || got > best.got + 1e-12) best = { got, c };
-    }
-    if (best === null) return greedy(r, k) as Plan;
-    return split(best.c.a, best.c.k1).concat(split(best.c.b, k - best.c.k1));
+    if (r.length === 1) return equalShares(r, k);
+    let ranked = cuts(r, k, s > 0.0);
+    if (!ranked.some((x) => x.ok)) ranked = cuts(r, k, s > 0.0, true);
+    const c =
+      ranked.find((x) => x.ok && halvable(x.a, x.k1) && halvable(x.b, k - x.k1)) ??
+      ranked.find((x) => x.ok) ??
+      (ranked[0] as Cut);
+    if (!c.ok) stats.forced++;
+    return split(c.a, c.k1).concat(split(c.b, k - c.k1));
   };
 
-  const start: Region = g.pop.map((_, i) => ({ i, from: 0.0, to: 1.0 }));
-  if (seats <= 1) return [start];
-  if (greedy(start, seats) === null) return greedy(start, seats, true) as Plan;
-  let plan = split(start, seats);
-  if (guard && s > 0.0) {
-    // Never worse for the drawer, by this strength's objective, than a weaker strength's map.
-    const whole = inertia(g, start);
-    for (const weaker of [0.5 * s, 0.0]) {
-      // The half-strength map finds the same cuts (only their scores differ): it shares the memo.
-      const other = drawPlan(g, seats, weaker, sign, theta0, stats, false, weaker > 0.0 ? memo : new Map());
-      if (objective(other, whole) > objective(plan, whole) + 1e-12) {
-        stats.kept_weaker++;
-        plan = other;
-      }
-    }
-  }
-  return plan;
+  return split(start, seats);
 }
 
 /** Expected seats for party A of a plan: Σ Φ(lean / σ) (pivot 5.5; the spike's "expected D seats"). */

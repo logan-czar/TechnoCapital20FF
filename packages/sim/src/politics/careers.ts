@@ -172,7 +172,6 @@ export const APPOINT_FROM_CONGRESS_CHANCE = 0.25;
 /** 4.21.1 confirmation (D984, T), by whether the president's party holds the Senate. */
 export const CONFIRM_CHANCE_FRIENDLY = 0.95;
 export const CONFIRM_CHANCE_HOSTILE = 0.6;
-export const CONFIRM_TRIES = 5;
 /** Senate seats that make a majority with the vice president's casting vote (D984). */
 export const SENATE_MAJORITY = 50;
 /** At the start, judges and the Fed chair were named by several presidents: either party (T). */
@@ -1216,24 +1215,25 @@ function appointee(
   }
   const same =
     seat.kind === "Judge" ? NOMINEE_SAME_PARTY_CHANCE : seat.kind === "FedChair" ? FED_SAME_PARTY_CHANCE : 1;
-  const nominate = (): { d: Drawn; party: Party } => {
-    let best: { d: Drawn; party: Party; score: number } | null = null;
-    for (let i = 0; i < APPOINTMENT_CANDIDATES; i++) {
-      const party = g.chance("Politics", same) ? appointer : otherParty(appointer);
-      const d = draw(g, pool, ranges, key, party, 0);
-      const score = d.skills[key] + (party === appointer ? SAME_PARTY_BONUS : 0);
-      if (best === null || score > best.score) best = { d, party, score };
-    }
-    return best as { d: Drawn; party: Party };
-  };
-  let pick = nominate();
+  // One slate, drawn once and ranked best first (by skill plus the party bonus; ties keep the draw
+  // order). A judge the Senate rejects is followed greedily by the next name on the slate, and the
+  // last is seated (D1062: a shortcut; a rejection drew a whole new slate before).
+  const slate: { d: Drawn; party: Party; score: number }[] = [];
+  for (let i = 0; i < APPOINTMENT_CANDIDATES; i++) {
+    const party = g.chance("Politics", same) ? appointer : otherParty(appointer);
+    const d = draw(g, pool, ranges, key, party, 0);
+    slate.push({ d, party, score: d.skills[key] + (party === appointer ? SAME_PARTY_BONUS : 0) });
+  }
+  slate.sort((a, b) => b.score - a.score);
+  let at = 0;
   if (seat.kind === "Judge") {
     const senators = s.offices.filter(
       (o) => o.seat.kind === "Senate" && personGet(s, o.person)?.party === appointer,
     );
     const confirm = senators.length >= SENATE_MAJORITY ? CONFIRM_CHANCE_FRIENDLY : CONFIRM_CHANCE_HOSTILE;
-    for (let t = 1; t < CONFIRM_TRIES && !g.chance("Politics", confirm); t++) pick = nominate();
+    while (at < slate.length - 1 && !g.chance("Politics", confirm)) at++;
   }
+  const pick = slate[at] as { d: Drawn; party: Party };
   const home = drawHomeState(world, g);
   const integrity = drawIntegrity(g, pick.d.traits, seat.kind === "Judge" ? JUDGE_INTEGRITY : undefined);
   return addDrawn(world, pick.d, year, {
@@ -1353,25 +1353,31 @@ function fillVacancy(
   }
 }
 
-/** Fills every vacancy careers fills (all but a House seat's special election), oldest first. */
-function fillVacancies(world: World, g: DrawSource, date: SimDate): void {
+/**
+ * Fills every vacancy careers fills (all but a House seat's special election), oldest first.
+ * Returns whether it filled any.
+ */
+function fillVacancies(world: World, g: DrawSource, date: SimDate): boolean {
   const s = world.persons;
   let pool: Pool | null = null;
   const award = (id: PersonId, a: Achievement): void => {
     personAward(world, g, id, a);
   };
   // A succession raises the successor's own vacancy: a few passes settle the chain.
+  let any = false;
   for (let pass = 0; pass < 4; pass++) {
     const open = s.vacancies.filter((v) => v.fill !== "Special");
-    if (open.length === 0) return;
+    if (open.length === 0) return any;
     let filled = false;
     for (const v of open) {
       if (officeHolderOf(s, v.seat) !== undefined) continue;
       pool ??= poolOf(world, date.year);
       if (fillVacancy(world, g, pool, v.seat, date, award)) filled = true;
     }
-    if (!filled) return;
+    if (!filled) return any;
+    any = true;
   }
+  return any;
 }
 
 /**
@@ -1622,8 +1628,10 @@ export function declareCycle(
  * for everyone alive, the year's mid-term exits and the executive crossovers. Every day: a new
  * president's administration, the Fed chair's term, the vacancies careers fills. Then, on
  * 1 January, the bench refresh (after the vacancies, so a bench member taken for a seat is
- * replaced). Last, the benches and the platforms. A world whose persons were never started (no US
- * states, or a hand-built test world) does nothing.
+ * replaced). Last, the benches and the platforms, rebuilt only on a day something changed them (a
+ * new year, a vacancy filled) and on the 1st of a month (D1062: a shortcut; a candidate who lost
+ * joins the bench lists by the next 1st, and the elections resync before they read them). A world
+ * whose persons were never started (no US states, or a hand-built test world) does nothing.
  */
 export function careersDay(world: World, draws: DrawSource, date: SimDate): void {
   const s: PersonsState | undefined = world.persons;
@@ -1636,10 +1644,12 @@ export function careersDay(world: World, draws: DrawSource, date: SimDate): void
   }
   executiveTurnover(world, date);
   fedChairTerm(world, g, date);
-  fillVacancies(world, g, date);
+  const filled = fillVacancies(world, g, date);
   if (newYear) benchRefresh(world, g, poolOf(world, date.year), date);
-  benchSync(world);
-  s.platforms = platformsOf(s);
+  if (newYear || filled || date.day === 1) {
+    benchSync(world);
+    s.platforms = platformsOf(s);
+  }
 }
 
 /**

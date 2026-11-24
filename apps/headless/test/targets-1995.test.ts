@@ -1,6 +1,6 @@
 // The calibration targets of a historical world's run (1995-rework 4.3).
 import { describe, expect, it } from "vitest";
-import { evaluateEra, maxDrawdown } from "../src/targets-1995.ts";
+import { ERA_BANDS, evaluateEra, maxDrawdown, USA_CUT_COMPANY_SHARE } from "../src/targets-1995.ts";
 
 const HEADER =
   "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born,president_changes,house_changes";
@@ -51,6 +51,24 @@ describe("the 1995 world's targets", () => {
       [1, false],
       [2, true],
     ]);
+  });
+
+  it("scales the whole world's entries bands to the USA cut (D1059)", () => {
+    // 60 companies gained: inside the cut's stable floor (46, from 150 and 8 failures), outside the whole world's.
+    const gained = (seed: number, n: number): string[] =>
+      run(seed, 1995, 2019, 85e12).map((row, i) => {
+        const cells = row.split(",");
+        cells[3] = String(300 + Math.round((n * i) / 24));
+        return cells.join(",");
+      });
+    const text = [HEADER, ...gained(1, 60), ...gained(2, 40)].join("\n");
+    const entries = evaluateEra(text, "stable").filter((r) => r.target === "entries");
+    expect(entries.map((r) => [r.seed, r.met])).toEqual([
+      [1, true],
+      [2, false],
+    ]);
+    expect(ERA_BANDS.stable?.entries).toEqual([Math.round(158 * USA_CUT_COMPANY_SHARE - 8), null]);
+    expect(ERA_BANDS.unstable?.entries).toEqual([Math.round(112 * USA_CUT_COMPANY_SHARE - 12), null]);
   });
 
   it("marks a short run", () => {

@@ -49,7 +49,8 @@ function seatOrder(o: Office): number {
   }
 }
 
-function row(p: PoliticsState, c: Politician): PoliticianRow {
+/** An office holder; the hidden stats only in Omniscient (pivot 5.11, D1060). */
+function row(p: PoliticsState, c: Politician, omniscient: boolean): PoliticianRow {
   const o = c.office;
   return {
     id: c.id,
@@ -59,10 +60,10 @@ function row(p: PoliticsState, c: Politician): PoliticianRow {
     ideology: c.ideology,
     title: officeTitle(p, o),
     province: o.kind === "House" ? (p.districts[o.district]?.home_province ?? null) : null,
-    skills: { ...c.skills },
-    traits: c.traits.slice(),
+    skills: omniscient ? { ...c.skills } : null,
+    traits: omniscient ? c.traits.slice() : null,
     since: c.since,
-    integrity: c.integrity,
+    integrity: omniscient ? c.integrity : null,
     leaning: c.leaning,
   };
 }
@@ -89,7 +90,8 @@ export function buildPolitics(input: ViewInput): PoliticsView {
   const p = input.world.politics;
   const of = (kind: Office["kind"]): Politician[] =>
     officeHolders(p, kind).sort((a, b) => seatOrder(a.office) - seatOrder(b.office));
-  const rows = (cs: readonly Politician[]): PoliticianRow[] => cs.map((c) => row(p, c));
+  const rows = (cs: readonly Politician[]): PoliticianRow[] =>
+    cs.map((c) => row(p, c, input.controls.omniscient));
   const house = of("House");
   const senate = of("Senate");
   const judges = of("Judge");

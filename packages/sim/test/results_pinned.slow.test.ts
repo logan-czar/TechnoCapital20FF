@@ -32,6 +32,9 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D1062 (greedy algorithms and shortcuts): careers rebuilds the benches and platforms only on a day something changed them and on the 1st, and an appointment walks one ranked slate, so the persons table and the state hash moved, and with them v_people and the monthly digest; the patch digest and every other view (the whole economy, v_politics) are unchanged.
+// Re-recorded for D1060 (hidden stats only in Omniscient, pivot 5.11): v_characters, v_politics, v_company_detail, v_company_rows, v_units, v_statements and v_recap now carry skills, traits, integrity, the management score and confidence factor, skill used, archetype, the locked plans and the recap's projection, surprise, reaction and expected beats and misses as null for the observer, so their digests and the monthly digest moved; the state hash, the patch digest and every other view are unchanged (D1061's drawer acts only in a world with counties).
+// Re-recorded for D1059 (the M2 close-out's company shocks): every ledger gained `special_charge` (0 in this world, which has no era and so never draws a shock), so the state hash moved; with the field stripped from every ledger it is still 0570df621d13e7eee505464f03dac97e, the value before. v_statements gained the `SpecialCharge` line, so its digest and the monthly digest moved; the patch digest and every other view are unchanged.
 // Re-recorded once for D1052 (the integration of the four sim lanes), on the merged tree: the lanes each recorded alone, so the constants were stale. The state hash moved because lane C's governors' term ends now follow lane E's calendar (3 January, not 15), and with them v_people; v_usmap_layers's states now carry the governors' parties from lane C's persons (lane G recorded before careers merged). The monthly and patch digests moved with those two views; every other view digest (the economy, v_politics, v_races, v_returns, v_account, v_notifications, v_districts) is unchanged: this world has no counties, so the elections, the mirror and the player never act in it.
 // Re-recorded for D1041 (lane C, careers): the world's persons table is filled at load and run by the careers job every day, so the state hash moved; their draws come after the politics POC's on the Politics stream, so the POC's later elections and appointments moved, and with them v_politics and its headlines in v_news; v_people is now built (version 8785). The monthly and patch digests moved with those three views; every other view digest (the whole economy) is unchanged.
 // Re-recorded for D1039 (lane G): v_districts and v_usmap_layers are built now, monthly, so their versions, the usmap_layers digest (its states' rows from the politics table; this world has no counties) and the monthly and patch digests moved; the state hash and every other view are unchanged (a world with no counties draws and changes nothing in geo).
@@ -50,8 +53,8 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "0570df621d13e7eee505464f03dac97e";
-const GOLDEN_MONTHLY = "aa1a8f8e7b87d626d080dd4e";
+const GOLDEN_STATE = "1d933c93b4ce5be10ad067c4b198ee51";
+const GOLDEN_MONTHLY = "d33c0e8b2e550b860c39f4ba";
 const GOLDEN_PATCHES = "c3624abc35ffa941c537f179";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
@@ -60,7 +63,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   countries: ["9de3a27ea9c7d773796efa55", 8785],
   zones: ["f5a9ead33682b6eadff6ec2a", 8785],
   rates: ["efc3668ad8d3cca8ad0790ce", 8785],
-  characters: ["4e22b8cb324effaa5debfe43", 8785],
+  characters: ["c5309aae1e0a47a24a5e7065", 8785],
   cap_table: ["a0e42ad318ea2122ca3376f4", 8785],
   quotes: ["493e8991f053c61006873dd9", 8785],
   price_bars: ["c6009fc44df02a5b8efe0ccf", 8785],
@@ -69,28 +72,28 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   news: ["c8cb1e476932cf08d7052a25", 8785],
   births: ["a25a57ae0f74c20a3e245545", 8785],
   projection: ["c6ead432d10a12fb7292f298", 8785],
-  company_rows: ["c2fa4edb1243e15ddceaee77", 8785],
-  company_detail: ["94b36e84ab7e1705cbf2e0de", 8785],
-  units: ["cb69926b999a5370e0151a1c", 8785],
+  company_rows: ["e81951396516d623141a09a4", 8785],
+  company_detail: ["79f4255b3a5d4bf993f3b01f", 8785],
+  units: ["4b573f2dfdd4498f0146b33c", 8785],
   tech: ["873075c31033e457e97081cd", 8785],
   industry_rows: ["d23253d17d86f236ddd85de4", 8785],
   industry_detail: ["6835abecc510d882dd17e967", 8785],
   cycle: ["b157722d749ca2fbcd91539e", 8785],
   map_layers: ["3cad1ea7b12b8809ad9cbddf", 8785],
   province_cards: ["99af44d8ca87df8c02fe718d", 8785],
-  statements: ["4b85ccb062ebd376e1b33ac8", 8785],
+  statements: ["c38bdfdc5d3e32a804fc4d71", 8785],
   filings: ["a5919099c8619a549d618894", 8785],
   ratings: ["5c79f5bdbb0789c46f43032d", 8785],
-  recap: ["c8717fb08e77f7127d3aefac", 8785],
+  recap: ["61c1d723484878817204cb7d", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
-  politics: ["fbef1e4d03e2551c0f836ca3", 8785],
+  politics: ["441070716aca46bbb42c9ea3", 8785],
   history: ["0259c604ed0adc2b0ebe9e35", 8785],
   feed: ["8440424e3e953d9ce88266ab", 1],
   social: ["41acd9a2c224b075b28c0aaf", 1],
   polls: ["66f490e3432976fdbfc95485", 1],
   forecast: ["e3ae3632c2838aeb6d729301", 1],
   races: ["59923a8a46fcb9581c1acb8a", 8785],
-  people: ["61e9523c877c8bab9917e866", 8785],
+  people: ["da94119474e9d05a3d637458", 8785],
   records: ["6df68f989ab8c28290a21f7d", 1],
   markets: ["3312b062bb7ccfa55b0b7d0a", 1],
   account: ["39647396081a417498294a57", 8785],

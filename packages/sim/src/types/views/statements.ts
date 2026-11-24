@@ -45,9 +45,18 @@ export interface OperatingFigures {
   labor_units: number;
   held_tb: Figure;
   free_rd_pct: number;
-  management_score: number;
+  /** Read from the board's hidden stats: only in Omniscient (pivot 5.11, D1060). */
+  management_score: number | null;
   rating: Rating;
 }
+
+/**
+ * A published statement (spec 3.9) as the observer reads it: its key figures' management score is
+ * read from the board's hidden stats, so it is only in Omniscient (pivot 5.11, D1060).
+ */
+export type ShownStatement = Omit<Statement, "key"> & {
+  key: Omit<Statement["key"], "management_score"> & { management_score: number | null };
+};
 
 /**
  * A statement of a company that does not publish: every line of `STATEMENT_LINE_VALUES` as a
@@ -58,7 +67,7 @@ export interface OperatingFigures {
 export interface EstimatedStatement {
   period: Period;
   synthetic: boolean;
-  /** One figure per `STATEMENT_LINE_VALUES` entry, in that order (32). */
+  /** One figure per `STATEMENT_LINE_VALUES` entry, in that order (33; D1059). */
   lines: Figure[];
   operating: OperatingFigures;
 }
@@ -80,11 +89,11 @@ export interface CompanyStatements {
    * Published quarters, oldest first (at most 20, spec 4.5); all of the archive's in
    * Omniscient; empty when estimated. (Rust: `quarters()`, see the header.)
    */
-  quarters: Statement[];
+  quarters: ShownStatement[];
   /**
    * Published years, oldest first (at most 5, D228); empty when estimated. (Rust: `years()`.)
    */
-  years: Statement[];
+  years: ShownStatement[];
   /**
    * The estimates of the quarters and years a published company would have published by
    * now, oldest first (D420).

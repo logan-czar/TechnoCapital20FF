@@ -81,6 +81,8 @@ export function kindOf(k: HeadlineKind): [string, Pick] {
       return ["Bankruptcy", 6];
     case "Removal":
       return ["Removal", 6];
+    case "SpecialCharge":
+      return ["Special charge", 6];
     case "Raise":
       return ["Raise", 7];
     case "FailedRaise":

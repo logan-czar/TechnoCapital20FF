@@ -22,13 +22,14 @@ import type { Outlook } from "./shared.ts";
 /** A company's expected result (spec 8 "by projection"; D280) as the observer sees it. */
 export interface ExpectedRow {
   company: CompanyId;
-  projection: Figure;
+  /** The sim's own forecast from the locked plan: only in Omniscient (pivot 5.11, D1060). */
+  projection: Figure | null;
   consensus: Figure;
   /**
    * The surprise s the projection would make (5.15), a ratio; from the estimates when the
-   * figures are bands.
+   * figures are bands. only in Omniscient (pivot 5.11, D1060).
    */
-  expected_surprise: number;
+  expected_surprise: number | null;
 }
 
 /** The world page (spec 8, 21.6.2). */
@@ -37,6 +38,7 @@ export interface WorldRecapPage {
   phase: CyclePhase;
   g_t: number;
   industries_by_label: [PhaseLabel, IndustryId[]][];
+  /** By the sim's own forecast, so only in Omniscient (pivot 5.11, D1060); empty otherwise. */
   expected_beats: ExpectedRow[];
   expected_misses: ExpectedRow[];
 }
@@ -48,9 +50,10 @@ export interface RecapPage {
   /** The anticipated earnings range (5.16), low then high. */
   range: [Figure, Figure];
   expected: ExpectedRow;
-  /** The expected price move at the release (5.15), a fraction. */
-  expected_reaction: number;
-  confidence_factor: number;
+  /** The expected price move at the release (5.15), a fraction: only in Omniscient (pivot 5.11, D1060). */
+  expected_reaction: number | null;
+  /** From the management score: only in Omniscient (pivot 5.11, D1060). */
+  confidence_factor: number | null;
   exchange_confidence: number | null;
   outlook: Outlook;
   /** The figures are estimate bands (D420). */

@@ -1,5 +1,6 @@
 // v_politics: the US politics page's data (politics POC, D980 to D988): the president and cabinet,
-// both chambers, the courts, the next vote and every past vote. All of it is public.
+// both chambers, the courts, the next vote and every past vote. All of it is public but the
+// hidden stats (skills, traits, integrity), which are only in Omniscient (pivot 5.11, D1060).
 
 import type { SimDate } from "../calendar.ts";
 import type { CountryId, PoliticianId, ProvinceId } from "../ids.ts";
@@ -18,8 +19,8 @@ export interface PoliticianRow {
   title: string;
   /** A House member's home province. */
   province: ProvinceId | null;
-  skills: Skills;
-  traits: Trait[];
+  skills: Skills | null;
+  traits: Trait[] | null;
   since: SimDate;
   integrity: number | null;
   leaning: JudgeLeaning | null;

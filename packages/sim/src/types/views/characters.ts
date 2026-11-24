@@ -27,8 +27,9 @@ export interface CharacterRow {
   name: string;
   /** u8. */
   age: number;
-  skills: Skills;
-  traits: Trait[];
+  /** Hidden stats: only in Omniscient (pivot 5.11, D1060). */
+  skills: Skills | null;
+  traits: Trait[] | null;
   /** In company id order, then seat order. */
   roles: Role[];
 }

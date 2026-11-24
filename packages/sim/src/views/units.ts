@@ -57,6 +57,7 @@ export function buildUnits(input: ViewInput): UnitsView {
   const w = input.world;
   const est = viewInputEstimator(input);
   const classes = estimatedIndustries(est, w);
+  const omni = input.controls.omniscient;
   const units = w.units.map((u, i): UnitRow => {
     const c = w.companies[u.company]!;
     const banded = unitBanded(est, w, classes, u.company, u.industry);
@@ -83,8 +84,9 @@ export function buildUnits(input: ViewInput): UnitsView {
       // `productivity + PC bonus + location bonus` (spec 5.2): the productivity band moved by
       // the published bonuses (D430).
       p_pre: productivity.kind === "Exact" ? figureExactOf(pre) : figureMap(productivity, (p) => p + bonuses),
-      growth_plan: u.growth_plan,
-      rd_plan: u.rd_plan,
+      // The locked plan is the AI's private intent: Omniscient only (pivot 5.11, D1060).
+      growth_plan: omni ? u.growth_plan : null,
+      rd_plan: omni ? u.rd_plan : null,
       revenue_m: unitRevenue(est, banded, u),
       variable_m: fig({ kind: "Line", line: "Variable" }, u.variable_m),
       fixed_m: fig({ kind: "Line", line: "FixedCash" }, u.fixed_m),

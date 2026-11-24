@@ -71,8 +71,9 @@ function personCells(r: PoliticianRow, names: IdeologyNames): Cell[] {
     { k: "text", v: partyLetter(r.party) },
     { k: "int", v: r.age },
     { k: "text", v: names?.[r.ideology] ?? r.ideology },
-    { k: "text", v: traitsText(r.traits) },
-    { k: "text", v: skillsText(r.skills) },
+    // Hidden stats: null outside Omniscient (pivot 5.11, D1060).
+    r.traits === null ? { k: "unknown" } : { k: "text", v: traitsText(r.traits) },
+    r.skills === null ? { k: "unknown" } : { k: "text", v: skillsText(r.skills) },
     { k: "date", v: r.since },
   ];
 }

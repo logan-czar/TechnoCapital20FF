@@ -241,6 +241,11 @@ export interface Ledger {
   interest_income: number;
   /** Gain (above 0) or loss on asset sales: `proceeds − book sold` (5.10; D229). */
   asset_sale_gain: number;
+  /**
+   * A historical world's company shock, paid in cash: a fraud, a lawsuit, a disaster
+   * (1995-rework 9, D1059). Below EBIT, inside pre-tax income and operating cash; 0 elsewhere.
+   */
+  special_charge: number;
   /** Tax accrued (5.11, D227); may be below 0 in a month. */
   tax: number;
   // Cash flow (3.9).

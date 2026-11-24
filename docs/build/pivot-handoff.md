@@ -3,8 +3,8 @@
 Written 2026-11-11 for whoever continues this (another model or Logan). Read this first; then
 [pivot-plan.md](pivot-plan.md) (the approved plan and the decisions from Logan's interview),
 [../design/pivot/spec.md](../design/pivot/spec.md) (the spec, cited in code as `pivot N.N`) and
-[pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1052 in
-[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1057**.
+[pivot-lanes.md](pivot-lanes.md) (M2's contracts and lane table). Decisions D1026 to D1062 in
+[decisions.md](decisions.md) record every choice the spec left open; the next free number is **D1063**.
 
 ## One paragraph
 
@@ -12,9 +12,8 @@ The game is a stock and prediction market sim on a deep US political sim: the pl
 fake desktop OS ("Orrery") who advances time (hourly ticks), reads published news, bets on politics
 and trades stocks. Play always starts in 2020, produced by pre-simulating the 1995 world for 25 years
 at Coarse fidelity. The app is Electron (React UI, sim in a Node utility process). Milestones M0, M1
-and M2 are built. M0 and M1 are in `main` (pull request #127, merged by Logan 2026-11-11). **M2 is
-not in `main`:** it is 88 commits on branch `claude/stock-market-prediction-game-7c4f97`, in its own
-pull request (see the PR list; it was opened after #127 merged). M3 to M6 are not started.
+and M2 are built and in `main` (pull requests #127 and #128; the Electron close-out is #129). M3 to
+M6 are not started.
 
 ## What is real and what is only a mock (read this before demoing anything)
 
@@ -35,7 +34,7 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 
 ## Branch, PR and tree state
 
-- M0 and M1 are in `main` via #127, M2 via #128. Save version 7.
+- M0 and M1 are in `main` via #127, M2 via #128. Save version 8 (D1059's `Ledger.special_charge`).
 - The playable 2020 world is removed (D1053, D1055; [pivot-2020-removal.md](pivot-2020-removal.md)):
   1995 is the only world, and the mock plays it. Its tables live on twice: as the 1995 generator's
   input in `tools/world-1995/source/`, and frozen for the tests, the research tools and the parity
@@ -46,18 +45,19 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 - Baked starts are not committed (`assets/starts/*.tcsave` is git-ignored): run
   `bash scripts/bake-starts.sh` (about 40 s for three seeds, about 11 MB each).
 
-## Verification of this tree (re-run 2026-11-20 on main 7012f9f plus D1053 to D1055)
+## Verification of this tree (re-run 2026-11-23 on main 44c96c6 plus D1057 to D1062)
 
-**The full gate is green** after D1054 fixed the two seed-fragile slow tests (no sim change) and
-D1055 removed the 2020 world. The soaks ran on 2026-11-20 (D1056): no crash or NaN, one band fails
-(lopsided chambers).
+**The full gate is green** with Logan's soak rulings in (D1057 to D1059: the fatigue on the
+presidency only, company shocks with save version 8), the hidden data closed at the source (D1060)
+the greedy district drawer (D1061, D1062, replacing D1058's budget) and D1062's shortcuts. The soaks
+were re-recorded on this tree: no crash or NaN, every politics band passes on these 40 seeds.
 
 | Check | Result |
 |---|---|
-| `scripts/check-ts.sh` (full gate) | **Passed** 2026-11-20: 253 of 253 test files, then the three data checks (the frozen test world, and 1995's two). |
-| `pnpm e2e` (49 tests) | **Passed** 2026-11-20: 49 of 49, the whole suite (smoke, visual, real, tour; 1.2 min). Three `@visual` baselines were re-recorded for the mock's 1995 names (D1055) and looked at. |
-| `... --filter @tc20ff/desktop determinism` | **Passed** 2026-11-20: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `fa8c7edc0d7e46d47be622e9bdf465e4`, unchanged since 2026-11-11). |
-| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | **Ran** 2026-11-20 (D1056). Economy: `headless calibrate`, 3 scenarios × 50 seeds, no failure; `entries` and `failures` miss in nearly every seed (bands predate the USA cut). Politics: `pivot-soak.ts`, 40 seeds, 24 of 25 checks; the failure is a chamber above 75% in 7 Coarse and 2 played seeds. Baselines in `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`. |
+| `scripts/check-ts.sh` (full gate) | **Passed** 2026-11-23: 257 of 257 test files, then the three data checks (the frozen test world, and 1995's two). `results_pinned` re-recorded for D1059 (with `special_charge` stripped the frozen world's state hash is the old one) D1060 (the state hash unchanged; seven views' digests moved) and D1062 (careers: the state hash and v_people moved, the economy views did not). |
+| `pnpm e2e` (49 tests) | **Passed** 2026-11-23: 49 of 49 (1.2 min), on re-baked starts (save version 8), after D1062 too. The smoke test "the mock's first scripted pause is a notification" failed twice while the machine was loaded (runs of 24 s, not 14): at Max speed the mock can reach its next scripted pause (27 Oct 15:00) before Playwright sees the note clear. Timing, not this change: it passes on this tree and on untouched main alike when the machine is idle. |
+| `... --filter @tc20ff/desktop determinism` | **Passed** 2026-11-23: headless Node, the desktop bundle under Node and the Electron utility process give the same state hash (1995, seed 1, one year; `00f1176926d6285d602df8954140b6ad`; it moved with D1057 to D1059 and with D1062, whose careers and consensus act in the first year, and not with D1060 or D1061). |
+| Soaks (Coarse 25-year, Full 2-year, with sanity bands) | **Re-recorded** 2026-11-23 (D1057 to D1062; first run D1056). Economy: `headless calibrate`, 3 scenarios × 50 seeds, no failure; targets met 678, 686 and 693 of 700 (were 592, 597, 647). Politics: `pivot-soak.ts`, 40 seeds, 25 of 25 checks in 102 s (no lopsided chamber on these seeds; the first run had 7 Coarse and 2 played). Baselines in `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`. |
 
 The three gate failures of 2026-11-11 and how they closed:
 
@@ -75,8 +75,10 @@ The three gate failures of 2026-11-11 and how they closed:
 
 1. Read the verification block above. Anything not shown as passing there is unverified. Done 2026-11-19: the two gate failures are fixed (D1054) and the gate and the whole `e2e` pass.
 2. Done 2026-11-20 (D1056): the soaks ran (results in the verification table; READMEs in
-   `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`). Logan to accept the two new baselines
-   and the bands, and to rule on the lopsided chambers and the `entries` and `failures` bands. `test/fixtures/ts-soak/` (the parity baseline)
+   `test/fixtures/soak-1995/` and `test/fixtures/pivot-soak/`). Logan ruled 2026-11-23: both baselines
+   accepted and re-recorded after the fixes; the fatigue moves the presidency only (D1057, which also
+   needed the district drawer's budget, D1058); `entries` scaled to the cut and American firms given
+   company shocks to meet the `failures` floors (D1059). `test/fixtures/ts-soak/` (the parity baseline)
    was recorded on the old 2020 world and stays the frozen test world's baseline (rerun with
    `--data-dir packages/sim/test/fixtures/world-mini`); its `state_hash` column is not compared. A 1995
    baseline is now recorded (`test/fixtures/soak-1995/`) and becomes the default once it settles and
@@ -92,16 +94,28 @@ The three gate failures of 2026-11-11 and how they closed:
 
 ### B. Known defects and loose ends
 
-- **Lopsided Senate:** in the real pre-simulation, seed 2's Senate reached 80% one party in 2008 and
-  78% in 2010 (crash under the incumbent party, then the fatigue tide on a fifth straight term, held in
-  place by six-year terms). The 75% bound fails; the levers left are the tides (1995-rework 7.3) and
-  incumbency. Seed 3's 2020 House is 131 to 300.
+- **Lopsided chambers, a tail left:** the fatigue tide on every race made 9 of 80 runs lopsided; on
+  the presidency only (D1057) the runs before D1062 kept 4 or 5, all House waves of 80 to 110 seats
+  from the national swing (`NATIONAL_SWING_SD`) and the economy term (`ECONOMY_PER_POINT`, D986). The
+  final 40 seeds have none, so the band passes, but a wider seed range may find one; for Logan.
+- **Company shocks (D1059) are tuned on 50 seeds a scenario**: `failures` still misses in 5 stable,
+  4 unstable and 2 stagnation seeds, and stable's `entries` in 11 (its floor assumes failures at their
+  floor).
+  The shocks hit after 2020 too, about one American company every two years.
 - **Six House seats are empty at the 2020 start**, vacated on 1 January and waiting for specials.
 - **The politics POC still runs beside the new tables in county worlds** (its start, its mirror):
   `elections/mirror.ts` copies seats back so the old politics page and the era levers keep working.
   `PRESIDENT_TERM_LIMIT` and `START_PRESIDENT_PARTY` exist in both `politics/jobs.ts` and `careers.ts`;
   `v_politics` lags the mirror until the next politics day. M3 should retire the POC.
 - **Executive crossover is narrow:** only board members of bankrupt US companies can enter politics.
+- **The district drawer is greedy (D1061, D1062)**, not a search: one ranked cut per split with one
+  step of look ahead, drawn once at its strength and compared only with neutral. A full-strength
+  gerrymander moves about a third fewer seats than the old search did (221 against 234 party-A seats
+  nationally for A at 1), and a stronger drawer is not promised more than a weaker one.
+- **Shortcuts taken on purpose (D1062):** careers rebuilds benches and platforms only on a change and
+  on the 1st; a historical world's consensus is the run rate (last quarter's net income grown by the
+  plan), not spec 5.16's projection; the POC mirror and the specials follow the offices weekly; a
+  judicial nomination walks one ranked slate. Revisit any of them if play shows the cost.
 - **Gerrymander strength is provisional** (mean about 0.39 with stand-in politicians; challenges rare):
   re-check with real governors.
 - **County results are kept only for the latest general** (and the latest presidential one): Records'
@@ -111,8 +125,10 @@ The three gate failures of 2026-11-11 and how they closed:
   and dormant sectors get a block only from their founding wave.
 - **Money system gaps:** no difficulty field in the new-game picker (sim, protocol and host support it),
   no margin, shorting, options or settlements (M5, M6).
-- **Leaks in the old page kinds** (company page, politics, industries, recap): see
-  [pivot-m3-requests.md](pivot-m3-requests.md). This is required work, not optional.
+- **Hidden data is closed at the source (D1060):** the views carry hidden stats, what is read from
+  them and the AI's private intent only in Omniscient; the Browser's label lists are gone. Any new
+  view field that reads skills, traits, integrity, a locked plan or the sim's own forecast must be
+  null outside Omniscient (`test/views/hidden_stats.test.ts`, `leak.slow`).
 - Window layouts below about 500 px are checked only in happy-dom for most apps; real-pointer resize
   of a snapped window is covered only by unit tests.
 - `apps/desktop/README.md` still says `--mock` starts at 2020-01-01 hour 0 (it starts 2020-10-20) and
@@ -128,7 +144,7 @@ The three gate failures of 2026-11-11 and how they closed:
 Scope from the plan and spec (pivot 6.3 to 6.5, 7, 5.12, 5.13, 3.4):
 
 - **Contracts change first** (serial): apply [pivot-m3-requests.md](pivot-m3-requests.md); define bill,
-  executive-action, campaign, endorsement and scandal state; save version 8; a lane table.
+  executive-action, campaign, endorsement and scandal state; save version 9 (8 is D1059's); a lane table.
 - Lanes (Opus for sim, Sonnet for apps): campaigns and primaries (war chests, ads and field spending by
   place, rallies and debates as stat checks, endorsements, scandals; elections' Coarse strength stays for
   Coarse), bills (drafted, committee, floor, per-member roll calls by stats and ideology, cloture 60,

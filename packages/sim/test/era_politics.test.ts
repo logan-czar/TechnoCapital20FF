@@ -11,7 +11,13 @@ import {
 import { fiscalDemandMult } from "../src/governing/levers.ts";
 import { simNew, simViews, simWorld } from "../src/lib.ts";
 import { equalProportions, eraBlocs, HOUSE_SEATS, IDEOLOGY_WINDOWS } from "../src/politics/era.ts";
-import { eraTide, FATIGUE_PER_TERM, MIDTERM_PENALTY, partyTermsHeld } from "../src/politics/jobs.ts";
+import {
+  eraFatigue,
+  eraTide,
+  FATIGUE_PER_TERM,
+  MIDTERM_PENALTY,
+  partyTermsHeld,
+} from "../src/politics/jobs.ts";
 import { partySeats } from "../src/politics/state.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
 import type { Politician, PoliticsState } from "../src/types/state/politics.ts";
@@ -50,6 +56,7 @@ describe("the tides of a November (1995-rework 7.3)", () => {
     const date = simDateYmd(1998, 11, 3);
     expect(eraTide(w, "Democrats", date)).toBe(-MIDTERM_PENALTY);
     expect(eraTide(w, "Republicans", date)).toBe(MIDTERM_PENALTY);
+    expect(eraFatigue(w, "Democrats", date)).toBe(0);
   });
 
   it("leaves a first re-election alone and grows against a party long in the White House", () => {
@@ -58,24 +65,38 @@ describe("the tides of a November (1995-rework 7.3)", () => {
     if (era === undefined) throw new Error("no era");
     const name = "";
     era.history.presidents = [{ ...dem(1993), name }];
-    expect(eraTide(w, "Democrats", simDateYmd(1996, 11, 5))).toBeCloseTo(0);
+    expect(eraFatigue(w, "Democrats", simDateYmd(1996, 11, 5))).toBeCloseTo(0);
     era.history.presidents = [
       { ...dem(1993), name },
       { ...dem(1997), name },
     ];
-    expect(eraTide(w, "Democrats", simDateYmd(2000, 11, 7))).toBeCloseTo(-FATIGUE_PER_TERM);
+    expect(eraFatigue(w, "Democrats", simDateYmd(2000, 11, 7))).toBeCloseTo(-FATIGUE_PER_TERM);
     era.history.presidents = [
       { ...rep(1993), name },
       { ...rep(1997), name },
       { ...rep(2001), name },
     ];
-    expect(eraTide(w, "Republicans", simDateYmd(2004, 11, 2))).toBeCloseTo(2 * FATIGUE_PER_TERM);
+    expect(eraFatigue(w, "Republicans", simDateYmd(2004, 11, 2))).toBeCloseTo(2 * FATIGUE_PER_TERM);
+  });
+
+  it("puts no tide on the whole ballot in a presidential year: the fatigue is the presidency's (D1057)", () => {
+    const w = start(1);
+    const era = w.era;
+    if (era === undefined) throw new Error("no era");
+    era.history.presidents = [
+      { ...dem(1993), name: "" },
+      { ...dem(1997), name: "" },
+      { ...dem(2001), name: "" },
+    ];
+    expect(eraTide(w, "Democrats", simDateYmd(2004, 11, 2))).toBe(0);
+    expect(eraFatigue(w, "Democrats", simDateYmd(2004, 11, 2))).toBeCloseTo(-2 * FATIGUE_PER_TERM);
   });
 
   it("is not in the 2020 world", () => {
     const made = simNew(data(), 1);
     if (!made.ok) throw new Error("did not load");
     expect(eraTide(simWorld(made.value), "Democrats", simDateYmd(2022, 11, 8))).toBe(0);
+    expect(eraFatigue(simWorld(made.value), "Democrats", simDateYmd(2024, 11, 5))).toBe(0);
   });
 });
 
